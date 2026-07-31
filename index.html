@@ -463,10 +463,28 @@ const DEST_GRADS = [
   ['#92400E','#D97706'],['#1E3A5F','#3B82F6'],['#4A044E','#7C3AED'],
   ['#1C1917','#78350F'],['#0F172A','#0D9488'],['#831843','#EC4899'],
 ];
-function destGrad(dest='') {
-  let h = 0; for (let c of dest) h = (h * 31 + c.charCodeAt(0)) & 0xFF;
-  const [c1,c2] = DEST_GRADS[h % DEST_GRADS.length];
-  return `linear-gradient(145deg,${c1},${c2})`;
+function destImage(dest='') {
+  const d = dest.toLowerCase();
+  if (d.includes('goa'))                              return 'https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=600&q=75';
+  if (d.includes('manali')||d.includes('himachal'))   return 'https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=600&q=75';
+  if (d.includes('shimla'))                           return 'https://images.unsplash.com/photo-1617953141905-b27fb1be9280?w=600&q=75';
+  if (d.includes('kashmir')||d.includes('srinagar'))  return 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=75';
+  if (d.includes('kerala')||d.includes('munnar'))     return 'https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=600&q=75';
+  if (d.includes('mumbai'))                           return 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=600&q=75';
+  if (d.includes('delhi'))                            return 'https://images.unsplash.com/photo-1587474260584-136574528ed5?w=600&q=75';
+  if (d.includes('jaipur')||d.includes('rajasthan'))  return 'https://images.unsplash.com/photo-1477587458883-47145ed94245?w=600&q=75';
+  if (d.includes('agra')||d.includes('taj'))          return 'https://images.unsplash.com/photo-1564507592333-c60657eea523?w=600&q=75';
+  if (d.includes('varanasi')||d.includes('banaras'))  return 'https://images.unsplash.com/photo-1561361058-c24cecae35ca?w=600&q=75';
+  if (d.includes('bangalore')||d.includes('bengaluru'))return 'https://images.unsplash.com/photo-1529161462655-f7cc4785f98b?w=600&q=75';
+  if (d.includes('hyderabad'))                        return 'https://images.unsplash.com/photo-1626436911592-22f4b6f30f0a?w=600&q=75';
+  if (d.includes('kolkata')||d.includes('calcutta'))  return 'https://images.unsplash.com/photo-1558431382-27c12e7db2a3?w=600&q=75';
+  if (d.includes('pondicherry')||d.includes('puducherry')) return 'https://images.unsplash.com/photo-1583294849073-7f3e0f3e2f26?w=600&q=75';
+  if (d.includes('coorg')||d.includes('kodagu'))      return 'https://images.unsplash.com/photo-1593693397690-362cb9666fc2?w=600&q=75';
+  if (d.includes('ooty')||d.includes('nilgiri'))      return 'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=600&q=75';
+  if (d.includes('udaipur'))                          return 'https://images.unsplash.com/photo-1568495248636-6432b97bd949?w=600&q=75';
+  if (d.includes('amritsar'))                         return 'https://images.unsplash.com/photo-1514222134-b57cbb8ce073?w=600&q=75';
+  // Default — India landscape
+  return 'https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=600&q=75';
 }
 function destEmoji(dest='') {
   const d = dest.toLowerCase();
@@ -962,7 +980,7 @@ function DashboardScreen({ profile, trips, session, setScr, loadTripData, notifi
               const status = tripStatus(trip);
               return (
                 <div key={trip.id} className="trip-photo-card" onClick={() => loadTripData(trip)}>
-                  <div className="tpc-photo" style={{background: destGrad(trip.destination)}} />
+                  <div className="tpc-photo" style={{backgroundImage:`linear-gradient(to bottom,rgba(0,0,0,0.15) 0%,rgba(0,0,0,0.65) 100%),url(${destImage(trip.destination)})`,backgroundSize:'cover',backgroundPosition:'center'}} />
                   <div className="tpc-overlay" />
                   <div className="tpc-role">{trip.myRole==='coordinator' ? '👑 Host' : '👥 Member'}</div>
                   <span className={'tpc-badge badge-'+status} style={{position:'absolute',top:12,right:12}}>

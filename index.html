@@ -2,699 +2,1382 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SafarNama — Your 24/7 Travel Planner</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>SafarNama – AI Group Travel</title>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
-:root{
-  --navy:#1B2B6B;--orange:#F7941D;
-  --green:#27AE60;--red:#E74C3C;
-  --muted:#888;--white:#fff;
-  --shadow:0 4px 20px rgba(27,43,107,0.12);
-}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#F5F7FA;color:#333;}
-#root{min-height:100vh;}
-/* NAV */
-.nav{background:var(--navy);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
-.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;}
-.nav-logo img{width:44px;height:44px;border-radius:50%;border:2px solid var(--orange);}
-.nav-brand{color:white;font-size:18px;font-weight:700;}
-.nav-sub{color:var(--orange);font-size:10px;letter-spacing:1px;}
-.nav-links{display:flex;gap:8px;}
-.nbtn{background:var(--orange);color:white;border:none;padding:8px 18px;border-radius:20px;cursor:pointer;font-size:13px;font-weight:600;}
-.nbtn.ghost{background:transparent;border:1.5px solid var(--orange);color:var(--orange);}
-.avatar{width:36px;height:36px;border-radius:50%;background:var(--orange);display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:14px;}
-/* SCREENS */
-.screen{min-height:calc(100vh - 68px);animation:fi .3s ease;}
-@keyframes fi{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
-.pb{padding-bottom:72px;}
-/* HERO */
-.hero{background:linear-gradient(135deg,#1B2B6B 0%,#2d4a9e 60%,#1B2B6B 100%);min-height:calc(100vh - 68px);display:flex;align-items:center;justify-content:center;text-align:center;padding:40px 20px;}
-.hero-logo{width:130px;height:130px;border-radius:50%;border:3px solid var(--orange);margin:0 auto 24px;box-shadow:0 0 40px rgba(247,148,29,0.4);}
-.hero h1{font-size:40px;font-weight:800;color:white;line-height:1.2;margin-bottom:16px;}
-.hero h1 em{color:var(--orange);font-style:normal;}
-.hero p{font-size:17px;color:rgba(255,255,255,0.82);margin-bottom:36px;line-height:1.6;}
-.hbtns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;}
-.hbtn1{background:var(--orange);color:white;border:none;padding:14px 32px;border-radius:30px;cursor:pointer;font-size:16px;font-weight:700;box-shadow:0 4px 20px rgba(247,148,29,0.4);transition:all .3s;}
-.hbtn1:hover{transform:translateY(-3px);}
-.hbtn2{background:transparent;color:white;border:2px solid white;padding:14px 32px;border-radius:30px;cursor:pointer;font-size:16px;font-weight:600;transition:all .3s;}
-.hbtn2:hover{background:white;color:var(--navy);}
-.feats{display:flex;gap:28px;justify-content:center;margin-top:44px;flex-wrap:wrap;}
-.feat{display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,0.85);}
-.feat .fi{font-size:30px;}
-.feat span{font-size:13px;font-weight:500;}
-/* AUTH */
-.auth-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 68px);padding:40px 20px;background:linear-gradient(135deg,#f0f4ff,#fff8f0);}
-.auth-card{background:white;border-radius:20px;padding:40px;width:100%;max-width:420px;box-shadow:var(--shadow);}
-.auth-logo{text-align:center;margin-bottom:24px;}
-.auth-logo img{width:80px;height:80px;border-radius:50%;}
-.auth-card h2{text-align:center;color:var(--navy);font-size:22px;margin-bottom:4px;}
-.auth-card .sub{text-align:center;color:var(--muted);font-size:14px;margin-bottom:24px;}
-.atabs{display:flex;background:#f0f4ff;border-radius:12px;padding:4px;margin-bottom:24px;}
-.atab{flex:1;padding:10px;text-align:center;border-radius:8px;cursor:pointer;font-size:14px;font-weight:600;color:var(--muted);transition:all .2s;}
-.atab.on{background:var(--navy);color:white;}
-.fg{margin-bottom:18px;}
-.fg label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:6px;}
-.fg input,.fg select{width:100%;padding:12px 16px;border:1.5px solid #e0e0e0;border-radius:10px;font-size:14px;outline:none;transition:border .2s;}
-.fg input:focus,.fg select:focus{border-color:var(--orange);}
-.bfull{width:100%;padding:14px;background:var(--navy);color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
-.div{text-align:center;color:var(--muted);font-size:13px;margin:14px 0;}
-/* DASH */
-.dash{padding:28px 24px;max-width:900px;margin:0 auto;}
-.dh{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;}
-.dh h2{font-size:24px;font-weight:800;color:var(--navy);}
-.greet{color:var(--muted);font-size:14px;}
-.cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;margin-bottom:28px;}
-.tc{background:white;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);cursor:pointer;transition:all .25s;}
-.tc:hover{transform:translateY(-4px);}
-.tc-img{height:130px;display:flex;align-items:center;justify-content:center;font-size:60px;position:relative;}
-.badge{position:absolute;top:10px;right:10px;background:var(--green);color:white;font-size:10px;font-weight:700;padding:4px 10px;border-radius:20px;}
-.tc-body{padding:16px;}
-.tc-body h3{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:6px;}
-.tmeta{display:flex;gap:10px;color:var(--muted);font-size:12px;flex-wrap:wrap;}
-.cc{background:linear-gradient(135deg,var(--navy),#2d4a9e);border-radius:16px;padding:28px;color:white;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:200px;text-align:center;transition:all .25s;}
-.cc:hover{transform:translateY(-4px);}
-.cc .plus{font-size:48px;margin-bottom:10px;}
-.cc h3{font-size:18px;font-weight:700;}
-.cc p{font-size:13px;opacity:0.8;margin-top:6px;}
-.stitle{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:14px;}
-/* PERSONA */
-.pstrip{display:flex;gap:12px;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;}
-.pchip{display:flex;align-items:center;gap:8px;background:white;border:1.5px solid #e0e0e0;border-radius:20px;padding:8px 16px;white-space:nowrap;cursor:pointer;transition:all .2s;flex-shrink:0;}
-.pchip.on{border-color:var(--orange);background:#fff8f0;}
-.pav{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:11px;font-weight:700;}
-.pname{font-size:13px;font-weight:700;color:var(--navy);}
-.prole{font-size:10px;color:var(--muted);}
-.pbox{background:#fff8f0;border:1px solid #ffe0b2;border-radius:12px;padding:12px 16px;margin-bottom:24px;font-size:13px;color:#555;}
-/* CREATE */
-.cw{max-width:680px;margin:0 auto;padding:28px 24px;}
-.cw h2{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:24px;}
-.sbar{display:flex;align-items:flex-start;margin-bottom:32px;}
-.step{display:flex;flex-direction:column;align-items:center;gap:6px;}
-.sc{width:36px;height:36px;border-radius:50%;background:#e0e0e0;color:#999;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;transition:all .3s;}
-.step.active .sc{background:var(--orange);color:white;}
-.step.done .sc{background:var(--green);color:white;}
-.sl{font-size:11px;color:var(--muted);font-weight:500;}
-.step.active .sl{color:var(--orange);font-weight:700;}
-.sline{flex:1;height:2px;background:#e0e0e0;margin-top:18px;}
-.sline.done{background:var(--green);}
-.fc{background:white;border-radius:20px;padding:28px;box-shadow:var(--shadow);}
-.fc h3{font-size:18px;font-weight:700;color:var(--navy);margin-bottom:6px;}
-.fc .desc{color:var(--muted);font-size:13px;margin-bottom:24px;}
-.dgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.do{border:2px solid #e0e0e0;border-radius:12px;padding:16px;cursor:pointer;text-align:center;transition:all .2s;}
-.do.sel{border-color:var(--orange);background:#fff8f0;}
-.do .em{font-size:32px;margin-bottom:8px;}
-.do .dn{font-size:14px;font-weight:700;color:var(--navy);}
-.do .ds{font-size:11px;color:var(--muted);}
-.frow{display:flex;align-items:center;gap:12px;padding:12px;background:#f8f9ff;border-radius:12px;margin-bottom:10px;}
-.fav{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-weight:700;font-size:16px;flex-shrink:0;}
-.fi2{flex:1;}
-.fn{font-size:14px;font-weight:700;color:var(--navy);}
-.fc2{font-size:12px;color:var(--muted);}
-.fst{font-size:11px;padding:4px 10px;border-radius:20px;font-weight:600;}
-.fp{background:#fff3e0;color:#e65100;}
-.fj{background:#e8f5e9;color:#2e7d32;}
-.brow{display:flex;gap:12px;margin-top:24px;}
-.bnext{flex:1;padding:13px;background:var(--orange);color:white;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;}
-.bnext:disabled{opacity:0.5;cursor:not-allowed;}
-.bback{padding:13px 20px;background:#f0f0f0;color:var(--navy);border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer;}
-/* TRACKER */
-.trk{padding:20px 24px;max-width:900px;margin:0 auto;}
-.trk h2{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:4px;}
-.trk-sub{color:var(--muted);font-size:14px;margin-bottom:20px;}
-.map{background:linear-gradient(160deg,#ddf1fa,#c5e8f7);border-radius:20px;height:360px;position:relative;overflow:hidden;margin-bottom:20px;border:1.5px solid #aacfe8;}
-.mgrid{position:absolute;inset:0;background-image:linear-gradient(rgba(100,149,200,.07) 1px,transparent 1px),linear-gradient(90deg,rgba(100,149,200,.07) 1px,transparent 1px);background-size:40px 40px;}
-.mlabel{position:absolute;font-size:10px;font-weight:600;color:#4a7aaa;pointer-events:none;}
-.fpin{position:absolute;display:flex;flex-direction:column;align-items:center;transition:left 1.2s linear,top 1.2s linear;}
-.fpav{width:36px;height:36px;border-radius:50%;color:white;font-weight:700;font-size:13px;display:flex;align-items:center;justify-content:center;border:2.5px solid white;box-shadow:0 3px 12px rgba(0,0,0,0.25);}
-.fpname{background:white;border-radius:8px;padding:3px 8px;font-size:10px;font-weight:700;color:var(--navy);margin-top:3px;box-shadow:0 2px 8px rgba(0,0,0,0.15);white-space:nowrap;}
-.dpin{position:absolute;display:flex;flex-direction:column;align-items:center;}
-.dm{width:20px;height:20px;background:var(--red);border-radius:50% 50% 50% 0;transform:rotate(-45deg);border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,0.3);}
-.dl{background:var(--red);color:white;font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;margin-top:6px;white-space:nowrap;}
-.fcards{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;}
-.ftc{background:white;border-radius:14px;padding:16px;box-shadow:var(--shadow);border-left:4px solid var(--orange);}
-.ftc.arr{border-left-color:var(--green);}
-.ftc.del{border-left-color:var(--red);}
-.ftop{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.ftav{width:40px;height:40px;border-radius:50%;color:white;font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
-.ftn{font-size:14px;font-weight:700;color:var(--navy);}
-.ftc2{font-size:11px;color:var(--muted);}
-.fts{display:flex;align-items:center;gap:6px;font-size:12px;}
-.sdot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
-.sdot.mv{background:var(--orange);animation:pu 1.5s infinite;}
-.sdot.ar{background:var(--green);}
-.sdot.dl{background:var(--red);}
-@keyframes pu{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.6;transform:scale(1.3)}}
-.ebar{background:#f5f5f5;border-radius:8px;height:6px;margin-top:10px;}
-.efill{height:100%;border-radius:8px;background:linear-gradient(90deg,var(--orange),#FFB347);transition:width 1.5s;}
-.efill.ar{background:var(--green);}
-.efill.dl{background:var(--red);}
-/* PLACES */
-.plc{padding:20px 24px;max-width:900px;margin:0 auto;}
-.plc h2{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:4px;}
-.frow2{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap;}
-.fbtn{padding:8px 16px;border-radius:20px;border:1.5px solid #e0e0e0;background:white;cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);transition:all .2s;}
-.fbtn.on{background:var(--navy);color:white;border-color:var(--navy);}
-.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px;}
-.pc{background:white;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);transition:all .25s;}
-.pc:hover{transform:translateY(-4px);}
-.pimg{height:150px;display:flex;align-items:center;justify-content:center;font-size:72px;}
-.pbody{padding:16px;}
-.pbody h3{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:4px;}
-.pbody p{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5;}
-.pmeta{display:flex;justify-content:space-between;align-items:flex-end;}
-.rat{color:var(--orange);font-size:12px;font-weight:600;}
-.vbtn{background:#f0f4ff;color:var(--navy);border:none;padding:6px 14px;border-radius:20px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;}
-.vbtn.voted{background:var(--navy);color:white;}
-.vc{font-size:11px;color:var(--muted);margin-top:4px;text-align:right;}
-/* HOTELS */
-.htls{padding:20px 24px;max-width:900px;margin:0 auto;}
-.htls h2{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:4px;}
-.hcard{background:white;border-radius:16px;padding:20px;box-shadow:var(--shadow);margin-bottom:16px;display:flex;gap:20px;transition:all .25s;cursor:pointer;}
-.hcard:hover{transform:translateX(4px);}
-.himg{width:100px;height:100px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:50px;flex-shrink:0;}
-.hinfo{flex:1;}
-.hinfo h3{font-size:16px;font-weight:700;color:var(--navy);margin-bottom:4px;}
-.hstars{color:var(--orange);font-size:12px;margin-bottom:8px;}
-.htags{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;}
-.htag{background:#f0f4ff;color:var(--navy);font-size:10px;font-weight:600;padding:3px 8px;border-radius:8px;}
-.hbot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;}
-.hprice{font-size:18px;font-weight:800;color:var(--navy);}
-.hprice span{font-size:12px;font-weight:400;color:var(--muted);}
-.hpp{font-size:11px;color:var(--green);font-weight:600;}
-.bbtn{background:var(--orange);color:white;border:none;padding:10px 22px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s;}
-.bbtn.bkd{background:var(--green);}
-/* MODAL */
-.mover{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
-.modal{background:white;border-radius:24px 24px 0 0;padding:28px;width:100%;max-width:500px;animation:su .3s ease;}
-@keyframes su{from{transform:translateY(100%)}to{transform:translateY(0)}}
-.mcls{float:right;background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted);}
-/* COST */
-.cst{padding:20px 24px;max-width:780px;margin:0 auto;}
-.cst h2{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:4px;}
-.scards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
-.scard{background:white;border-radius:14px;padding:18px;box-shadow:var(--shadow);text-align:center;}
-.scard .sv{font-size:22px;font-weight:800;color:var(--navy);}
-.scard .sl2{font-size:12px;color:var(--muted);margin-top:4px;}
-.erow{background:white;border-radius:14px;padding:16px 20px;box-shadow:0 2px 10px rgba(0,0,0,0.06);margin-bottom:14px;}
-.etop{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-.en{font-size:15px;font-weight:700;color:var(--navy);}
-.et{font-size:15px;font-weight:800;color:var(--navy);}
-.epayers{display:flex;gap:8px;flex-wrap:wrap;}
-.pyr{display:flex;align-items:center;gap:8px;background:#f8f9ff;padding:8px 12px;border-radius:10px;flex:1;min-width:140px;}
-.pyrav{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:12px;font-weight:700;flex-shrink:0;}
-.pyrn{font-size:12px;font-weight:700;color:var(--navy);}
-.pyra{font-size:11px;color:var(--muted);}
-.ps{margin-left:auto;font-size:10px;font-weight:700;padding:3px 8px;border-radius:8px;white-space:nowrap;}
-.paid{background:#e8f5e9;color:#2e7d32;}
-.unpd{background:#fff3e0;color:#e65100;}
-/* BOTTOM NAV */
-.bnav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #eee;display:flex;z-index:99;box-shadow:0 -4px 20px rgba(0,0,0,0.08);}
-.bni{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 4px;cursor:pointer;border:none;background:none;transition:all .2s;}
-.bni .ic{font-size:22px;margin-bottom:2px;}
-.bni .lb{font-size:10px;font-weight:600;color:var(--muted);}
-.bni.on .lb{color:var(--orange);}
-.bni.on .ic{transform:scale(1.15);}
+:root{--navy:#1B2B6B;--orange:#F7941D;--teal:#0D9488;--green:#22C55E;--red:#EF4444;--purple:#8B5CF6;--bg:#F1F5F9;--card:#fff;--text:#0F172A;--muted:#64748B;--border:#E2E8F0;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+button{cursor:pointer;border:none;outline:none;font-family:inherit;}
+input,textarea,select{font-family:inherit;outline:none;}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+/* ── TOP NAVBAR (dashboard) ── */
+.top-navbar{display:flex;align-items:center;padding:0 28px;height:64px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:200;gap:6px;box-shadow:0 1px 3px rgba(0,0,0,.06);}
+.nav-brand{font-size:20px;font-weight:900;color:var(--navy);margin-right:16px;white-space:nowrap;flex-shrink:0;}
+.nav-brand em{color:var(--orange);font-style:normal;}
+.nav-links{display:flex;align-items:center;gap:2px;flex:1;}
+.nav-link{padding:8px 14px;border-radius:8px;font-size:14px;font-weight:500;color:var(--muted);background:none;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.nav-link:hover,.nav-link.active{color:var(--text);background:#F1F5F9;}
+.nav-right{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.nav-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;cursor:pointer;flex-shrink:0;}
+.nav-notif{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;position:relative;}
+
+/* ── HERO ── */
+.hero{background:linear-gradient(135deg,#0F2048 0%,#1B4F8C 45%,#0D7874 100%);padding:52px 28px 40px;position:relative;overflow:hidden;}
+.hero::before{content:'✈️';position:absolute;right:5%;top:20%;font-size:80px;opacity:.08;transform:rotate(-15deg);}
+.hero::after{content:'🌍';position:absolute;left:3%;bottom:10%;font-size:120px;opacity:.06;}
+.hero-inner{max-width:1120px;margin:0 auto;position:relative;z-index:1;}
+.hero-title{font-size:32px;font-weight:900;color:#fff;margin-bottom:6px;line-height:1.2;}
+.hero-sub{color:rgba(255,255,255,.65);font-size:15px;margin-bottom:28px;}
+
+/* ── AI CREATOR CARD ── */
+.ai-creator{background:#fff;border-radius:18px;padding:20px 22px;box-shadow:0 8px 40px rgba(0,0,0,.18);}
+.ai-creator-label{font-size:15px;font-weight:800;color:var(--text);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.ai-creator-fields{display:flex;gap:10px;flex-wrap:wrap;}
+.ai-creator-inp-wrap{flex:1;min-width:140px;position:relative;}
+.ai-creator-inp-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+.ai-creator-inp{width:100%;padding:11px 12px 11px 34px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;color:var(--text);transition:border .2s;}
+.ai-creator-inp:focus{border-color:var(--teal);}
+.ai-creator-btn{padding:11px 20px;background:var(--teal);color:#fff;border:none;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap;transition:background .2s;flex-shrink:0;}
+.ai-creator-btn:hover{background:#0b7a72;}
+
+/* ── MAIN CONTENT ── */
+.page-body{max-width:1120px;margin:0 auto;padding:32px 28px 60px;}
+.section-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;}
+.section-title{font-size:20px;font-weight:800;color:var(--text);}
+.section-link{color:var(--orange);font-size:13px;font-weight:700;background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;}
+
+/* ── QUICK ACTIONS ── */
+.quick-actions{display:flex;gap:12px;margin-bottom:32px;}
+.qa-btn{flex:1;padding:14px;border-radius:14px;font-size:15px;font-weight:700;transition:all .2s;text-align:center;}
+.qa-btn.primary{background:var(--orange);color:#fff;box-shadow:0 4px 12px rgba(247,148,29,.3);}
+.qa-btn.primary:hover{background:#e07f0a;transform:translateY(-1px);}
+.qa-btn.outline{background:#fff;color:var(--orange);border:2px solid var(--orange);}
+.qa-btn.outline:hover{background:#FFF3E0;}
+
+/* ── TRIP CARDS GRID ── */
+.trips-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+@media(max-width:960px){.trips-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.trips-grid{grid-template-columns:1fr;}}
+
+.trip-photo-card{border-radius:20px;overflow:hidden;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.1);transition:transform .2s,box-shadow .2s;position:relative;height:230px;animation:fadeIn .3s ease;}
+.trip-photo-card:hover{transform:translateY(-5px);box-shadow:0 16px 40px rgba(0,0,0,.18);}
+.tpc-photo{position:absolute;inset:0;background-size:cover;background-position:center;transition:transform .4s;}
+.trip-photo-card:hover .tpc-photo{transform:scale(1.05);}
+.tpc-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,.08) 0%,rgba(0,0,0,.72) 100%);}
+.tpc-body{position:absolute;bottom:0;left:0;right:0;padding:16px;}
+.tpc-dest{font-size:20px;font-weight:800;color:#fff;line-height:1.2;}
+.tpc-name{font-size:12px;color:rgba(255,255,255,.75);margin-top:3px;}
+.tpc-meta{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.tpc-badge{padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;}
+.badge-planning{background:rgba(59,130,246,.85);color:#fff;}
+.badge-voting{background:rgba(247,148,29,.9);color:#fff;}
+.badge-confirmed{background:rgba(34,197,94,.9);color:#fff;}
+.tpc-code{background:rgba(255,255,255,.18);color:#fff;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:600;backdrop-filter:blur(4px);}
+.tpc-role{position:absolute;top:12px;left:12px;background:rgba(0,0,0,.45);color:#fff;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;backdrop-filter:blur(4px);}
+
+/* ── EMPTY STATE ── */
+.empty-state{text-align:center;padding:60px 16px;color:var(--muted);}
+.empty-icon{font-size:56px;margin-bottom:14px;}
+.empty-title{font-size:20px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.empty-sub{font-size:14px;max-width:320px;margin:0 auto 20px;}
+
+/* ── OLD MOBILE STYLES (for inner trip screens) ── */
+.mobile-wrap{max-width:680px;margin:0 auto;padding:16px 16px 80px;}
+.screen-inner{animation:fadeUp .3s ease;}
+.back-nav{display:flex;align-items:center;padding:14px 20px;background:var(--navy);color:#fff;position:sticky;top:0;z-index:100;gap:12px;}
+.back-btn{background:none;border:none;color:#fff;font-size:22px;cursor:pointer;line-height:1;}
+.back-title{font-size:16px;font-weight:700;flex:1;}
+.back-action{background:none;border:none;color:rgba(255,255,255,.8);font-size:20px;cursor:pointer;}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);display:flex;z-index:100;}
+.bn-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;gap:3px;font-size:10px;color:var(--muted);border:none;background:none;}
+.bn-item.active{color:var(--orange);}
+.bn-icon{font-size:22px;line-height:1;}
+
+/* ── CARD / FORMS (inner screens) ── */
+.card{background:var(--card);border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.card-title{font-size:15px;font-weight:700;margin-bottom:10px;color:var(--text);}
+.sec-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.sec-title{font-size:17px;font-weight:800;color:var(--text);}
+.sec-link{font-size:13px;color:var(--orange);font-weight:600;}
+.chip{background:#F0F2F8;color:var(--navy);padding:4px 10px;border-radius:20px;font-size:12px;font-weight:600;}
+.chip.orange{background:#FFF3E0;color:var(--orange);}
+.chip.green{background:#DCFCE7;color:#16A34A;}
+.form-group{margin-bottom:14px;}
+.form-label{font-size:13px;font-weight:600;color:var(--muted);margin-bottom:6px;display:block;}
+.form-input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:15px;transition:border .2s;background:#fff;}
+.form-input:focus{border-color:var(--orange);}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.err-msg{background:#FEE2E2;color:var(--red);padding:10px 12px;border-radius:8px;font-size:13px;margin-bottom:12px;}
+
+/* ── BUTTONS (inner) ── */
+.btn{display:block;width:100%;padding:14px;border-radius:12px;font-size:15px;font-weight:700;text-align:center;transition:all .2s;}
+.btn-primary{background:var(--orange);color:#fff;}
+.btn-primary:hover{background:#e07f0a;}
+.btn-navy{background:var(--navy);color:#fff;}
+.btn-outline{background:transparent;border:2px solid var(--orange);color:var(--orange);}
+.btn-green{background:var(--green);color:#fff;}
+.btn-sm{padding:8px 14px;font-size:13px;border-radius:8px;width:auto;display:inline-block;}
+.btn-wa{background:#25D366;color:#fff;display:flex;align-items:center;justify-content:center;gap:8px;}
+
+/* ── AUTH ── */
+.auth-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:linear-gradient(160deg,var(--navy) 0%,#2a3f8f 50%,var(--orange) 150%);}
+.auth-card{background:#fff;border-radius:24px;padding:28px 24px;width:100%;max-width:380px;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+.auth-tabs{display:flex;background:#F0F2F8;border-radius:10px;padding:4px;margin-bottom:20px;}
+.auth-tab{flex:1;padding:9px;border-radius:8px;font-size:14px;font-weight:600;border:none;background:none;color:var(--muted);transition:all .2s;}
+.auth-tab.active{background:#fff;color:var(--navy);box-shadow:0 1px 4px rgba(0,0,0,.1);}
+.auth-title{font-size:22px;font-weight:800;color:var(--navy);margin-bottom:4px;}
+.auth-sub{font-size:13px;color:var(--muted);margin-bottom:20px;}
+
+/* ── LOADING ── */
+.loading-screen{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(160deg,var(--navy),#2a3f8f);}
+.spinner{width:40px;height:40px;border:4px solid rgba(255,255,255,.2);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:16px;}
+.loading-text{color:rgba(255,255,255,.8);font-size:14px;}
+
+/* ── TRIP DETAIL INNER ── */
+.map-box{background:linear-gradient(135deg,#e8f4fd,#d4eaf7);border-radius:16px;height:220px;position:relative;overflow:hidden;margin-bottom:12px;}
+.map-bg{position:absolute;inset:0;background:url("data:image/svg+xml,%3Csvg width='400' height='220' xmlns='http://www.w3.org/2000/svg'%3E%3Crect fill='%23d4eaf7' width='400' height='220'/%3E%3Cellipse cx='200' cy='130' rx='160' ry='80' fill='%23c5e0f0'/%3E%3Cellipse cx='80' cy='160' rx='60' ry='30' fill='%23b8d4e8'/%3E%3Cellipse cx='320' cy='90' rx='70' ry='35' fill='%23c0d8ea'/%3E%3Cpath d='M0 160 Q100 140 200 150 Q300 160 400 145 L400 220 L0 220Z' fill='%23a8c8d8' opacity='.5'/%3E%3C/svg%3E") center/cover;}
+.dest-pin{position:absolute;bottom:30px;left:50%;transform:translateX(-50%);text-align:center;}
+.dest-pin .pin-dot{width:16px;height:16px;background:var(--red);border-radius:50%;margin:0 auto 2px;border:3px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.3);}
+.dest-pin .pin-label{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:4px;}
+.friend-pin{position:absolute;text-align:center;}
+.friend-pin .fp-avatar{width:32px;height:32px;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.25);margin:0 auto 2px;}
+.friend-pin .fp-name{font-size:9px;font-weight:700;color:var(--navy);background:rgba(255,255,255,.9);padding:1px 4px;border-radius:3px;}
+.prog-bar{height:6px;background:#E5E7EB;border-radius:3px;overflow:hidden;margin-top:8px;}
+.prog-fill{height:100%;border-radius:3px;transition:width .8s ease;background:linear-gradient(90deg,var(--orange),#FFD700);}
+.member-row{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.member-row:last-child{border-bottom:none;}
+.m-info{flex:1;}
+.m-name{font-size:14px;font-weight:700;}
+.m-city{font-size:12px;color:var(--muted);}
+.m-role{font-size:11px;padding:2px 8px;border-radius:10px;font-weight:600;}
+.m-role.coordinator{background:#FFF3E0;color:var(--orange);}
+.m-role.member{background:#F0F9FF;color:var(--navy);}
+.place-card{border-radius:16px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.08);}
+.place-img{height:110px;display:flex;align-items:center;justify-content:center;font-size:52px;}
+.place-body{background:#fff;padding:12px;}
+.place-name{font-size:15px;font-weight:700;margin-bottom:4px;}
+.vote-bar{display:flex;align-items:center;gap:8px;margin-top:8px;}
+.vote-btn{padding:6px 14px;border-radius:8px;font-size:13px;font-weight:700;}
+.vote-up{background:#DCFCE7;color:#16A34A;}
+.vote-dn{background:#FEE2E2;color:var(--red);}
+.vote-count{font-size:12px;color:var(--muted);}
+.hotel-card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.hotel-name{font-size:15px;font-weight:800;margin-bottom:4px;}
+.hotel-stars{color:#F59E0B;font-size:14px;}
+.hotel-price{font-size:18px;font-weight:800;color:var(--orange);}
+.hotel-per{font-size:12px;color:var(--muted);}
+.hotel-tags{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;}
+.hotel-tag{background:#F0F2F8;padding:3px 8px;border-radius:6px;font-size:11px;color:var(--navy);font-weight:600;}
+.exp-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.exp-row:last-child{border-bottom:none;}
+.exp-title{font-size:14px;font-weight:700;}
+.exp-paid{font-size:11px;color:var(--muted);}
+.exp-amt{font-size:16px;font-weight:800;color:var(--navy);}
+.exp-pp{font-size:11px;color:var(--orange);text-align:right;}
+.total-card{background:linear-gradient(135deg,var(--navy),#2a3f8f);border-radius:16px;padding:16px;color:#fff;margin-bottom:12px;text-align:center;}
+.total-label{font-size:13px;opacity:.8;margin-bottom:4px;}
+.total-amt{font-size:32px;font-weight:900;}
+.total-pp{font-size:14px;opacity:.8;margin-top:4px;}
+.chat-area{display:flex;flex-direction:column;gap:10px;margin-bottom:12px;}
+.chat-bubble{max-width:80%;padding:10px 14px;border-radius:16px;font-size:14px;line-height:1.5;}
+.chat-ai{background:#fff;color:var(--text);border-radius:4px 16px 16px 16px;align-self:flex-start;box-shadow:0 2px 6px rgba(0,0,0,.08);}
+.chat-user{background:var(--navy);color:#fff;border-radius:16px 4px 16px 16px;align-self:flex-end;}
+.chat-input-row{display:flex;gap:8px;}
+.chat-input{flex:1;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;font-size:14px;}
+.chat-input:focus{border-color:var(--orange);}
+.chat-send{background:var(--orange);color:#fff;border-radius:10px;padding:0 16px;font-size:18px;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-end;justify-content:center;z-index:300;}
+.modal-sheet{background:#fff;border-radius:24px 24px 0 0;padding:24px;width:100%;max-width:520px;animation:fadeUp .3s ease;}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 16px;}
+.modal-title{font-size:18px;font-weight:800;margin-bottom:4px;}
+.modal-sub{font-size:13px;color:var(--muted);margin-bottom:16px;}
+.invite-code-box{background:#F0F2F8;border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.invite-code{font-size:22px;font-weight:900;letter-spacing:3px;color:var(--navy);}
+.copy-btn{background:var(--navy);color:#fff;border-radius:8px;padding:6px 12px;font-size:13px;font-weight:700;}
+.invite-link-box{background:#F0F2F8;border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);word-break:break-all;margin-bottom:12px;}
+.profile-header{background:linear-gradient(135deg,var(--navy),#2a3f8f);border-radius:20px;padding:24px;color:#fff;text-align:center;margin-bottom:16px;}
+.profile-avatar-big{width:72px;height:72px;border-radius:50%;border:3px solid rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;font-size:28px;font-weight:700;color:#fff;margin:0 auto 10px;}
+.profile-name{font-size:20px;font-weight:800;}
+.profile-email{font-size:13px;opacity:.7;}
+.admin-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.admin-stat{background:linear-gradient(135deg,var(--navy),#2a3f8f);border-radius:14px;padding:14px;color:#fff;text-align:center;}
+.admin-stat-val{font-size:28px;font-weight:900;}
+.admin-stat-label{font-size:11px;opacity:.7;margin-top:2px;}
+.admin-table-wrap{overflow-x:auto;}
+.admin-table{width:100%;border-collapse:collapse;font-size:12px;}
+.admin-table th{text-align:left;padding:8px 10px;color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border);}
+.admin-table td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:middle;}
+.admin-table tr:last-child td{border-bottom:none;}
+.admin-section{font-size:15px;font-weight:800;margin:16px 0 10px;}
+.join-input{text-transform:uppercase;letter-spacing:4px;font-size:20px;font-weight:800;text-align:center;}
+/* top-nav (inner screens only — inside back-nav) */
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--navy);color:#fff;position:sticky;top:0;z-index:100;}
+.top-nav h2{font-size:17px;font-weight:700;}
+.notif-btn{position:relative;background:none;border:none;font-size:22px;color:#fff;}
+
+/* ── LEAFLET MAP ── */
+#tracker-map{height:320px;border-radius:16px;overflow:hidden;margin-bottom:12px;z-index:1;}
+.leaflet-container{font-family:inherit;}
+.lf-avatar-marker{width:36px;height:36px;border-radius:50%;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;box-shadow:0 2px 8px rgba(0,0,0,.3);cursor:pointer;}
+.lf-dest-marker{background:var(--red);color:#fff;padding:4px 10px;border-radius:8px;font-size:11px;font-weight:700;white-space:nowrap;box-shadow:0 2px 6px rgba(0,0,0,.3);}
+.gps-status{display:flex;align-items:center;gap:8px;font-size:13px;margin-bottom:10px;}
+.gps-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0;}
+.gps-dot.active{background:var(--green);animation:pulse 1.5s infinite;}
+.gps-dot.denied{background:var(--red);}
+.gps-dot.pending{background:var(--orange);}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+
+/* ── AI RESPONSE PANEL ── */
+.ai-response{background:#fff;border-radius:16px;padding:18px;margin-top:14px;box-shadow:0 4px 20px rgba(0,0,0,.1);border-left:4px solid var(--teal);animation:fadeUp .3s ease;}
+.ai-response-title{font-size:13px;font-weight:700;color:var(--teal);margin-bottom:8px;}
+.ai-response-text{font-size:14px;line-height:1.6;color:var(--text);}
 </style>
 </head>
 <body>
 <div id="root"></div>
 <script type="text/babel">
-const {useState, useEffect} = React;
-const LOGO = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyMDAgMjAwIj4KICA8IS0tIE91dGVyIGNpcmNsZSBib3JkZXIgLS0+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5NyIgZmlsbD0id2hpdGUiIHN0cm9rZT0iIzFCMkI2QiIgc3Ryb2tlLXdpZHRoPSI0Ii8+CiAgPCEtLSBPcmFuZ2UgdG9wIGhhbGYgYmFja2dyb3VuZCAtLT4KICA8Y2xpcFBhdGggaWQ9InRvcEhhbGYiPgogICAgPHJlY3QgeD0iMyIgeT0iMyIgd2lkdGg9IjE5NCIgaGVpZ2h0PSI5NyIvPgogIDwvY2xpcFBhdGg+CiAgPGNpcmNsZSBjeD0iMTAwIiBjeT0iMTAwIiByPSI5MyIgZmlsbD0iI0Y3OTQxRCIgY2xpcC1wYXRoPSJ1cmwoI3RvcEhhbGYpIi8+CiAgPCEtLSBTdW4gLS0+CiAgPGNpcmNsZSBjeD0iMTQwIiBjeT0iNTUiIHI9IjE4IiBmaWxsPSIjRkY2NjAwIiBvcGFjaXR5PSIwLjgiLz4KICA8IS0tIE1vdW50YWlucyAtLT4KICA8cG9seWdvbiBwb2ludHM9IjE1MCw5NyAxNjgsNjUgMTg2LDk3IiBmaWxsPSIjODg4IiBvcGFjaXR5PSIwLjciLz4KICA8cG9seWdvbiBwb2ludHM9IjE0MCw5NyAxNTgsNzIgMTc2LDk3IiBmaWxsPSIjYWFhIiBvcGFjaXR5PSIwLjYiLz4KICA8IS0tIFRhaiBNYWhhbCBzaW1wbGlmaWVkIC0tPgogIDxyZWN0IHg9IjIwIiB5PSI3NSIgd2lkdGg9IjQwIiBoZWlnaHQ9IjIyIiBmaWxsPSJ3aGl0ZSIgb3BhY2l0eT0iMC45Ii8+CiAgPGVsbGlwc2UgY3g9IjQwIiBjeT0iNzUiIHJ4PSI4IiByeT0iMTIiIGZpbGw9IndoaXRlIiBvcGFjaXR5PSIwLjkiLz4KICA8cmVjdCB4PSIyOCIgeT0iNjUiIHdpZHRoPSIyNCIgaGVpZ2h0PSIxMCIgZmlsbD0id2hpdGUiIG9wYWNpdHk9IjAuOSIvPgogIDwhLS0gRWlmZmVsIHRvd2VyIHNpbXBsaWZpZWQgLS0+CiAgPHBvbHlnb24gcG9pbnRzPSI3OCw5NyA4Miw2MCA4Niw5NyIgZmlsbD0iIzU1NSIgb3BhY2l0eT0iMC44Ii8+CiAgPGxpbmUgeDE9Ijc4IiB5MT0iODIiIHgyPSI4NiIgeTI9IjgyIiBzdHJva2U9IiM1NTUiIHN0cm9rZS13aWR0aD0iMS41Ii8+CiAgPCEtLSBCdXJqIEtoYWxpZmEgc2ltcGxpZmllZCAtLT4KICA8cmVjdCB4PSI5OCIgeT0iNTIiIHdpZHRoPSI1IiBoZWlnaHQ9IjQ1IiBmaWxsPSIjOTk5IiBvcGFjaXR5PSIwLjciLz4KICA8IS0tIEhvdCBhaXIgYmFsbG9vbiAtLT4KICA8ZWxsaXBzZSBjeD0iMzAiIGN5PSI1MiIgcng9IjgiIHJ5PSIxMCIgZmlsbD0iI0U1MzkzNSIgb3BhY2l0eT0iMC45Ii8+CiAgPGVsbGlwc2UgY3g9IjMwIiBjeT0iNTIiIHJ4PSI4IiByeT0iMTAiIGZpbGw9Im5vbmUiIHN0cm9rZT0iI0Y5QTgyNSIgc3Ryb2tlLXdpZHRoPSIxIi8+CiAgPHJlY3QgeD0iMjciIHk9IjYxIiB3aWR0aD0iNiIgaGVpZ2h0PSI0IiBmaWxsPSIjNzk1NTQ4IiBvcGFjaXR5PSIwLjgiLz4KICA8IS0tIFBlb3BsZSByb3cgLS0+CiAgPHRleHQgeD0iMTAwIiB5PSIxMDgiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI5IiBmb250LXdlaWdodD0iYm9sZCI+CiAgICA8dHNwYW4gZmlsbD0iI0Y3OTQxRCI+QTwvdHNwYW4+PHRzcGFuIGZpbGw9IiMxQjJCNkIiPk08L3RzcGFuPjx0c3BhbiBmaWxsPSIjOUMyN0IwIj5QPC90c3Bhbj48dHNwYW4gZmlsbD0iIzFCMkI2QiI+TTwvdHNwYW4+PHRzcGFuIGZpbGw9IiNGNzk0MUQiPkE8L3RzcGFuPjx0c3BhbiBmaWxsPSIjMUIyQjZCIj5NPC90c3Bhbj4KICA8L3RleHQ+CiAgPCEtLSBTYWZhck5hbWEgdGV4dCAtLT4KICA8dGV4dCB4PSIxMDAiIHk9IjEzMCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9Ikdlb3JnaWEsIHNlcmlmIiBmb250LXNpemU9IjIyIiBmb250LXdlaWdodD0iYm9sZCIgZmlsbD0iIzFCMkI2QiIgZm9udC1zdHlsZT0iaXRhbGljIj5TYWZhck5hbWE8L3RleHQ+CiAgPCEtLSBTdWJ0aXRsZSAtLT4KICA8dGV4dCB4PSIxMDAiIHk9IjE0MiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjYuNSIgZmlsbD0iIzU1NSI+WW91ciAyNC83IFRyYXZlbCBQbGFubmVyPC90ZXh0PgogIDwhLS0gT3JhbmdlIHJpYmJvbiAtLT4KICA8cmVjdCB4PSIxNSIgeT0iMTQ3IiB3aWR0aD0iMTcwIiBoZWlnaHQ9IjE2IiBmaWxsPSIjRjc5NDFEIiByeD0iMiIvPgogIDx0ZXh0IHg9IjEwMCIgeT0iMTU4IiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNyIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IndoaXRlIiBsZXR0ZXItc3BhY2luZz0iMSI+KyBIT1JJWk9OUyBUT0dFVEhFUiArPC90ZXh0PgogIDwhLS0gVGFnbGluZSAtLT4KICA8dGV4dCB4PSIxMDAiIHk9IjE3MiIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjUuNSIgZmlsbD0iIzQ0NCI+T05FIFBMQU4gT05FIERFQ0lTSU9OPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTgxIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNiIgZm9udC13ZWlnaHQ9ImJvbGQiIGZpbGw9IiMxQjJCNkIiPk9ORSBKT1VSTkVZPC90ZXh0PgogIDx0ZXh0IHg9IjEwMCIgeT0iMTkwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iNS41IiBmaWxsPSIjNDQ0Ij5NSUxMSU9OIE1FTU9SSUVTPC90ZXh0Pgo8L3N2Zz4K";
+const { useState, useEffect, useRef, useCallback } = React;
 
-const PERSONAS = [
-  {id:1,name:"Arjun Mehta",role:"The Coordinator",emoji:"👨‍💼",color:"#F7941D",city:"Mumbai",desc:"Organising a Goa trip for 7 friends from 5 different cities. Key need: see where everyone is in real time, pick the best spots as a group, and track who paid what."},
-  {id:2,name:"Priya Sharma",role:"The Joiner",emoji:"👩",color:"#9C27B0",city:"Delhi",desc:"Joining Arjun's trip. Wants a clear view of the itinerary, to vote on activities, and pay her share in one tap without chasing anyone."},
-  {id:3,name:"Rahul Das",role:"The Explorer",emoji:"🧑‍🎒",color:"#1565C0",city:"Bangalore",desc:"First one to reach Goa! Scouts the best activities and restaurants, votes for the group, and helps finalise the itinerary in real time."},
-];
+/* ── Supabase mini-client ── */
+const SUPA_URL = 'https://dftexxvrzyaoqgaipznu.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmdGV4eHZyenlhb3FnYWlwem51Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODU0NjIzMzIsImV4cCI6MjEwMTAzODMzMn0.8k4XuqNoHkWne_D0lUoCLeGswOJK0KHrHnNEsATxsSU';
+const SESSION_KEY = 'sn_auth';
 
-const FRIENDS = [
-  {id:1,name:"Arjun",city:"Mumbai",color:"#F7941D",status:"moving",progress:70,eta:"2h 10m",tr:"✈️",sl:74,st:23},
-  {id:2,name:"Priya",city:"Delhi",color:"#9C27B0",status:"moving",progress:50,eta:"3h 40m",tr:"✈️",sl:52,st:12},
-  {id:3,name:"Rahul",city:"Bangalore",color:"#1565C0",status:"arrived",progress:100,eta:"Arrived!",tr:"🛬",sl:68,st:66},
-  {id:4,name:"Sneha",city:"Pune",color:"#E53935",status:"delayed",progress:28,eta:"5h (delayed)",tr:"🚂",sl:62,st:30},
-  {id:5,name:"Karan",city:"Chennai",color:"#2E7D32",status:"moving",progress:78,eta:"1h 20m",tr:"✈️",sl:74,st:62},
-  {id:6,name:"Isha",city:"Hyderabad",color:"#795548",status:"moving",progress:58,eta:"2h 45m",tr:"🚌",sl:65,st:48},
-  {id:7,name:"Dev",city:"Ahmedabad",color:"#0097A7",status:"moving",progress:64,eta:"2h 00m",tr:"✈️",sl:52,st:22},
-];
+const sb = (() => {
+  let _sess = null; let _listeners = [];
+  try { const s = localStorage.getItem(SESSION_KEY); if (s) _sess = JSON.parse(s); } catch(e) {}
+  function _hdrs(prefer) {
+    const h = {'Content-Type':'application/json','apikey':SUPA_KEY,'Prefer':prefer||'return=representation'};
+    if (_sess?.access_token) h['Authorization'] = 'Bearer ' + _sess.access_token;
+    return h;
+  }
+  function _save(s) { _sess = s; s ? localStorage.setItem(SESSION_KEY, JSON.stringify(s)) : localStorage.removeItem(SESSION_KEY); }
+  const auth = {
+    async getSession() {
+      if (!_sess) return {data:{session:null}};
+      if (_sess.expires_at && Date.now()/1000 > _sess.expires_at) { _save(null); return {data:{session:null}}; }
+      return {data:{session:_sess}};
+    },
+    async signUp({email,password,options={}}) {
+      const r = await fetch(`${SUPA_URL}/auth/v1/signup`,{method:'POST',headers:_hdrs(),body:JSON.stringify({email,password,data:options.data||{}})});
+      const d = await r.json();
+      if (!r.ok || d.error) return {data:null,error:{message:d.msg||d.error_description||d.message||'Signup failed'}};
+      if (d.access_token) { const sess={access_token:d.access_token,user:d.user,expires_at:d.expires_at}; _save(sess); _listeners.forEach(fn=>fn('SIGNED_IN',sess)); }
+      else if (d.id) return {data:{user:d},error:null,needsConfirm:true};
+      return {data:{user:d.user||d},error:null};
+    },
+    async signInWithPassword({email,password}) {
+      const r = await fetch(`${SUPA_URL}/auth/v1/token?grant_type=password`,{method:'POST',headers:_hdrs(),body:JSON.stringify({email,password})});
+      const d = await r.json();
+      if (!r.ok || d.error_code) return {error:{message:d.error_description||d.msg||'Invalid email or password'}};
+      const sess = {access_token:d.access_token,user:d.user,expires_at:d.expires_at};
+      _save(sess); _listeners.forEach(fn=>fn('SIGNED_IN',sess));
+      return {data:{session:sess,user:d.user},error:null};
+    },
+    async signOut() {
+      if (_sess?.access_token) await fetch(`${SUPA_URL}/auth/v1/logout`,{method:'POST',headers:{apikey:SUPA_KEY,Authorization:'Bearer '+_sess.access_token}}).catch(()=>{});
+      _save(null); _listeners.forEach(fn=>fn('SIGNED_OUT',null));
+    },
+    onAuthStateChange(cb) {
+      _listeners.push(cb);
+      if (_sess) setTimeout(()=>cb('SIGNED_IN',_sess),0);
+      return {data:{subscription:{unsubscribe(){ _listeners=_listeners.filter(f=>f!==cb); }}}};
+    }
+  };
+  function from(table) {
+    let _sel='*',_filt=[],_ord=null,_lim=null,_cnt=false;
+    const q = {
+      select(cols,opts={}){ _sel=cols||'*'; if(opts.count==='exact') _cnt=true; return q; },
+      eq(col,val){ _filt.push(`${col}=eq.${encodeURIComponent(val)}`); return q; },
+      order(col,{ascending=true,foreignTable}={}){ if(!foreignTable) _ord=`${col}.${ascending?'asc':'desc'}`; return q; },
+      limit(n){ _lim=n; return q; },
+      single(){ return q._run(true); },
+      async _run(single=false){
+        const p=[`select=${encodeURIComponent(_sel)}`,..._filt];
+        if(_ord) p.push(`order=${_ord}`);
+        if(_lim) p.push(`limit=${_lim}`);
+        const url=`${SUPA_URL}/rest/v1/${table}?${p.join('&')}`;
+        const r=await fetch(url,{headers:_hdrs(_cnt?'count=exact':undefined)});
+        if(_cnt){ const cr=r.headers.get('Content-Range'); return {count:cr?parseInt(cr.split('/')[1]):0,data:null,error:null}; }
+        const data=await r.json();
+        if(!r.ok) return {data:null,error:{message:data.message||data.hint||'Query failed'}};
+        if(single) return {data:Array.isArray(data)?(data[0]||null):data,error:null};
+        return {data,error:null};
+      },
+      then(res,rej){ return q._run().then(res,rej); },
+      insert(body){
+        const ins={
+          select(){ return ins; },
+          single(){
+            return fetch(`${SUPA_URL}/rest/v1/${table}`,{method:'POST',headers:_hdrs(),body:JSON.stringify(body)})
+              .then(async r=>{ const d=await r.json(); if(!r.ok) return {data:null,error:{message:d.message||d.details||'Insert failed'}}; return {data:Array.isArray(d)?d[0]:d,error:null}; });
+          },
+          then(res){ return ins.single().then(res); }
+        };
+        return ins;
+      },
+      upsert(body,{onConflict}={}){
+        const url=`${SUPA_URL}/rest/v1/${table}`+(onConflict?`?on_conflict=${onConflict}`:'');
+        return fetch(url,{method:'POST',headers:{..._hdrs(),'Prefer':'resolution=merge-duplicates,return=representation'},body:JSON.stringify(body)})
+          .then(async r=>{ const d=await r.json(); if(!r.ok) return {data:null,error:{message:d.message||'Upsert failed'}}; return {data:Array.isArray(d)?d[0]:d,error:null}; });
+      },
+      update(body){
+        const upd={
+          eq(col,val){ _filt.push(`${col}=eq.${encodeURIComponent(val)}`); return upd; },
+          then(res){ const p=_filt.length?'?'+_filt.join('&'):''; return fetch(`${SUPA_URL}/rest/v1/${table}${p}`,{method:'PATCH',headers:_hdrs(),body:JSON.stringify(body)}).then(async r=>{ const d=await r.json(); res(!r.ok?{data:null,error:{message:d.message||'Update failed'}}:{data:d,error:null}); }); }
+        };
+        return upd;
+      }
+    };
+    return q;
+  }
+  return { auth, from };
+})();
 
+/* ── Static data ── */
 const PLACES = [
-  {id:1,cat:"beach",name:"Baga Beach",desc:"Perfect for the whole group — water sports, beach shacks & legendary sunsets.",emoji:"🏖️",rating:"4.8",votes:4,bg:"linear-gradient(135deg,#e3f2fd,#90caf9)"},
-  {id:2,cat:"food",name:"Infantaria Café",desc:"Best croissants & all-day breakfast in North Goa. Group tables available.",emoji:"☕",rating:"4.6",votes:3,bg:"linear-gradient(135deg,#fff8e1,#ffe082)"},
-  {id:3,cat:"adventure",name:"Water Sports Hub",desc:"Parasailing, banana boat & jet ski — group packages save 30%.",emoji:"🤿",rating:"4.7",votes:5,bg:"linear-gradient(135deg,#e8f5e9,#a5d6a7)"},
-  {id:4,cat:"culture",name:"Basilica of Bom Jesus",desc:"UNESCO Heritage site. Only 20 min from the beach — don't miss it.",emoji:"⛪",rating:"4.9",votes:2,bg:"linear-gradient(135deg,#f3e5f5,#ce93d8)"},
-  {id:5,cat:"nightlife",name:"Tito's Lane",desc:"Goa's iconic nightlife strip. Whole group enters free before 10 pm.",emoji:"🎶",rating:"4.5",votes:6,bg:"linear-gradient(135deg,#fce4ec,#f48fb1)"},
-  {id:6,cat:"food",name:"Vinayak Restaurant",desc:"Authentic Goan fish curry, rice & feni. Group thalis ₹280/person.",emoji:"🍛",rating:"4.8",votes:3,bg:"linear-gradient(135deg,#fff3e0,#ffcc80)"},
+  {id:1,name:'Dudhsagar Falls',emoji:'🌊',cat:'Nature',bg:'linear-gradient(135deg,#0ea5e9,#38bdf8)',votes:0},
+  {id:2,name:'Calangute Beach',emoji:'🏖️',cat:'Beach',bg:'linear-gradient(135deg,#f59e0b,#fcd34d)',votes:0},
+  {id:3,name:'Basilica of Bom Jesus',emoji:'⛪',cat:'Heritage',bg:'linear-gradient(135deg,#8b5cf6,#a78bfa)',votes:0},
+  {id:4,name:'Spice Plantation',emoji:'🌿',cat:'Nature',bg:'linear-gradient(135deg,#22c55e,#86efac)',votes:0},
+  {id:5,name:'Fort Aguada',emoji:'🏰',cat:'Heritage',bg:'linear-gradient(135deg,#ef4444,#fca5a5)',votes:0},
+  {id:6,name:'Night Market Anjuna',emoji:'🛍️',cat:'Food & Fun',bg:'linear-gradient(135deg,#f97316,#fdba74)',votes:0},
 ];
-
 const HOTELS = [
-  {id:1,name:"The Leela Goa",stars:"★★★★★",img:"🏨",tags:["Group-friendly","Pool","Beach View","Breakfast incl."],price:"₹8,200",pp:"₹1,171",bg:"linear-gradient(135deg,#e3f2fd,#90caf9)"},
-  {id:2,name:"Taj Exotica Resort",stars:"★★★★★",img:"🌅",tags:["Luxury","Spa","Private Beach","Group Rates"],price:"₹11,500",pp:"₹1,643",bg:"linear-gradient(135deg,#f3e5f5,#ce93d8)"},
-  {id:3,name:"O Hotel Goa",stars:"★★★★",img:"🏩",tags:["Villa","Party Pool","Rooftop Bar","City View"],price:"₹5,400",pp:"₹771",bg:"linear-gradient(135deg,#e8f5e9,#a5d6a7)"},
-  {id:4,name:"Treehouse Silversands",stars:"★★★★",img:"🌴",tags:["Beachfront","Budget Pick","Large Group OK"],price:"₹3,800",pp:"₹543",bg:"linear-gradient(135deg,#fff8e1,#ffe082)"},
+  {id:1,name:'The Leela Goa',stars:5,tags:['Pool','Beachfront','Spa'],price:8500,perPerson:2125},
+  {id:2,name:'Taj Exotica Resort',stars:5,tags:['Luxury','Private Beach'],price:7200,perPerson:1800},
+  {id:3,name:'Goa Marriott Resort',stars:4,tags:['City','Pool','Business'],price:4800,perPerson:1200},
+  {id:4,name:'Zostel Goa (Hostel)',stars:2,tags:['Budget','Social','Fun'],price:800,perPerson:200},
 ];
+const AI_RESPONSES = {
+  'budget':'💰 For 4 people visiting Goa for 3 nights, expect ₹10,000–15,000/person including travel, stay at mid-range hotel, food, and activities.',
+  'best time':'☀️ October to March is the best time for Goa — perfect weather, all beaches open, and the famous Sunburn festival in December!',
+  'places':'🗺️ Top picks: Dudhsagar Falls, Calangute Beach, Basilica of Bom Jesus, Spice Plantation. For nightlife: Tito\'s Lane and Anjuna Market.',
+  'hotel':'🏨 For groups: Zostel is fun & social (₹800/night), Goa Marriott is mid-range (₹4,800/night), Leela is luxury (₹8,500/night).',
+  'transport':'🚗 Best for groups: rent a self-drive car (₹1,500/day) or hire a local cab for day trips. Scooters are great for beach hopping!',
+};
+const COLORS = ['#F7941D','#1B2B6B','#22C55E','#EF4444','#8B5CF6','#EC4899','#14B8A6','#F59E0B'];
 
-const EXPS = [
-  {id:1,name:"✈️ Flight Tickets",total:"₹47,600",payers:[
-    {n:"Arjun",a:"₹6,800",c:"#F7941D",paid:true},{n:"Priya",a:"₹6,800",c:"#9C27B0",paid:true},
-    {n:"Rahul",a:"₹6,800",c:"#1565C0",paid:false},{n:"Sneha",a:"₹6,800",c:"#E53935",paid:false},
-    {n:"Karan",a:"₹6,800",c:"#2E7D32",paid:true},{n:"Isha",a:"₹6,800",c:"#795548",paid:false},
-    {n:"Dev",a:"₹6,800",c:"#0097A7",paid:true},
-  ]},
-  {id:2,name:"🏨 Hotel — The Leela (3 nights)",total:"₹24,600",payers:[
-    {n:"Arjun",a:"₹3,514",c:"#F7941D",paid:true},{n:"Priya",a:"₹3,514",c:"#9C27B0",paid:true},
-    {n:"Rahul",a:"₹3,514",c:"#1565C0",paid:false},{n:"Sneha",a:"₹3,514",c:"#E53935",paid:false},
-    {n:"Karan",a:"₹3,514",c:"#2E7D32",paid:true},{n:"Isha",a:"₹3,514",c:"#795548",paid:false},
-    {n:"Dev",a:"₹3,516",c:"#0097A7",paid:true},
-  ]},
-  {id:3,name:"🤿 Water Sports Package",total:"₹14,000",payers:[
-    {n:"Arjun",a:"₹2,000",c:"#F7941D",paid:true},{n:"Priya",a:"₹2,000",c:"#9C27B0",paid:false},
-    {n:"Rahul",a:"₹2,000",c:"#1565C0",paid:false},{n:"Sneha",a:"₹2,000",c:"#E53935",paid:false},
-    {n:"Karan",a:"₹2,000",c:"#2E7D32",paid:true},{n:"Isha",a:"₹2,000",c:"#795548",paid:false},
-    {n:"Dev",a:"₹2,000",c:"#0097A7",paid:false},
-  ]},
+/* ── Destination → gradient (for trip photo cards) ── */
+const DEST_GRADS = [
+  ['#0B4F6C','#20A4F3'],['#7B2D8B','#C850C0'],['#134E4A','#059669'],
+  ['#92400E','#D97706'],['#1E3A5F','#3B82F6'],['#4A044E','#7C3AED'],
+  ['#1C1917','#78350F'],['#0F172A','#0D9488'],['#831843','#EC4899'],
 ];
+function destGrad(dest='') {
+  let h = 0; for (let c of dest) h = (h * 31 + c.charCodeAt(0)) & 0xFF;
+  const [c1,c2] = DEST_GRADS[h % DEST_GRADS.length];
+  return `linear-gradient(145deg,${c1},${c2})`;
+}
+function destEmoji(dest='') {
+  const d = dest.toLowerCase();
+  if (d.includes('goa')||d.includes('beach')) return '🏖️';
+  if (d.includes('manali')||d.includes('shimla')||d.includes('mountain')) return '🏔️';
+  if (d.includes('kerala')) return '🌴';
+  if (d.includes('rajasthan')||d.includes('jaipur')) return '🏰';
+  if (d.includes('mumbai')) return '🌆';
+  if (d.includes('delhi')) return '🕌';
+  if (d.includes('varanasi')) return '🛕';
+  if (d.includes('pondicherry')||d.includes('coorg')) return '🌿';
+  return '✈️';
+}
+function tripStatus(trip) {
+  if (!trip.start_date) return 'planning';
+  const d = new Date(trip.start_date);
+  const diff = (d - Date.now()) / (1000*60*60*24);
+  if (diff > 30) return 'planning';
+  if (diff > 0) return 'voting';
+  return 'confirmed';
+}
 
+/* ── Helpers ── */
+const initials = (name='') => name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+const fmtCurrency = n => '₹' + Number(n).toLocaleString('en-IN');
+const getInviteUrl = code => `${window.location.origin}${window.location.pathname}?invite=${code}`;
+
+/* ── Logo (base64 embedded) ── */
+const LOGO_URI = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNDAwIj48ZGVmcz48Y2xpcFBhdGggaWQ9ImNjIj48Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjE5MSIvPjwvY2xpcFBhdGg+PHJhZGlhbEdyYWRpZW50IGlkPSJzZyIgY3g9IjYwJSIgY3k9IjIyJSIgcj0iNzUlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRkY1NTAwIi8+PHN0b3Agb2Zmc2V0PSIzNSUiIHN0b3AtY29sb3I9IiNGNzk0MUQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNGRkIzNDciLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjE5MSIgZmlsbD0id2hpdGUiLz48cGF0aCBkPSJNIDkgMjAwIEEgMTkxIDE5MSAwIDAgMSAzOTEgMjAwIFoiIGZpbGw9InVybCgjc2cpIiBjbGlwLXBhdGg9InVybCgjY2MpIi8+PHRleHQgeD0iMjAwIiB5PSIyMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjM4IiBmb250LXN0eWxlPSJpdGFsaWMiIGZvbnQtd2VpZ2h0PSJib2xkIj48dHNwYW4gZmlsbD0iIzFCMkI2QiI+U2FmYXI8L3RzcGFuPjx0c3BhbiBmaWxsPSIjRjc5NDFEIj5OYW1hPC90c3Bhbj48L3RleHQ+PGNpcmNsZSBjeD0iMjAwIiBjeT0iMjAwIiByPSIxOTEiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFCMkI2QiIgc3Ryb2tlLXdpZHRoPSI1LjUiLz48L3N2Zz4=';
+
+
+/* ══════════════════════════════════════════
+   APP (state + logic unchanged from v3)
+══════════════════════════════════════════ */
 function App() {
-  const [scr, setScr] = useState("landing");
-  const [atab, setAtab] = useState("login");
-  const [step, setStep] = useState(1);
-  const [dest, setDest] = useState(null);
-  const [votes, setVotes] = useState({});
-  const [fil, setFil] = useState("all");
-  const [persona, setPersona] = useState(1);
-  const [booked, setBooked] = useState(null);
-  const [modal, setModal] = useState(null);
-  const [prog, setProg] = useState(FRIENDS.map(f=>f.progress));
-  const li = !["landing","auth"].includes(scr);
+  const [session, setSession] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [trips, setTrips] = useState([]);
+  const [currentTrip, setCurrentTrip] = useState(null);
+  const [members, setMembers] = useState([]);
+  const [expenses, setExpenses] = useState([]);
+  const [places, setPlaces] = useState(PLACES);
+  const [scr, setScr] = useState('loading');
+  const [authMode, setAuthMode] = useState('login');
+  const [showInviteModal, setShowInviteModal] = useState(false);
+  const [showAddExp, setShowAddExp] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState('');
 
   useEffect(() => {
-    if (scr !== "tracker") return;
-    const t = setInterval(() => {
-      setProg(p => p.map((v,i) => FRIENDS[i].status==="moving" ? Math.min(v+Math.random()*0.5,96) : v));
-    }, 1200);
-    return () => clearInterval(t);
-  }, [scr]);
+    const params = new URLSearchParams(window.location.search);
+    const ic = params.get('invite');
+    if (ic) sessionStorage.setItem('pendingInvite', ic);
+  }, []);
 
-  const go = s => { setScr(s); window.scrollTo(0,0); };
+  useEffect(() => {
+    sb.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      if (session) loadProfile(session.user.id);
+      else setScr('auth');
+    });
+    const { data: { subscription } } = sb.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      if (session) loadProfile(session.user.id);
+      else setScr('auth');
+    });
+    return () => subscription.unsubscribe();
+  }, []);
 
-  function Nav() {
-    return (
-      <nav className="nav">
-        <div className="nav-logo" onClick={()=>go(li?"dashboard":"landing")}>
-          <img src={LOGO} alt="SafarNama"/>
-          <div><div className="nav-brand">SafarNama</div><div className="nav-sub">HORIZONS TOGETHER</div></div>
+  async function loadProfile(uid) {
+    const { data } = await sb.from('profiles').select('*').eq('id', uid).single();
+    if (data) {
+      setProfile(data);
+      await loadTrips(uid);
+      const pending = sessionStorage.getItem('pendingInvite');
+      if (pending) { sessionStorage.removeItem('pendingInvite'); await joinTripByCode(pending, uid, data); }
+      setScr('dashboard');
+    }
+  }
+
+  async function loadTrips(uid) {
+    const { data } = await sb.from('trip_members').select('*, trips(*)').eq('user_id', uid).order('created_at', { foreignTable:'trips', ascending:false });
+    if (data) setTrips(data.map(tm => ({ ...tm.trips, myRole:tm.role, myProgress:tm.progress })));
+  }
+
+  async function loadTripData(trip) {
+    setCurrentTrip(trip);
+    const { data: mems } = await sb.from('trip_members').select('*, profiles(*)').eq('trip_id', trip.id);
+    if (mems) setMembers(mems);
+    const { data: exps } = await sb.from('expenses').select('*, profiles(name,avatar_color)').eq('trip_id', trip.id);
+    if (exps) setExpenses(exps);
+    setScr('tracker');
+  }
+
+  async function joinTripByCode(code, uid, prof) {
+    const { data: trip } = await sb.from('trips').select('*').eq('invite_code', code.toUpperCase()).single();
+    if (!trip) return;
+    await sb.from('trip_members').upsert({ trip_id:trip.id, user_id:uid, role:'member', from_city:'Your City', progress:0 }, { onConflict:'trip_id,user_id' });
+    await loadTrips(uid);
+  }
+
+  if (scr === 'loading') return <LoadingScreen />;
+  if (scr === 'auth') return <AuthScreen authMode={authMode} setAuthMode={setAuthMode} setScr={setScr} setProfile={setProfile} setSession={setSession} />;
+  if (scr === 'create-trip') return <CreateTripScreen session={session} profile={profile} setScr={setScr} loadTrips={loadTrips} />;
+  if (scr === 'join-trip') return <JoinTripScreen session={session} profile={profile} setScr={setScr} loadTrips={loadTrips} />;
+  if (scr === 'profile-scr') return <ProfileScreen profile={profile} session={session} setScr={setScr} setSession={setSession} />;
+  if (scr === 'admin-scr') return <AdminScreen session={session} setScr={setScr} />;
+  if (scr === 'dashboard') return <DashboardScreen profile={profile} trips={trips} session={session} setScr={setScr} loadTripData={loadTripData} />;
+
+  if (!currentTrip) { setScr('dashboard'); return null; }
+
+  const tripNav = (
+    <div className="bottom-nav">
+      {[{id:'tracker',icon:'🗺️',label:'Track'},{id:'places',icon:'📍',label:'Places'},
+        {id:'hotels',icon:'🏨',label:'Hotels'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI Help'}]
+        .map(n => (
+        <button key={n.id} className={'bn-item'+(scr===n.id?' active':'')} onClick={() => setScr(n.id)}>
+          <span className="bn-icon">{n.icon}</span>{n.label}
+        </button>
+      ))}
+    </div>
+  );
+
+  const tripTopNav = (
+    <div className="back-nav">
+      <button className="back-btn" onClick={() => setScr('dashboard')}>←</button>
+      <div className="back-title">📍 {currentTrip.destination}</div>
+      <button className="back-action" onClick={() => setShowInviteModal(true)}>➕</button>
+    </div>
+  );
+
+  return (
+    <div>
+      {tripTopNav}
+      <div className="mobile-wrap screen-inner">
+        {scr === 'tracker' && <TrackerScreen trip={currentTrip} members={members} session={session} profile={profile} loadTripData={loadTripData} />}
+        {scr === 'places' && <PlacesScreen places={places} setPlaces={setPlaces} trip={currentTrip} members={members} />}
+        {scr === 'hotels' && <HotelsScreen trip={currentTrip} members={members} />}
+        {scr === 'cost' && <CostScreen trip={currentTrip} members={members} expenses={expenses} setExpenses={setExpenses} session={session} profile={profile} showAddExp={showAddExp} setShowAddExp={setShowAddExp} />}
+        {scr === 'ai-chat' && <AiChatScreen trip={currentTrip} />}
+      </div>
+      {tripNav}
+      {showInviteModal && <InviteModal trip={currentTrip} onClose={() => setShowInviteModal(false)} />}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   LOADING SCREEN
+══════════════════════════════════════════ */
+function LoadingScreen() {
+  return (
+    <div className="loading-screen">
+      <div style={{fontSize:56,marginBottom:16}}>✈️</div>
+      <div className="spinner"/>
+      <div className="loading-text">SafarNama · Loading your trips…</div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   AUTH SCREEN
+══════════════════════════════════════════ */
+function AuthScreen({ authMode, setAuthMode, setScr, setProfile, setSession }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [err, setErr] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [msg, setMsg] = useState('');
+
+  async function submit() {
+    setErr(''); setMsg(''); setLoading(true);
+    if (authMode === 'login') {
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) { setErr(error.message); setLoading(false); return; }
+    } else {
+      if (!name.trim()) { setErr('Name is required'); setLoading(false); return; }
+      const { data, error, needsConfirm } = await sb.auth.signUp({ email, password, options:{ data:{ name:name.trim(), phone:phone.trim(), avatar_color: '#F7941D' } } });
+      if (error) { setErr(error.message); setLoading(false); return; }
+      if (needsConfirm) { setMsg('✅ Account created! Check your email to confirm, then log in.'); setLoading(false); setAuthMode('login'); return; }
+    }
+    setLoading(false);
+  }
+
+  return (
+    <div className="auth-screen">
+      <div style={{marginBottom:24,textAlign:'center'}}>
+        <div style={{fontSize:48,marginBottom:8}}>✈️</div>
+        <div style={{fontSize:26,fontWeight:900,color:'#fff'}}>Safar<span style={{color:'#F7941D'}}>Nama</span></div>
+        <div style={{fontSize:13,color:'rgba(255,255,255,.6)',marginTop:4}}>Plan group trips, together</div>
+      </div>
+      <div className="auth-card">
+        <div className="auth-tabs">
+          <button className={'auth-tab'+(authMode==='login'?' active':'')} onClick={() => { setAuthMode('login'); setErr(''); }}>Login</button>
+          <button className={'auth-tab'+(authMode==='signup'?' active':'')} onClick={() => { setAuthMode('signup'); setErr(''); }}>Sign Up</button>
         </div>
-        {!li ? (
-          <div className="nav-links">
-            <button className="nbtn ghost" onClick={()=>go("auth")}>Login</button>
-            <button className="nbtn" onClick={()=>{setAtab("signup");go("auth");}}>Sign Up Free</button>
+        {msg && <div style={{background:'#D1FAE5',color:'#065F46',padding:'10px 12px',borderRadius:8,fontSize:13,marginBottom:12}}>{msg}</div>}
+        {err && <div className="err-msg">{err}</div>}
+        {authMode === 'signup' && <>
+          <div className="form-group">
+            <label className="form-label">Full Name</label>
+            <input className="form-input" placeholder="Ashok Ankalla" value={name} onChange={e => setName(e.target.value)} />
+          </div>
+          <div className="form-group">
+            <label className="form-label">Phone (optional)</label>
+            <input className="form-input" placeholder="+91 9999999999" value={phone} onChange={e => setPhone(e.target.value)} />
+          </div>
+        </>}
+        <div className="form-group">
+          <label className="form-label">Email</label>
+          <input className="form-input" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} />
+        </div>
+        <div className="form-group">
+          <label className="form-label">Password</label>
+          <input className="form-input" type="password" placeholder="Min 6 characters" value={password} onChange={e => setPassword(e.target.value)} onKeyDown={e => e.key==='Enter' && submit()} />
+        </div>
+        <button className="btn btn-primary" onClick={submit} disabled={loading} style={{opacity:loading?.6:1}}>
+          {loading ? '⏳ Please wait…' : authMode==='login' ? '🚀 Log In' : '✨ Create Account'}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   DASHBOARD SCREEN (new desktop design)
+══════════════════════════════════════════ */
+function DashboardScreen({ profile, trips, session, setScr, loadTripData }) {
+  const [tapCount, setTapCount] = useState(0);
+  const tapTimer = useRef(null);
+  const [aiFrom, setAiFrom] = useState('');
+  const [aiBudget, setAiBudget] = useState('');
+  const [aiDates, setAiDates] = useState('');
+  const [aiResult, setAiResult] = useState(null);
+  const [aiLoading, setAiLoading] = useState(false);
+
+  function handleLogoTap() {
+    const next = tapCount + 1;
+    setTapCount(next);
+    clearTimeout(tapTimer.current);
+    if (next >= 5) { setTapCount(0); setScr('admin-scr'); return; }
+    tapTimer.current = setTimeout(() => setTapCount(0), 2000);
+  }
+
+  function generateAiPlan() {
+    if (!aiFrom && !aiBudget && !aiDates) return;
+    setAiLoading(true);
+    setAiResult(null);
+    setTimeout(() => {
+      const budget = aiBudget ? `₹${Number(aiBudget).toLocaleString('en-IN')}/person` : 'flexible budget';
+      const dates = aiDates || 'your preferred dates';
+      setAiResult(`✨ **AI Trip Plan for you:**\n\nDeparting from ${aiFrom||'your city'} with ${budget} around ${dates}.\n\n🏖️ **Top picks:** Goa (3N), Pondicherry (2N), or Coorg (2N) all work great for groups.\n\n📋 **Suggested itinerary:** Day 1 – Travel & check-in → Day 2-3 – Explore beaches & local food → Day 4 – Day trip → Day 5 – Return\n\n💡 **Pro tip:** Book trains 45+ days in advance for best prices. Tatkal opens 1 day before if you're flexible!`);
+      setAiLoading(false);
+    }, 1200);
+  }
+
+  if (!profile) return <LoadingScreen />;
+
+  const statusLabel = { planning:'🔵 Planning', voting:'🟠 Voting', confirmed:'🟢 Confirmed' };
+
+  return (
+    <div>
+      {/* ── TOP NAVBAR ── */}
+      <nav className="top-navbar">
+        <div className="nav-brand" style={{cursor:'pointer'}} onClick={handleLogoTap}>
+          Safar<em>Nama</em> ✈️
+        </div>
+        {tapCount > 0 && tapCount < 5 && <span style={{fontSize:10,color:'var(--muted)'}}>{5-tapCount} more…</span>}
+        <div className="nav-links">
+          <button className="nav-link active">🏠 Home</button>
+          <button className="nav-link" onClick={() => {}}>🗺️ My Trips</button>
+          <button className="nav-link" onClick={() => {}}>🔭 Discover</button>
+        </div>
+        <div className="nav-right">
+          {session?.user?.email === 'ankallaashoka101@gmail.com' && (
+            <button className="nav-link" onClick={() => setScr('admin-scr')}>🛡️ Admin</button>
+          )}
+          <div
+            className="nav-avatar"
+            style={{background: profile.avatar_color||'#F7941D'}}
+            onClick={() => setScr('profile-scr')}
+            title={profile.name}
+          >
+            {initials(profile.name)}
+          </div>
+        </div>
+      </nav>
+
+      {/* ── HERO ── */}
+      <div className="hero">
+        <div className="hero-inner">
+          <div className="hero-title">Welcome back, {profile.name.split(' ')[0]} ✈️</div>
+          <div className="hero-sub">Plan your next adventure with your crew — together.</div>
+          <div className="ai-creator">
+            <div className="ai-creator-label">✨ AI Trip Creator</div>
+            <div className="ai-creator-fields">
+              <div className="ai-creator-inp-wrap">
+                <span className="ai-creator-inp-icon">📍</span>
+                <input className="ai-creator-inp" placeholder="Where from?" value={aiFrom} onChange={e => setAiFrom(e.target.value)} />
+              </div>
+              <div className="ai-creator-inp-wrap">
+                <span className="ai-creator-inp-icon">₹</span>
+                <input className="ai-creator-inp" placeholder="Budget per person" type="number" value={aiBudget} onChange={e => setAiBudget(e.target.value)} />
+              </div>
+              <div className="ai-creator-inp-wrap">
+                <span className="ai-creator-inp-icon">📅</span>
+                <input className="ai-creator-inp" placeholder="Travel dates?" value={aiDates} onChange={e => setAiDates(e.target.value)} />
+              </div>
+              <button className="ai-creator-btn" onClick={generateAiPlan} disabled={aiLoading}>
+                {aiLoading ? '⏳ Thinking…' : '✨ Generate AI Trip Plan'}
+              </button>
+            </div>
+            {aiResult && (
+              <div className="ai-response">
+                <div className="ai-response-title">🤖 SafarNama AI</div>
+                <div className="ai-response-text">{aiResult}</div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* ── MAIN CONTENT ── */}
+      <div className="page-body">
+        {/* Quick Actions */}
+        <div className="quick-actions">
+          <button className="qa-btn primary" onClick={() => setScr('create-trip')}>
+            ✈️ Plan a Trip
+          </button>
+          <button className="qa-btn outline" onClick={() => setScr('join-trip')}>
+            🔗 Join a Trip
+          </button>
+        </div>
+
+        {/* Active Trips */}
+        <div className="section-hdr">
+          <div className="section-title">Your Active Trips</div>
+          <span style={{color:'var(--muted)',fontSize:14}}>{trips.length} trip{trips.length!==1?'s':''}</span>
+        </div>
+
+        {trips.length === 0 ? (
+          <div className="empty-state">
+            <div className="empty-icon">🌍</div>
+            <div className="empty-title">No trips yet!</div>
+            <div className="empty-sub">Plan your first group trip or join one using an invite code from a friend.</div>
+            <button className="qa-btn primary" style={{maxWidth:220,margin:'0 auto',display:'block'}} onClick={() => setScr('create-trip')}>
+              ✈️ Plan First Trip
+            </button>
           </div>
         ) : (
-          <div style={{display:"flex",alignItems:"center",gap:12}}>
-            <button className="nbtn" style={{fontSize:12}} onClick={()=>{setStep(1);go("create");}}>+ New Trip</button>
-            <div className="avatar">A</div>
-          </div>
-        )}
-      </nav>
-    );
-  }
-
-  function BNav() {
-    if (!li) return null;
-    const items=[{id:"dashboard",ic:"🏠",lb:"Home"},{id:"tracker",ic:"📍",lb:"Track"},{id:"places",ic:"🗺️",lb:"Explore"},{id:"hotels",ic:"🏨",lb:"Hotels"},{id:"cost",ic:"💰",lb:"Split"}];
-    return (
-      <nav className="bnav">
-        {items.map(i=>(
-          <button key={i.id} className={"bni"+(scr===i.id?" on":"")} onClick={()=>go(i.id)}>
-            <span className="ic">{i.ic}</span><span className="lb">{i.lb}</span>
-          </button>
-        ))}
-      </nav>
-    );
-  }
-
-  function Landing() {
-    return (
-      <div className="screen">
-        <div className="hero">
-          <div>
-            <img src={LOGO} className="hero-logo" alt="SafarNama"/>
-            <h1>Travel Together,<br/><em>Stress Never.</em></h1>
-            <p>Plan group trips with friends from anywhere in India.<br/>Track everyone live, explore top spots, split costs — one app.</p>
-            <div className="hbtns">
-              <button className="hbtn1" onClick={()=>{setAtab("signup");go("auth");}}>Start a Group Trip →</button>
-              <button className="hbtn2" onClick={()=>go("auth")}>Login</button>
-            </div>
-            <div className="feats">
-              {[["📍","Live Friend Tracking"],["🗺️","Group Explore"],["🏨","Best Hotels"],["💰","Smart Cost Split"]].map(([e,l])=>(
-                <div className="feat" key={l}><span className="fi">{e}</span><span>{l}</span></div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  function Auth() {
-    return (
-      <div className="screen">
-        <div className="auth-wrap">
-          <div className="auth-card">
-            <div className="auth-logo"><img src={LOGO} alt="SafarNama"/></div>
-            <h2>Welcome to SafarNama</h2>
-            <p className="sub">Your 24/7 group travel companion</p>
-            <div className="atabs">
-              <div className={"atab"+(atab==="login"?" on":"")} onClick={()=>setAtab("login")}>Login</div>
-              <div className={"atab"+(atab==="signup"?" on":"")} onClick={()=>setAtab("signup")}>Sign Up</div>
-            </div>
-            {atab==="signup"&&<div className="fg"><label>Full Name</label><input placeholder="Arjun Mehta"/></div>}
-            <div className="fg"><label>Email</label><input placeholder="arjun@email.com" type="email"/></div>
-            <div className="fg"><label>Password</label><input placeholder="••••••••" type="password"/></div>
-            {atab==="signup"&&<div className="fg"><label>Departure City</label>
-              <select><option>Mumbai</option><option>Delhi</option><option>Bangalore</option><option>Hyderabad</option><option>Chennai</option><option>Pune</option><option>Ahmedabad</option></select>
-            </div>}
-            <button className="bfull" onClick={()=>go("dashboard")}>{atab==="login"?"Login →":"Create Account →"}</button>
-            <div className="div">or</div>
-            <button className="bfull" style={{background:"white",color:"#333",border:"1.5px solid #e0e0e0"}} onClick={()=>go("dashboard")}>🇮🇳 Continue with Google</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  function Dashboard() {
-    const p = PERSONAS.find(x=>x.id===persona);
-    return (
-      <div className="screen pb">
-        <div className="dash">
-          <div className="dh">
-            <div><div className="greet">Good morning 👋</div><h2>Hey Arjun!</h2></div>
-            <button className="nbtn" onClick={()=>{setStep(1);go("create");}}>+ New Trip</button>
-          </div>
-          <div className="stitle">👤 User Persona</div>
-          <div className="pstrip">
-            {PERSONAS.map(x=>(
-              <div key={x.id} className={"pchip"+(persona===x.id?" on":"")} onClick={()=>setPersona(x.id)}>
-                <div className="pav" style={{background:x.color}}>{x.emoji}</div>
-                <div><div className="pname">{x.name}</div><div className="prole">{x.role} · {x.city}</div></div>
-              </div>
-            ))}
-          </div>
-          {p&&<div className="pbox">💡 <strong>{p.name}</strong>: {p.desc}</div>}
-          <div className="stitle">🧳 My Trips</div>
-          <div className="cgrid">
-            <div className="tc" onClick={()=>go("tracker")}>
-              <div className="tc-img" style={{background:"linear-gradient(135deg,#e3f2fd,#90caf9)"}}>🏖️<div className="badge">● LIVE</div></div>
-              <div className="tc-body">
-                <h3>Goa — Beach Gang 2025</h3>
-                <div className="tmeta"><span>📅 Aug 15–19</span><span>👥 7 friends</span><span>✈️ 5 cities</span></div>
-                <div style={{marginTop:10,background:"#e8f5e9",borderRadius:8,padding:"6px 10px",fontSize:12,color:"#2e7d32",fontWeight:600}}>📍 Rahul arrived · 5 in transit</div>
-              </div>
-            </div>
-            <div className="tc" onClick={()=>go("tracker")}>
-              <div className="tc-img" style={{background:"linear-gradient(135deg,#f3e5f5,#ce93d8)"}}>🏰</div>
-              <div className="tc-body"><h3>Rajasthan Heritage Tour</h3><div className="tmeta"><span>📅 Oct 3–8</span><span>👥 4 friends</span><span>🗓️ Planning</span></div></div>
-            </div>
-            <div className="cc" onClick={()=>{setStep(1);go("create");}}>
-              <div className="plus">+</div><h3>Plan a New Trip</h3><p>Add destination, invite friends from any city</p>
-            </div>
-          </div>
-          <div className="stitle">⚡ Quick Actions</div>
-          <div style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-            {[["📍","Track Friends","tracker"],["🗺️","Explore Goa","places"],["🏨","Hotels","hotels"],["💰","Cost Split","cost"]].map(([e,l,s])=>(
-              <button key={s} onClick={()=>go(s)} style={{background:"white",border:"1.5px solid #e0e0e0",borderRadius:12,padding:"12px 18px",cursor:"pointer",display:"flex",alignItems:"center",gap:8,fontSize:13,fontWeight:600,color:"var(--navy)"}}>
-                {e} {l}
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  function CreateTrip() {
-    const dests=[
-      {id:1,name:"Goa",sub:"Beaches & Nightlife",em:"🏖️",bg:"#e3f2fd"},
-      {id:2,name:"Manali",sub:"Mountains & Snow",em:"🏔️",bg:"#e8f5e9"},
-      {id:3,name:"Jaipur",sub:"Heritage & Culture",em:"🏰",bg:"#f3e5f5"},
-      {id:4,name:"Kerala",sub:"Backwaters & Nature",em:"🌴",bg:"#fff8e1"},
-    ];
-    const steps=["Destination","Dates","Friends","Launch"];
-    return (
-      <div className="screen pb">
-        <div className="cw">
-          <h2>Plan Your Group Trip</h2>
-          <div className="sbar">
-            {steps.map((s,i)=>(
-              <React.Fragment key={s}>
-                <div className={"step"+(step>i+1?" done":step===i+1?" active":"")}>
-                  <div className="sc">{step>i+1?"✓":i+1}</div>
-                  <div className="sl">{s}</div>
-                </div>
-                {i<steps.length-1&&<div className={"sline"+(step>i+1?" done":"")}/>}
-              </React.Fragment>
-            ))}
-          </div>
-
-          {step===1&&(
-            <div className="fc">
-              <h3>Where are you heading?</h3><p className="desc">Pick a destination for the group</p>
-              <div className="dgrid">
-                {dests.map(d=>(
-                  <div key={d.id} className={"do"+(dest===d.id?" sel":"")} style={{background:dest===d.id?"#fff8f0":d.bg}} onClick={()=>setDest(d.id)}>
-                    <div className="em">{d.em}</div><div className="dn">{d.name}</div><div className="ds">{d.sub}</div>
-                  </div>
-                ))}
-              </div>
-              <div className="brow"><button className="bnext" disabled={!dest} onClick={()=>setStep(2)}>Next: Set Dates →</button></div>
-            </div>
-          )}
-
-          {step===2&&(
-            <div className="fc">
-              <h3>When are you going?</h3><p className="desc">Set travel dates for the whole group</p>
-              <div className="fg"><label>Departure Date</label><input type="date" defaultValue="2025-08-15"/></div>
-              <div className="fg"><label>Return Date</label><input type="date" defaultValue="2025-08-19"/></div>
-              <div className="fg"><label>Number of Travellers</label><select defaultValue="7">{[2,3,4,5,6,7,8,10,12,15].map(n=><option key={n}>{n} people</option>)}</select></div>
-              <div className="brow"><button className="bback" onClick={()=>setStep(1)}>← Back</button><button className="bnext" onClick={()=>setStep(3)}>Next: Add Friends →</button></div>
-            </div>
-          )}
-
-          {step===3&&(
-            <div className="fc">
-              <h3>Add your travel group</h3>
-              <p className="desc">Each friend sets their departure city — SafarNama tracks everyone live on a map</p>
-              {FRIENDS.map(f=>(
-                <div key={f.id} className="frow">
-                  <div className="fav" style={{background:f.color}}>{f.name[0]}</div>
-                  <div className="fi2"><div className="fn">{f.name}</div><div className="fc2">From {f.city}</div></div>
-                  <div className={"fst "+(f.status==="arrived"?"fj":"fp")}>{f.status==="arrived"?"✓ Joined":"Invited"}</div>
-                </div>
-              ))}
-              <button style={{width:"100%",padding:"12px",background:"#f0f4ff",border:"2px dashed #c0d0f0",borderRadius:12,color:"var(--navy)",fontWeight:600,cursor:"pointer",marginTop:12}}>+ Invite More Friends</button>
-              <div className="brow"><button className="bback" onClick={()=>setStep(2)}>← Back</button><button className="bnext" onClick={()=>setStep(4)}>Review →</button></div>
-            </div>
-          )}
-
-          {step===4&&(
-            <div className="fc">
-              <h3>🎉 Ready to Launch!</h3><p className="desc">Your group trip summary</p>
-              {[["📍","Destination","Goa — Beach Gang 2025"],["📅","Dates","Aug 15–19, 2025 (5 days)"],["👥","Group","7 friends from 5 cities"],["✈️","Departures","Mumbai, Delhi, Bangalore, Pune, Chennai, Hyderabad, Ahmedabad"]].map(([e,l,v])=>(
-                <div key={l} style={{display:"flex",gap:12,padding:"12px 0",borderBottom:"1px solid #f0f0f0"}}>
-                  <span style={{fontSize:20}}>{e}</span>
-                  <div><div style={{fontSize:12,color:"var(--muted)"}}>{l}</div><div style={{fontWeight:600,color:"var(--navy)"}}>{v}</div></div>
-                </div>
-              ))}
-              <div className="brow"><button className="bback" onClick={()=>setStep(3)}>← Back</button><button className="bnext" onClick={()=>go("tracker")}>🚀 Launch Trip!</button></div>
-            </div>
-          )}
-        </div>
-      </div>
-    );
-  }
-
-  function Tracker() {
-    const DL=15, DT=42;
-    return (
-      <div className="screen pb">
-        <div className="trk">
-          <h2>📍 Live Friend Tracker</h2>
-          <div className="trk-sub">Goa Trip · Aug 15 · 7 friends · 5 cities · All tracked live</div>
-          <div className="map">
-            <div className="mgrid"/>
-            {[["Mumbai",70,26],["Delhi",50,14],["Bangalore",65,68],["Pune",59,32],["Chennai",70,67],["Hyderabad",62,50],["Ahmedabad",48,24],["GOA ⭐",10,44]].map(([c,l,t])=>(
-              <span key={c} className="mlabel" style={{left:`${l}%`,top:`${t}%`}}>{c}</span>
-            ))}
-            <div className="dpin" style={{left:`${DL}%`,top:`${DT}%`,transform:"translate(-50%,-100%)"}}>
-              <div className="dm"/><div className="dl">🏖️ GOA</div>
-            </div>
-            {FRIENDS.map((f,i)=>{
-              const p=prog[i]/100;
-              const l=f.sl+(DL-f.sl)*p;
-              const t=f.st+(DT-f.st)*p;
+          <div className="trips-grid">
+            {trips.map((trip, i) => {
+              const status = tripStatus(trip);
               return (
-                <div key={f.id} className="fpin" style={{left:`${l}%`,top:`${t}%`,transform:"translate(-50%,-50%)"}}>
-                  <div className="fpav" style={{background:f.color}}>{f.name[0]}</div>
-                  <div className="fpname">{f.tr} {f.name}</div>
+                <div key={trip.id} className="trip-photo-card" onClick={() => loadTripData(trip)}>
+                  <div className="tpc-photo" style={{background: destGrad(trip.destination)}} />
+                  <div className="tpc-overlay" />
+                  <div className="tpc-role">{trip.myRole==='coordinator' ? '👑 Host' : '👥 Member'}</div>
+                  <span className={'tpc-badge badge-'+status} style={{position:'absolute',top:12,right:12}}>
+                    {statusLabel[status]}
+                  </span>
+                  <div className="tpc-body">
+                    <div className="tpc-dest">{destEmoji(trip.destination)} {trip.destination}</div>
+                    <div className="tpc-name">{trip.name}</div>
+                    <div className="tpc-meta">
+                      {trip.start_date && <span className="tpc-code">📅 {new Date(trip.start_date).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</span>}
+                      <span className="tpc-code">🔑 {trip.invite_code}</span>
+                    </div>
+                  </div>
                 </div>
               );
             })}
           </div>
-          <div className="fcards">
-            {FRIENDS.map((f,i)=>(
-              <div key={f.id} className={"ftc"+(f.status==="arrived"?" arr":f.status==="delayed"?" del":"")}>
-                <div className="ftop">
-                  <div className="ftav" style={{background:f.color}}>{f.name[0]}</div>
-                  <div><div className="ftn">{f.name}</div><div className="ftc2">{f.tr} from {f.city}</div></div>
-                </div>
-                <div className="fts">
-                  <div className={"sdot "+(f.status==="moving"?"mv":f.status==="arrived"?"ar":"dl")}/>
-                  {f.status==="arrived"?"🎉 Arrived in Goa!":f.status==="delayed"?"⚠️ Delayed · "+f.eta:"In transit · ETA "+f.eta}
-                </div>
-                <div className="ebar"><div className={"efill "+(f.status==="arrived"?"ar":f.status==="delayed"?"dl":"")} style={{width:`${Math.round(prog[i])}%`}}/></div>
-              </div>
-            ))}
-          </div>
-          <div style={{background:"#fff8f0",border:"1px solid #ffe0b2",borderRadius:14,padding:16,marginTop:20}}>
-            <div style={{fontWeight:700,color:"var(--navy)",marginBottom:8}}>📊 Group Travel Status</div>
-            <div style={{display:"flex",gap:20,fontSize:13,flexWrap:"wrap"}}>
-              <span>🟢 1 Arrived</span><span>🟠 5 In Transit</span><span>🔴 1 Delayed</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  function Places() {
-    const cats=["all","beach","food","adventure","culture","nightlife"];
-    const labels={all:"All",beach:"🏖️ Beach",food:"🍛 Food",adventure:"🤿 Adventure",culture:"⛪ Culture",nightlife:"🎶 Nightlife"};
-    const filtered=fil==="all"?PLACES:PLACES.filter(p=>p.cat===fil);
-    return (
-      <div className="screen pb">
-        <div className="plc">
-          <h2>🗺️ Explore Goa Together</h2>
-          <p style={{color:"var(--muted)",fontSize:14,marginBottom:16}}>Vote on what the group wants to do — top votes go on the itinerary</p>
-          <div className="frow2">
-            {cats.map(c=><button key={c} className={"fbtn"+(fil===c?" on":"")} onClick={()=>setFil(c)}>{labels[c]}</button>)}
-          </div>
-          <div className="pgrid">
-            {filtered.map(p=>(
-              <div key={p.id} className="pc">
-                <div className="pimg" style={{background:p.bg}}>{p.emoji}</div>
-                <div className="pbody">
-                  <h3>{p.name}</h3><p>{p.desc}</p>
-                  <div className="pmeta">
-                    <div><div className="rat">★ {p.rating}</div></div>
-                    <div style={{textAlign:"right"}}>
-                      <button className={"vbtn"+(votes[p.id]?" voted":"")} onClick={()=>setVotes(v=>({...v,[p.id]:!v[p.id]}))}>
-                        {votes[p.id]?"✓ I'm in!":"👍 Count me in"}
-                      </button>
-                      <div className="vc">{p.votes+(votes[p.id]?1:0)} friends want this</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  function Hotels() {
-    return (
-      <div className="screen pb">
-        <div className="htls">
-          <h2>🏨 Best Hotels in Goa</h2>
-          <p style={{color:"var(--muted)",fontSize:14,marginBottom:20}}>Group-friendly picks · 7 people · Aug 15–19 · Price per night</p>
-          {HOTELS.map(h=>(
-            <div key={h.id} className="hcard">
-              <div className="himg" style={{background:h.bg}}>{h.img}</div>
-              <div className="hinfo">
-                <h3>{h.name}</h3>
-                <div className="hstars">{h.stars}</div>
-                <div className="htags">{h.tags.map(t=><span key={t} className="htag">{t}</span>)}</div>
-                <div className="hbot">
-                  <div>
-                    <div className="hprice">{h.price} <span>/night</span></div>
-                    <div className="hpp">✓ {h.pp}/person (7 people)</div>
-                  </div>
-                  <button className={"bbtn"+(booked===h.id?" bkd":"")} onClick={()=>{setBooked(h.id);setModal({type:"booked",name:h.name});}}>
-                    {booked===h.id?"✓ Booked!":"Book Now"}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-        {modal?.type==="booked"&&(
-          <div className="mover" onClick={()=>setModal(null)}>
-            <div className="modal" onClick={e=>e.stopPropagation()}>
-              <button className="mcls" onClick={()=>setModal(null)}>×</button>
-              <div style={{textAlign:"center",padding:"10px 0"}}>
-                <div style={{fontSize:56,marginBottom:12}}>🎉</div>
-                <h3>{modal.name} Booked!</h3>
-                <p style={{color:"var(--muted)",margin:"12px 0 20px"}}>Cost split sent to all 7 members automatically.</p>
-                <button className="bfull" onClick={()=>{setModal(null);go("cost");}}>View Cost Split →</button>
-              </div>
-            </div>
-          </div>
         )}
       </div>
-    );
-  }
-
-  function CostSplit() {
-    return (
-      <div className="screen pb">
-        <div className="cst">
-          <h2>💰 Cost Split</h2>
-          <p style={{color:"var(--muted)",fontSize:14,marginBottom:20}}>Goa Trip · 7 friends · All expenses tracked</p>
-          <div className="scards">
-            <div className="scard"><div className="sv">₹86,200</div><div className="sl2">Total Spent</div></div>
-            <div className="scard"><div className="sv">₹12,314</div><div className="sl2">Per Person</div></div>
-            <div className="scard"><div className="sv" style={{color:"var(--red)"}}>₹29,456</div><div className="sl2">Still Pending</div></div>
-          </div>
-          {EXPS.map(e=>(
-            <div key={e.id} className="erow">
-              <div className="etop"><div className="en">{e.name}</div><div className="et">{e.total}</div></div>
-              <div className="epayers">
-                {e.payers.map(p=>(
-                  <div key={p.n} className="pyr">
-                    <div className="pyrav" style={{background:p.c}}>{p.n[0]}</div>
-                    <div><div className="pyrn">{p.n}</div><div className="pyra">{p.a}</div></div>
-                    <div className={"ps "+(p.paid?"paid":"unpd")}>{p.paid?"✓ Paid":"Pending"}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-          <div style={{background:"var(--navy)",borderRadius:14,padding:"18px 20px",marginTop:8,display:"flex",justifyContent:"space-between",alignItems:"center",flexWrap:"wrap",gap:12}}>
-            <div style={{color:"white"}}>
-              <div style={{fontSize:13,opacity:0.8}}>Still to collect</div>
-              <div style={{fontSize:24,fontWeight:800}}>₹29,456</div>
-            </div>
-            <button style={{background:"var(--orange)",color:"white",border:"none",padding:"12px 24px",borderRadius:12,fontWeight:700,cursor:"pointer",fontSize:14}}>📲 Send Reminders</button>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const SCREENS={landing:Landing,auth:Auth,dashboard:Dashboard,create:CreateTrip,tracker:Tracker,places:Places,hotels:Hotels,cost:CostSplit};
-  const Screen=SCREENS[scr]||Dashboard;
-  return <div><Nav/><Screen/><BNav/></div>;
+    </div>
+  );
 }
 
-ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+
+/* ══════════════════════════════════════════
+   CREATE TRIP SCREEN
+══════════════════════════════════════════ */
+function CreateTripScreen({ session, profile, setScr, loadTrips }) {
+  const [name, setName] = useState('');
+  const [dest, setDest] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [fromCity, setFromCity] = useState('');
+  const [transport, setTransport] = useState('flight');
+  const [err, setErr] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  async function createTrip() {
+    if (!name || !dest) { setErr('Trip name and destination are required.'); return; }
+    setLoading(true); setErr('');
+    const uid = session.user.id;
+    const { data: trip, error } = await sb.from('trips').insert({
+      name, destination:dest, start_date:startDate||null, end_date:endDate||null, created_by:uid
+    }).select().single();
+    if (error) { setErr(error.message); setLoading(false); return; }
+    await sb.from('trip_members').insert({ trip_id:trip.id, user_id:uid, role:'coordinator', from_city:fromCity||'Your City', transport_mode:transport, progress:0 });
+    await loadTrips(uid);
+    setLoading(false);
+    setScr('dashboard');
+  }
+
+  return (
+    <div>
+      <div className="back-nav">
+        <button className="back-btn" onClick={() => setScr('dashboard')}>←</button>
+        <div className="back-title">Plan a New Trip ✈️</div>
+        <div style={{width:30}}/>
+      </div>
+      <div className="mobile-wrap screen-inner" style={{paddingBottom:20}}>
+        {err && <div className="err-msg">{err}</div>}
+        <div className="card">
+          <div className="card-title">Trip Details</div>
+          <div className="form-group"><label className="form-label">Trip Name</label><input className="form-input" placeholder="Goa Squad Trip 2025" value={name} onChange={e => setName(e.target.value)} /></div>
+          <div className="form-group"><label className="form-label">Destination</label><input className="form-input" placeholder="Goa, India" value={dest} onChange={e => setDest(e.target.value)} /></div>
+          <div className="form-row">
+            <div className="form-group"><label className="form-label">Start Date</label><input className="form-input" type="date" value={startDate} onChange={e => setStartDate(e.target.value)} /></div>
+            <div className="form-group"><label className="form-label">End Date</label><input className="form-input" type="date" value={endDate} onChange={e => setEndDate(e.target.value)} /></div>
+          </div>
+        </div>
+        <div className="card">
+          <div className="card-title">Your Travel Info</div>
+          <div className="form-group"><label className="form-label">Travelling From</label><input className="form-input" placeholder="Mumbai" value={fromCity} onChange={e => setFromCity(e.target.value)} /></div>
+          <div className="form-group"><label className="form-label">Mode of Transport</label>
+            <select className="form-input" value={transport} onChange={e => setTransport(e.target.value)}>
+              <option value="flight">✈️ Flight</option><option value="train">🚂 Train</option><option value="bus">🚌 Bus</option><option value="car">🚗 Car</option>
+            </select>
+          </div>
+        </div>
+        <button className="btn btn-primary" onClick={createTrip} disabled={loading}>{loading ? '⏳ Creating…' : '🚀 Create Trip & Get Invite Link'}</button>
+        <div style={{height:12}}/>
+        <button className="btn btn-outline" onClick={() => setScr('dashboard')}>Cancel</button>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   JOIN TRIP SCREEN
+══════════════════════════════════════════ */
+function JoinTripScreen({ session, profile, setScr, loadTrips }) {
+  const [code, setCode] = useState('');
+  const [fromCity, setFromCity] = useState('');
+  const [transport, setTransport] = useState('flight');
+  const [err, setErr] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [found, setFound] = useState(null);
+
+  async function lookupCode() {
+    if (code.length < 4) return;
+    const { data } = await sb.from('trips').select('*').eq('invite_code', code.toUpperCase()).single();
+    setFound(data || null);
+    if (!data) setErr('No trip found with this code.');
+    else setErr('');
+  }
+
+  async function joinTrip() {
+    if (!found) return;
+    setLoading(true);
+    const uid = session.user.id;
+    const { error } = await sb.from('trip_members').upsert({ trip_id:found.id, user_id:uid, role:'member', from_city:fromCity||'Your City', transport_mode:transport, progress:0 }, { onConflict:'trip_id,user_id' });
+    if (error) { setErr(error.message); setLoading(false); return; }
+    await loadTrips(uid);
+    setLoading(false);
+    setScr('dashboard');
+  }
+
+  return (
+    <div>
+      <div className="back-nav">
+        <button className="back-btn" onClick={() => setScr('dashboard')}>←</button>
+        <div className="back-title">Join a Trip 🔗</div>
+        <div style={{width:30}}/>
+      </div>
+      <div className="mobile-wrap screen-inner" style={{paddingBottom:20}}>
+        {err && <div className="err-msg">{err}</div>}
+        <div className="card">
+          <div className="card-title">Enter Invite Code</div>
+          <div className="form-group"><input className="form-input join-input" placeholder="ABC12345" maxLength={8} value={code} onChange={e => { setCode(e.target.value.toUpperCase()); setFound(null); }} onBlur={lookupCode} /></div>
+          {found && <div style={{background:'#F0FFF4',border:'1.5px solid #86EFAC',borderRadius:10,padding:12,marginBottom:12}}><div style={{fontSize:13,color:'var(--muted)'}}>Trip found! ✅</div><div style={{fontSize:17,fontWeight:800,color:'var(--navy)'}}>{found.destination}</div><div style={{fontSize:13,color:'var(--muted)'}}>{found.name}</div></div>}
+          <div className="form-group"><label className="form-label">Travelling From</label><input className="form-input" placeholder="Delhi" value={fromCity} onChange={e => setFromCity(e.target.value)} /></div>
+          <div className="form-group"><label className="form-label">Mode of Transport</label>
+            <select className="form-input" value={transport} onChange={e => setTransport(e.target.value)}>
+              <option value="flight">✈️ Flight</option><option value="train">🚂 Train</option><option value="bus">🚌 Bus</option><option value="car">🚗 Car</option>
+            </select>
+          </div>
+          <button className="btn btn-primary" onClick={found ? joinTrip : lookupCode} disabled={loading}>{loading ? '⏳ Joining…' : found ? '✅ Join Trip' : '🔍 Find Trip'}</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   TRACKER SCREEN — real GPS + Leaflet map
+══════════════════════════════════════════ */
+function TrackerScreen({ trip, members: initialMembers, session, profile, loadTripData }) {
+  const [members, setMembers] = useState(initialMembers);
+  const [myProgress, setMyProgress] = useState(0);
+  const [saving, setSaving] = useState(false);
+  const [gpsStatus, setGpsStatus] = useState('pending'); // 'pending'|'active'|'denied'
+  const [myCoords, setMyCoords] = useState(null);
+  const [destCoords, setDestCoords] = useState(null);
+  const mapRef = useRef(null);
+  const leafletMap = useRef(null);
+  const markers = useRef({});
+  const destMarker = useRef(null);
+  const watchId = useRef(null);
+  const pollTimer = useRef(null);
+
+  const uid = session?.user?.id;
+  const transIcons = { flight:'✈️', train:'🚂', bus:'🚌', car:'🚗' };
+
+  /* ── Init progress ── */
+  useEffect(() => {
+    const me = members.find(m => m.user_id === uid);
+    if (me) setMyProgress(me.progress || 0);
+  }, []);
+
+  /* ── Geocode destination → lat/lng ── */
+  useEffect(() => {
+    async function geocode() {
+      try {
+        const r = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(trip.destination)}&format=json&limit=1`);
+        const d = await r.json();
+        if (d[0]) setDestCoords({ lat: parseFloat(d[0].lat), lng: parseFloat(d[0].lon) });
+      } catch(e) {
+        // Fallback: centre of India
+        setDestCoords({ lat: 20.5937, lng: 78.9629 });
+      }
+    }
+    geocode();
+  }, [trip.destination]);
+
+  /* ── Init Leaflet map once destCoords ready ── */
+  useEffect(() => {
+    if (!destCoords || leafletMap.current) return;
+    const map = L.map('tracker-map', { zoomControl: true, attributionControl: true })
+      .setView([destCoords.lat, destCoords.lng], 12);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors',
+      maxZoom: 18,
+    }).addTo(map);
+
+    // Destination marker
+    const destIcon = L.divIcon({
+      html: `<div class="lf-dest-marker">📍 ${trip.destination}</div>`,
+      className: '', iconAnchor: [0, 0]
+    });
+    destMarker.current = L.marker([destCoords.lat, destCoords.lng], { icon: destIcon }).addTo(map);
+
+    leafletMap.current = map;
+    updateMarkers(members, map);
+  }, [destCoords]);
+
+  /* ── Update markers whenever members change ── */
+  useEffect(() => {
+    if (leafletMap.current) updateMarkers(members, leafletMap.current);
+  }, [members]);
+
+  function updateMarkers(mems, map) {
+    mems.forEach((m, i) => {
+      if (!m.lat || !m.lng) return;
+      const color = m.profiles?.avatar_color || COLORS[i % COLORS.length];
+      const label = initials(m.profiles?.name || '?');
+      const name = m.profiles?.name || 'Unknown';
+      const seenAgo = m.last_seen ? timeSince(new Date(m.last_seen)) : 'unknown';
+
+      if (markers.current[m.user_id]) {
+        markers.current[m.user_id].setLatLng([m.lat, m.lng]);
+        markers.current[m.user_id].getPopup()?.setContent(`<b>${name}</b><br>📍 Live<br>⏱ ${seenAgo}`);
+      } else {
+        const icon = L.divIcon({
+          html: `<div class="lf-avatar-marker" style="background:${color}">${label}</div>`,
+          className: '', iconSize: [36, 36], iconAnchor: [18, 18]
+        });
+        markers.current[m.user_id] = L.marker([m.lat, m.lng], { icon })
+          .addTo(map)
+          .bindPopup(`<b>${name}</b><br>📍 Live<br>⏱ ${seenAgo}`);
+      }
+    });
+  }
+
+  function timeSince(date) {
+    const s = Math.floor((Date.now() - date) / 1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return `${Math.floor(s/60)}m ago`;
+    return `${Math.floor(s/3600)}h ago`;
+  }
+
+  /* ── GPS watch ── */
+  useEffect(() => {
+    if (!navigator.geolocation) { setGpsStatus('denied'); return; }
+    watchId.current = navigator.geolocation.watchPosition(
+      pos => {
+        const { latitude: lat, longitude: lng } = pos.coords;
+        setGpsStatus('active');
+        setMyCoords({ lat, lng });
+        saveMyLocation(lat, lng);
+        // Pan map to my location on first fix
+        if (leafletMap.current) leafletMap.current.setView([lat, lng], 14);
+      },
+      err => setGpsStatus('denied'),
+      { enableHighAccuracy: true, maximumAge: 15000, timeout: 20000 }
+    );
+    return () => { if (watchId.current) navigator.geolocation.clearWatch(watchId.current); };
+  }, []);
+
+  /* ── Poll member locations every 10s ── */
+  useEffect(() => {
+    async function pollMembers() {
+      const { data } = await sb.from('trip_members').select('*, profiles(*)').eq('trip_id', trip.id);
+      if (data) setMembers(data);
+    }
+    pollTimer.current = setInterval(pollMembers, 10000);
+    return () => clearInterval(pollTimer.current);
+  }, [trip.id]);
+
+  /* ── Cleanup map on unmount ── */
+  useEffect(() => {
+    return () => {
+      if (leafletMap.current) { leafletMap.current.remove(); leafletMap.current = null; }
+      markers.current = {};
+    };
+  }, []);
+
+  async function saveMyLocation(lat, lng) {
+    await sb.from('trip_members')
+      .update({ lat, lng, last_seen: new Date().toISOString() })
+      .eq('trip_id', trip.id)
+      .eq('user_id', uid);
+  }
+
+  async function updateProgress(val) {
+    setMyProgress(val); setSaving(true);
+    await sb.from('trip_members').update({ progress: val }).eq('trip_id', trip.id).eq('user_id', uid);
+    setSaving(false);
+  }
+
+  const membersWithGps = members.filter(m => m.lat && m.lng);
+
+  return (
+    <>
+      {/* GPS status bar */}
+      <div className="gps-status">
+        <div className={'gps-dot ' + gpsStatus}/>
+        {gpsStatus === 'active' && <span style={{color:'var(--green)',fontWeight:600}}>📡 GPS Active — sharing location</span>}
+        {gpsStatus === 'denied' && <span style={{color:'var(--red)'}}>📵 GPS denied — enable in browser settings</span>}
+        {gpsStatus === 'pending' && <span style={{color:'var(--orange)'}}>⏳ Requesting GPS…</span>}
+        {membersWithGps.length > 0 && <span style={{marginLeft:'auto',color:'var(--muted)',fontSize:12}}>{membersWithGps.length} live on map</span>}
+      </div>
+
+      {/* Leaflet map */}
+      <div id="tracker-map" />
+
+      {/* Progress slider */}
+      <div className="card">
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+          <div className="card-title" style={{margin:0}}>My Journey Progress</div>
+          {saving && <span style={{fontSize:12,color:'var(--muted)'}}>Saving…</span>}
+        </div>
+        <input type="range" min="0" max="100" value={myProgress}
+          onChange={e => updateProgress(Number(e.target.value))}
+          style={{width:'100%',accentColor:'var(--orange)'}}/>
+        <div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'var(--muted)',marginTop:4}}>
+          <span>🏠 Start</span>
+          <span style={{color:'var(--orange)',fontWeight:700}}>{myProgress}% done</span>
+          <span>📍 {trip.destination}</span>
+        </div>
+      </div>
+
+      {/* Member list */}
+      <div className="card">
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
+          <div className="card-title" style={{margin:0}}>Group ({members.length})</div>
+          <span style={{fontSize:12,color:'var(--muted)'}}>Updates every 10s</span>
+        </div>
+        {members.map((m, i) => (
+          <div key={m.id} className="member-row">
+            <div style={{width:40,height:40,borderRadius:'50%',background:m.profiles?.avatar_color||COLORS[i%COLORS.length],display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:700,color:'#fff',flexShrink:0}}>
+              {initials(m.profiles?.name||'?')}
+            </div>
+            <div className="m-info">
+              <div className="m-name">{m.profiles?.name||'Unknown'}</div>
+              <div className="m-city">
+                {transIcons[m.transport_mode]||'✈️'} from {m.from_city}
+                {m.lat && m.lng
+                  ? <span style={{color:'var(--green)',marginLeft:6,fontWeight:600}}>📡 Live{m.last_seen ? ' · '+timeSince(new Date(m.last_seen)) : ''}</span>
+                  : <span style={{color:'var(--muted)',marginLeft:6}}>No GPS</span>
+                }
+              </div>
+              <div className="prog-bar"><div className="prog-fill" style={{width:(m.progress||0)+'%'}}/></div>
+            </div>
+            <div style={{textAlign:'right',flexShrink:0}}>
+              <span className={'m-role '+m.role}>{m.role==='coordinator'?'👑 Host':'👤 Member'}</span>
+              <div style={{fontSize:12,color:'var(--orange)',fontWeight:700,marginTop:4}}>{m.progress||0}%</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   PLACES SCREEN
+══════════════════════════════════════════ */
+function PlacesScreen({ places, setPlaces, trip, members }) {
+  function vote(id, dir) { setPlaces(prev => prev.map(p => p.id===id ? {...p,votes:(p.votes||0)+dir} : p)); }
+  const sorted = [...places].sort((a,b) => (b.votes||0)-(a.votes||0));
+  return (
+    <>
+      <div className="sec-header"><div className="sec-title">📍 Places to Explore</div><span className="chip orange">{trip.destination}</span></div>
+      <div style={{fontSize:13,color:'var(--muted)',marginBottom:12}}>Vote for places you want to visit with the group!</div>
+      {sorted.map(p => (
+        <div key={p.id} className="place-card">
+          <div className="place-img" style={{background:p.bg}}>{p.emoji}</div>
+          <div className="place-body">
+            <div className="place-name">{p.name}</div><span className="chip">{p.cat}</span>
+            <div className="vote-bar">
+              <button className="vote-btn vote-up" onClick={() => vote(p.id,1)}>👍</button>
+              <button className="vote-btn vote-dn" onClick={() => vote(p.id,-1)}>👎</button>
+              <span className="vote-count">{(p.votes||0)>=0?'+':''}{p.votes||0} votes</span>
+            </div>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   HOTELS SCREEN
+══════════════════════════════════════════ */
+function HotelsScreen({ trip, members }) {
+  const count = members.length || 4;
+  return (
+    <>
+      <div className="sec-header"><div className="sec-title">🏨 Hotels</div><span className="chip">{count} people</span></div>
+      {HOTELS.map(h => (
+        <div key={h.id} className="hotel-card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+            <div><div className="hotel-name">{h.name}</div><div className="hotel-stars">{'⭐'.repeat(h.stars)}</div></div>
+            <div style={{textAlign:'right'}}><div className="hotel-price">{fmtCurrency(h.price)}<span style={{fontSize:12,fontWeight:400}}>/night</span></div><div className="hotel-per">{fmtCurrency(Math.round(h.price/count))} per person</div></div>
+          </div>
+          <div className="hotel-tags">{h.tags.map(t => <span key={t} className="hotel-tag">{t}</span>)}</div>
+          <div style={{display:'flex',gap:8}}>
+            <button className="btn btn-navy btn-sm" onClick={() => window.open(`https://www.google.com/search?q=${encodeURIComponent(h.name+' '+trip.destination)}`)}>View Hotel</button>
+            <button className="btn btn-outline btn-sm">Add to Trip</button>
+          </div>
+        </div>
+      ))}
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   COST SPLIT SCREEN
+══════════════════════════════════════════ */
+function CostScreen({ trip, members, expenses, setExpenses, session, profile, showAddExp, setShowAddExp }) {
+  const [title, setTitle] = useState('');
+  const [amount, setAmount] = useState('');
+  const [loading, setLoading] = useState(false);
+  const total = expenses.reduce((s,e) => s+Number(e.amount), 0);
+  const perPerson = members.length > 0 ? Math.round(total/members.length) : 0;
+
+  async function addExpense() {
+    if (!title || !amount) return;
+    setLoading(true);
+    const { data } = await sb.from('expenses').insert({ trip_id:trip.id, title, amount:Number(amount), paid_by:session.user.id }).select('*, profiles(name,avatar_color)').single();
+    if (data) { setExpenses(prev => [...prev, data]); setTitle(''); setAmount(''); setShowAddExp(false); }
+    setLoading(false);
+  }
+
+  return (
+    <>
+      <div className="total-card"><div className="total-label">Total Trip Spend</div><div className="total-amt">{fmtCurrency(total)}</div>{members.length>0 && <div className="total-pp">{fmtCurrency(perPerson)} per person ({members.length} members)</div>}</div>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:12}}>
+        <div className="sec-title">💸 Expenses</div>
+        <button className="btn btn-primary btn-sm" onClick={() => setShowAddExp(!showAddExp)}>+ Add</button>
+      </div>
+      {showAddExp && (
+        <div className="card" style={{marginBottom:12}}>
+          <div className="card-title">Add Expense</div>
+          <div className="form-group"><label className="form-label">What was it for?</label><input className="form-input" placeholder="Flight tickets, Hotel, Food…" value={title} onChange={e => setTitle(e.target.value)} /></div>
+          <div className="form-group"><label className="form-label">Total Amount (₹)</label><input className="form-input" placeholder="5000" type="number" value={amount} onChange={e => setAmount(e.target.value)} /></div>
+          {members.length>0 && amount && <div style={{background:'#FFF3E0',borderRadius:8,padding:'8px 12px',fontSize:13,color:'var(--orange)',fontWeight:600,marginBottom:10}}>= {fmtCurrency(Math.round(Number(amount)/members.length))} per person</div>}
+          <button className="btn btn-green" onClick={addExpense} disabled={loading}>{loading ? '⏳ Saving…' : '✅ Add Expense'}</button>
+        </div>
+      )}
+      {expenses.length===0 ? <div className="empty-state" style={{padding:'24px 0'}}><div className="empty-icon">💸</div><div className="empty-sub">No expenses yet. Add your first one!</div></div>
+        : <div className="card">{expenses.map((e,i) => (<div key={e.id||i} className="exp-row"><div><div className="exp-title">{e.title}</div><div className="exp-paid">Paid by {e.profiles?.name||'You'}</div></div><div style={{textAlign:'right'}}><div className="exp-amt">{fmtCurrency(e.amount)}</div>{members.length>0 && <div className="exp-pp">{fmtCurrency(Math.round(Number(e.amount)/members.length))}/person</div>}</div></div>))}</div>
+      }
+      {members.length>0 && expenses.length>0 && (
+        <div className="card"><div className="card-title">Balance Sheet</div>
+          {members.map((m,i) => {
+            const paid = expenses.filter(e => e.paid_by===m.user_id).reduce((s,e) => s+Number(e.amount),0);
+            const owes = perPerson - paid;
+            return (<div key={m.id} className="member-row">
+              <div style={{width:36,height:36,borderRadius:'50%',background:m.profiles?.avatar_color||COLORS[i%COLORS.length],display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:'#fff'}}>{initials(m.profiles?.name||'?')}</div>
+              <div className="m-info"><div className="m-name">{m.profiles?.name||'Unknown'}</div><div className="m-city">Paid: {fmtCurrency(paid)}</div></div>
+              <div style={{textAlign:'right'}}>{owes>0 ? <span style={{color:'var(--red)',fontWeight:700,fontSize:13}}>Owes {fmtCurrency(owes)}</span> : <span style={{color:'var(--green)',fontWeight:700,fontSize:13}}>Gets {fmtCurrency(Math.abs(owes))}</span>}</div>
+            </div>);
+          })}
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   AI CHAT SCREEN
+══════════════════════════════════════════ */
+function AiChatScreen({ trip }) {
+  const [messages, setMessages] = useState([{role:'ai',text:`Hi! 👋 I'm your SafarNama AI assistant. I can help you plan your trip to ${trip.destination}. Ask me anything — budget, places, hotels, best time to go!`}]);
+  const [input, setInput] = useState('');
+  const [thinking, setThinking] = useState(false);
+  const endRef = useRef(null);
+  function send() {
+    if (!input.trim() || thinking) return;
+    const q = input.trim();
+    setMessages(prev => [...prev, {role:'user',text:q}]);
+    setInput(''); setThinking(true);
+    setTimeout(() => {
+      const key = Object.keys(AI_RESPONSES).find(k => q.toLowerCase().includes(k));
+      const reply = key ? AI_RESPONSES[key] : `Great question about ${trip.destination}! 🌍 I'd suggest exploring local cuisine, checking weather, and booking early for best deals.`;
+      setMessages(prev => [...prev, {role:'ai',text:reply}]);
+      setThinking(false);
+      setTimeout(() => endRef.current?.scrollIntoView({behavior:'smooth'}), 100);
+    }, 900);
+  }
+  return (
+    <>
+      <div className="chat-area">
+        {messages.map((m,i) => <div key={i} className={'chat-bubble chat-'+(m.role==='ai'?'ai':'user')}>{m.text}</div>)}
+        {thinking && <div className="chat-bubble chat-ai" style={{opacity:.6}}>⏳ Thinking…</div>}
+        <div ref={endRef}/>
+      </div>
+      <div className="chat-input-row">
+        <input className="chat-input" placeholder="Ask about budget, hotels, places…" value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key==='Enter' && send()} />
+        <button className="chat-send" onClick={send}>➤</button>
+      </div>
+      <div style={{marginTop:10,display:'flex',gap:8,flexWrap:'wrap'}}>
+        {['budget','best time','places','hotel','transport'].map(q => <button key={q} className="chip" style={{cursor:'pointer'}} onClick={() => setInput(q)}>{q}</button>)}
+      </div>
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   INVITE MODAL
+══════════════════════════════════════════ */
+function InviteModal({ trip, onClose }) {
+  const [copied, setCopied] = useState(false);
+  const link = getInviteUrl(trip.invite_code);
+  const waText = encodeURIComponent(`🌍 Join my SafarNama trip to ${trip.destination}!\nClick to join: ${link}\nInvite code: ${trip.invite_code}`);
+  function copyCode() { navigator.clipboard.writeText(trip.invite_code).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }); }
+  function copyLink() { navigator.clipboard.writeText(link).then(() => { setCopied(true); setTimeout(() => setCopied(false), 2000); }); }
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-sheet" onClick={e => e.stopPropagation()}>
+        <div className="modal-handle"/>
+        <div className="modal-title">Invite Friends 📨</div>
+        <div className="modal-sub">Share the invite code or link with your group</div>
+        <div style={{fontSize:13,color:'var(--muted)',marginBottom:6,fontWeight:600}}>INVITE CODE</div>
+        <div className="invite-code-box"><div className="invite-code">{trip.invite_code}</div><button className="copy-btn" onClick={copyCode}>{copied?'✅ Copied!':'Copy'}</button></div>
+        <div style={{fontSize:13,color:'var(--muted)',marginBottom:6,fontWeight:600}}>OR SHARE LINK</div>
+        <div className="invite-link-box">{link}</div>
+        <button className="btn btn-outline" style={{marginBottom:10}} onClick={copyLink}>📋 Copy Link</button>
+        <button className="btn btn-wa" onClick={() => window.open(`https://wa.me/?text=${waText}`,'_blank')}><span style={{fontSize:20}}>💬</span> Send via WhatsApp</button>
+        <div style={{height:10}}/>
+        <button className="btn" style={{background:'#F0F2F8',color:'var(--muted)'}} onClick={onClose}>Close</button>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   PROFILE SCREEN
+══════════════════════════════════════════ */
+function ProfileScreen({ profile, session, setScr, setSession }) {
+  async function logout() { await sb.auth.signOut(); setSession(null); setScr('auth'); }
+  return (
+    <div>
+      <div className="back-nav">
+        <button className="back-btn" onClick={() => setScr('dashboard')}>←</button>
+        <div className="back-title">Profile</div>
+        <div style={{width:30}}/>
+      </div>
+      <div className="mobile-wrap screen-inner" style={{paddingBottom:20}}>
+        <div className="profile-header">
+          <div className="profile-avatar-big" style={{background:profile?.avatar_color||'#F7941D'}}>{initials(profile?.name||'?')}</div>
+          <div className="profile-name">{profile?.name}</div>
+          <div className="profile-email">{session?.user?.email}</div>
+          {profile?.phone && <div style={{marginTop:4,fontSize:13,opacity:.7}}>📱 {profile.phone}</div>}
+        </div>
+        <div className="card">
+          <div className="card-title">Account Info</div>
+          <div style={{fontSize:14,color:'var(--muted)',lineHeight:2}}>
+            <div><strong>Name:</strong> {profile?.name}</div>
+            <div><strong>Email:</strong> {session?.user?.email}</div>
+            <div><strong>Phone:</strong> {profile?.phone||'—'}</div>
+            <div><strong>Member since:</strong> {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '—'}</div>
+          </div>
+        </div>
+        <button className="btn btn-outline" style={{borderColor:'var(--red)',color:'var(--red)'}} onClick={logout}>🚪 Logout</button>
+      </div>
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   ADMIN SCREEN
+══════════════════════════════════════════ */
+const ADMIN_EMAIL = 'ankallaashoka101@gmail.com';
+function AdminScreen({ session, setScr }) {
+  const [stats, setStats] = useState({users:0,trips:0,members:0,spend:0});
+  const [users, setUsers] = useState([]);
+  const [allTrips, setAllTrips] = useState([]);
+  const [exps, setExps] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => { loadAdmin(); }, []);
+  async function loadAdmin() {
+    setLoading(true);
+    const [{data:expData},{data:profileData},{data:tripData},{data:expTable},{data:memberData}] = await Promise.all([
+      sb.from('expenses').select('amount,trip_id'),
+      sb.from('profiles').select('*').order('created_at',{ascending:false}),
+      sb.from('trips').select('*,profiles(name)').order('created_at',{ascending:false}),
+      sb.from('expenses').select('*,profiles(name,avatar_color),trips(destination)').order('created_at',{ascending:false}).limit(30),
+      sb.from('trip_members').select('trip_id,user_id,role'),
+    ]);
+    const totalSpend = (expData||[]).reduce((s,e) => s+Number(e.amount),0);
+    setStats({users:(profileData||[]).length,trips:(tripData||[]).length,members:(memberData||[]).length,spend:totalSpend});
+    const tcByUser={};
+    (memberData||[]).forEach(m => { tcByUser[m.user_id]=(tcByUser[m.user_id]||0)+1; });
+    setUsers((profileData||[]).map(p => ({...p,tripCount:tcByUser[p.id]||0})));
+    const mcByTrip={},spByTrip={};
+    (memberData||[]).forEach(m => { mcByTrip[m.trip_id]=(mcByTrip[m.trip_id]||0)+1; });
+    (expData||[]).forEach(e => { spByTrip[e.trip_id]=(spByTrip[e.trip_id]||0)+Number(e.amount); });
+    setAllTrips((tripData||[]).map(t => ({...t,memberCount:mcByTrip[t.id]||0,spend:spByTrip[t.id]||0})));
+    setExps(expTable||[]);
+    setLoading(false);
+  }
+  if (session?.user?.email !== ADMIN_EMAIL) return (
+    <div><div className="back-nav"><button className="back-btn" onClick={() => setScr('dashboard')}>←</button><div className="back-title">Admin</div><div style={{width:30}}/></div>
+    <div className="mobile-wrap" style={{textAlign:'center',paddingTop:40}}><div style={{fontSize:48}}>🔒</div><div style={{fontSize:18,fontWeight:800,marginTop:12}}>Access Denied</div></div></div>
+  );
+  return (
+    <div>
+      <div className="back-nav">
+        <button className="back-btn" onClick={() => setScr('dashboard')}>←</button>
+        <div className="back-title">🛡️ Admin Panel</div>
+        <button style={{background:'none',border:'none',color:'rgba(255,255,255,.7)',fontSize:18,cursor:'pointer'}} onClick={loadAdmin}>⟳</button>
+      </div>
+      <div className="mobile-wrap screen-inner" style={{paddingBottom:20}}>
+        {loading ? <div style={{textAlign:'center',paddingTop:40,color:'var(--muted)'}}>Loading…</div> : (
+          <>
+            <div className="admin-stat-grid">
+              <div className="admin-stat"><div className="admin-stat-val">{stats.users}</div><div className="admin-stat-label">👥 Users</div></div>
+              <div className="admin-stat"><div className="admin-stat-val">{stats.trips}</div><div className="admin-stat-label">✈️ Trips</div></div>
+              <div className="admin-stat"><div className="admin-stat-val">{stats.members}</div><div className="admin-stat-label">🤝 Memberships</div></div>
+              <div className="admin-stat" style={{background:'linear-gradient(135deg,#d97706,#f59e0b)'}}><div className="admin-stat-val">₹{stats.spend>=1000?(stats.spend/1000).toFixed(1)+'K':stats.spend}</div><div className="admin-stat-label">💸 Total Spend</div></div>
+            </div>
+            <div className="admin-section">👥 Users ({users.length})</div>
+            <div className="card" style={{padding:'0 4px'}}>
+              <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Name</th><th>Phone</th><th>Trips</th><th>Joined</th></tr></thead><tbody>
+                {users.length===0 && <tr><td colSpan={4} style={{textAlign:'center',color:'var(--muted)',padding:16}}>No users yet</td></tr>}
+                {users.map((u,i) => <tr key={u.id}><td><div style={{display:'flex',alignItems:'center',gap:6}}><div style={{width:26,height:26,borderRadius:'50%',background:u.avatar_color||COLORS[i%COLORS.length],display:'flex',alignItems:'center',justifyContent:'center',fontSize:10,fontWeight:700,color:'#fff',flexShrink:0}}>{initials(u.name)}</div><span style={{fontWeight:600,fontSize:13}}>{u.name}</span></div></td><td style={{color:'var(--muted)'}}>{u.phone||'—'}</td><td><span style={{background:'#EFF6FF',color:'var(--navy)',padding:'2px 8px',borderRadius:8,fontSize:11,fontWeight:700}}>{u.tripCount}</span></td><td style={{color:'var(--muted)',fontSize:11}}>{new Date(u.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short'})}</td></tr>)}
+              </tbody></table></div>
+            </div>
+            <div className="admin-section">✈️ Trips ({allTrips.length})</div>
+            <div className="card" style={{padding:'0 4px'}}>
+              <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Destination</th><th>Code</th><th>👥</th><th>Spend</th></tr></thead><tbody>
+                {allTrips.length===0 && <tr><td colSpan={4} style={{textAlign:'center',color:'var(--muted)',padding:16}}>No trips yet</td></tr>}
+                {allTrips.map(t => <tr key={t.id}><td><span style={{fontWeight:700}}>📍 {t.destination}</span><div style={{fontSize:10,color:'var(--muted)'}}>{t.name}</div></td><td><code style={{background:'#F0F2F8',padding:'2px 6px',borderRadius:4,fontSize:11,fontWeight:700,letterSpacing:1}}>{t.invite_code}</code></td><td style={{fontWeight:700,color:'var(--navy)'}}>{t.memberCount}</td><td style={{color:'var(--green)',fontWeight:700,fontSize:12}}>{fmtCurrency(t.spend)}</td></tr>)}
+              </tbody></table></div>
+            </div>
+            <div className="admin-section">💸 Recent Expenses</div>
+            <div className="card" style={{padding:'0 4px'}}>
+              <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>Item</th><th>Trip</th><th>By</th><th>₹</th></tr></thead><tbody>
+                {exps.length===0 && <tr><td colSpan={4} style={{textAlign:'center',color:'var(--muted)',padding:16}}>No expenses yet</td></tr>}
+                {exps.map((e,i) => <tr key={e.id||i}><td style={{fontWeight:600}}>{e.title}</td><td style={{color:'var(--muted)',fontSize:11}}>{e.trips?.destination||'—'}</td><td style={{fontSize:11}}>{e.profiles?.name||'—'}</td><td style={{color:'var(--orange)',fontWeight:800}}>{fmtCurrency(e.amount)}</td></tr>)}
+              </tbody></table></div>
+            </div>
+            <div style={{textAlign:'center',marginTop:12,fontSize:12,color:'var(--muted)'}}>For full charts open safarnama_analytics.html</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ── Mount ── */
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
 </script>
 </body>
 </html>

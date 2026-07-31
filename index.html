@@ -4,6 +4,11 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>SafarNama – AI Group Travel</title>
+<meta name="theme-color" content="#1B2B6B"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="SafarNama"/>
+<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;SafarNama&quot;,&quot;short_name&quot;:&quot;SafarNama&quot;,&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%231B2B6B&quot;,&quot;theme_color&quot;:&quot;%231B2B6B&quot;,&quot;description&quot;:&quot;AI-powered group travel planner&quot;}"/>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -240,6 +245,78 @@ input,textarea,select{font-family:inherit;outline:none;}
 .ai-response{background:#fff;border-radius:16px;padding:18px;margin-top:14px;box-shadow:0 4px 20px rgba(0,0,0,.1);border-left:4px solid var(--teal);animation:fadeUp .3s ease;}
 .ai-response-title{font-size:13px;font-weight:700;color:var(--teal);margin-bottom:8px;}
 .ai-response-text{font-size:14px;line-height:1.6;color:var(--text);}
+
+/* ── NOTIFICATION BELL ── */
+.notif-bell{position:relative;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;padding:4px;}
+.notif-badge{position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
+.notif-dropdown{position:absolute;right:0;top:calc(100% + 8px);width:320px;background:#fff;border-radius:16px;box-shadow:0 8px 30px rgba(0,0,0,.15);border:1px solid var(--border);z-index:500;overflow:hidden;}
+.notif-header{padding:12px 16px;font-size:13px;font-weight:700;color:var(--navy);border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+.notif-item{padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .15s;}
+.notif-item:hover{background:#F8F9FA;}
+.notif-item.unread{background:#FFF8F0;}
+.notif-msg{font-size:13px;color:var(--text);line-height:1.4;}
+.notif-time{font-size:11px;color:var(--muted);margin-top:3px;}
+.notif-empty{padding:24px;text-align:center;color:var(--muted);font-size:13px;}
+
+/* ── VOTING SCREEN ── */
+.vote-category{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.vote-cat-title{font-size:15px;font-weight:800;color:var(--navy);margin-bottom:12px;}
+.vote-options{display:flex;flex-direction:column;gap:8px;}
+.vote-option{padding:12px 14px;border-radius:10px;border:2px solid var(--border);background:#fff;font-size:14px;font-weight:500;text-align:left;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:space-between;}
+.vote-option:hover{border-color:var(--orange);background:#FFF8F0;}
+.vote-option.selected{border-color:var(--teal);background:#F0FDFA;color:var(--teal);font-weight:700;}
+.vote-option .vote-tally{font-size:12px;color:var(--muted);font-weight:600;}
+.vote-option.selected .vote-tally{color:var(--teal);}
+.consensus-box{background:linear-gradient(135deg,var(--navy),#2a3f8f);border-radius:16px;padding:16px;color:#fff;margin-bottom:12px;}
+.consensus-title{font-size:13px;opacity:.8;margin-bottom:6px;}
+.consensus-text{font-size:14px;line-height:1.6;}
+.vote-bar-outer{height:6px;background:#E5E7EB;border-radius:3px;flex:1;overflow:hidden;}
+.vote-bar-inner{height:100%;background:var(--teal);border-radius:3px;transition:width .5s ease;}
+
+/* ── ITINERARY SCREEN ── */
+.itin-day{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
+.itin-day-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.itin-day-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.itin-day-title{font-size:15px;font-weight:800;color:var(--navy);}
+.itin-activity{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.itin-activity:last-child{border-bottom:none;}
+.itin-time{font-size:12px;color:var(--muted);font-weight:600;min-width:52px;}
+.itin-desc{font-size:13px;color:var(--text);line-height:1.5;}
+
+/* ── UPI / PAYMENT ── */
+.pay-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1.5px solid #00BA60;background:#F0FFF4;color:#00874A;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
+.pay-btn:hover{background:#00BA60;color:#fff;}
+.pay-apps{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px;}
+.pay-app{padding:5px 10px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;border:none;}
+.pay-gpay{background:#4285F4;color:#fff;}
+.pay-phonepe{background:#5F259F;color:#fff;}
+.pay-paytm{background:#002970;color:#fff;}
+
+/* ── PREFERENCES ── */
+.pref-pills{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px;}
+.pref-pill{padding:6px 12px;border-radius:20px;font-size:12px;font-weight:600;border:1.5px solid var(--border);background:#fff;cursor:pointer;transition:all .2s;}
+.pref-pill.selected{border-color:var(--teal);background:#F0FDFA;color:var(--teal);}
+
+/* ── MOBILE RESPONSIVE ── */
+@media(max-width:768px){
+  .top-navbar{padding:0 14px;gap:4px;}
+  .nav-links{display:none;}
+  .hero{padding:28px 16px 24px;}
+  .hero-title{font-size:22px;}
+  .ai-creator-fields{flex-direction:column;}
+  .ai-creator-inp-wrap{min-width:100%;}
+  .ai-creator-btn{width:100%;}
+  .page-body{padding:20px 14px 100px;}
+  .quick-actions{flex-direction:column;}
+  .trips-grid{grid-template-columns:1fr;}
+  .hero::before,.hero::after{display:none;}
+}
+@media(max-width:480px){
+  .top-navbar{height:56px;}
+  .nav-brand{font-size:17px;}
+  .form-row{grid-template-columns:1fr;}
+  .admin-stat-grid{grid-template-columns:1fr 1fr;}
+}
 </style>
 </head>
 <body>
@@ -443,6 +520,25 @@ function App() {
   const [showAddExp, setShowAddExp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState('');
+  const [notifications, setNotifications] = useState([]);
+
+  async function loadNotifications(uid) {
+    const { data } = await sb.from('notifications').select('*').eq('user_id', uid).order('created_at', { ascending: false }).limit(20);
+    if (data) setNotifications(data);
+  }
+
+  async function markAllRead(uid) {
+    await sb.from('notifications').update({ read: true }).eq('user_id', uid);
+    setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+  }
+
+  async function sendNotifications(tripId, membersList, fromUserId, message) {
+    const targets = (membersList || []).filter(m => m.user_id !== fromUserId);
+    if (!targets.length) return;
+    await Promise.all(targets.map(m =>
+      sb.from('notifications').insert({ trip_id: tripId, user_id: m.user_id, message, read: false })
+    ));
+  }
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -469,6 +565,7 @@ function App() {
     if (data) {
       setProfile(data);
       await loadTrips(uid);
+      loadNotifications(uid);
       const pending = sessionStorage.getItem('pendingInvite');
       if (pending) { sessionStorage.removeItem('pendingInvite'); await joinTripByCode(pending, uid, data); }
       setScr('dashboard');
@@ -502,14 +599,14 @@ function App() {
   if (scr === 'join-trip') return <JoinTripScreen session={session} profile={profile} setScr={setScr} loadTrips={loadTrips} />;
   if (scr === 'profile-scr') return <ProfileScreen profile={profile} session={session} setScr={setScr} setSession={setSession} />;
   if (scr === 'admin-scr') return <AdminScreen session={session} setScr={setScr} />;
-  if (scr === 'dashboard') return <DashboardScreen profile={profile} trips={trips} session={session} setScr={setScr} loadTripData={loadTripData} />;
+  if (scr === 'dashboard') return <DashboardScreen profile={profile} trips={trips} session={session} setScr={setScr} loadTripData={loadTripData} notifications={notifications} markAllRead={uid => markAllRead(uid)} />;
 
   if (!currentTrip) { setScr('dashboard'); return null; }
 
   const tripNav = (
     <div className="bottom-nav">
-      {[{id:'tracker',icon:'🗺️',label:'Track'},{id:'places',icon:'📍',label:'Places'},
-        {id:'hotels',icon:'🏨',label:'Hotels'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI Help'}]
+      {[{id:'tracker',icon:'🗺️',label:'Track'},{id:'voting',icon:'🗳️',label:'Vote'},
+        {id:'itinerary',icon:'📋',label:'Plan'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI'}]
         .map(n => (
         <button key={n.id} className={'bn-item'+(scr===n.id?' active':'')} onClick={() => setScr(n.id)}>
           <span className="bn-icon">{n.icon}</span>{n.label}
@@ -533,7 +630,9 @@ function App() {
         {scr === 'tracker' && <TrackerScreen trip={currentTrip} members={members} session={session} profile={profile} loadTripData={loadTripData} />}
         {scr === 'places' && <PlacesScreen places={places} setPlaces={setPlaces} trip={currentTrip} members={members} />}
         {scr === 'hotels' && <HotelsScreen trip={currentTrip} members={members} />}
-        {scr === 'cost' && <CostScreen trip={currentTrip} members={members} expenses={expenses} setExpenses={setExpenses} session={session} profile={profile} showAddExp={showAddExp} setShowAddExp={setShowAddExp} />}
+        {scr === 'cost' && <CostScreen trip={currentTrip} members={members} expenses={expenses} setExpenses={setExpenses} session={session} profile={profile} showAddExp={showAddExp} setShowAddExp={setShowAddExp} sendNotifications={sendNotifications} />}
+        {scr === 'voting' && <VotingScreen trip={currentTrip} members={members} session={session} sendNotifications={sendNotifications} />}
+        {scr === 'itinerary' && <ItineraryScreen trip={currentTrip} members={members} />}
         {scr === 'ai-chat' && <AiChatScreen trip={currentTrip} />}
       </div>
       {tripNav}
@@ -623,7 +722,7 @@ function AuthScreen({ authMode, setAuthMode, setScr, setProfile, setSession }) {
 /* ══════════════════════════════════════════
    DASHBOARD SCREEN (new desktop design)
 ══════════════════════════════════════════ */
-function DashboardScreen({ profile, trips, session, setScr, loadTripData }) {
+function DashboardScreen({ profile, trips, session, setScr, loadTripData, notifications, markAllRead }) {
   const [tapCount, setTapCount] = useState(0);
   const tapTimer = useRef(null);
   const [aiFrom, setAiFrom] = useState('');
@@ -679,6 +778,7 @@ function DashboardScreen({ profile, trips, session, setScr, loadTripData }) {
           {session?.user?.email === 'ankallaashoka101@gmail.com' && (
             <button className="nav-link" onClick={() => setScr('admin-scr')}>🛡️ Admin</button>
           )}
+          <NotificationBell notifications={notifications} session={session} markAllRead={markAllRead} />
           <div
             className="nav-avatar"
             style={{background: profile.avatar_color||'#F7941D'}}
@@ -1170,7 +1270,7 @@ function HotelsScreen({ trip, members }) {
 /* ══════════════════════════════════════════
    COST SPLIT SCREEN
 ══════════════════════════════════════════ */
-function CostScreen({ trip, members, expenses, setExpenses, session, profile, showAddExp, setShowAddExp }) {
+function CostScreen({ trip, members, expenses, setExpenses, session, profile, showAddExp, setShowAddExp, sendNotifications }) {
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
@@ -1212,7 +1312,20 @@ function CostScreen({ trip, members, expenses, setExpenses, session, profile, sh
             return (<div key={m.id} className="member-row">
               <div style={{width:36,height:36,borderRadius:'50%',background:m.profiles?.avatar_color||COLORS[i%COLORS.length],display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:'#fff'}}>{initials(m.profiles?.name||'?')}</div>
               <div className="m-info"><div className="m-name">{m.profiles?.name||'Unknown'}</div><div className="m-city">Paid: {fmtCurrency(paid)}</div></div>
-              <div style={{textAlign:'right'}}>{owes>0 ? <span style={{color:'var(--red)',fontWeight:700,fontSize:13}}>Owes {fmtCurrency(owes)}</span> : <span style={{color:'var(--green)',fontWeight:700,fontSize:13}}>Gets {fmtCurrency(Math.abs(owes))}</span>}</div>
+              <div style={{textAlign:'right'}}>
+                {owes>0 ? (
+                  <div>
+                    <div style={{color:'var(--red)',fontWeight:700,fontSize:13}}>Owes {fmtCurrency(owes)}</div>
+                    {m.user_id === session?.user?.id && (
+                      <div className="pay-apps" style={{justifyContent:'flex-end'}}>
+                        <button className="pay-app pay-gpay" onClick={() => window.open(`upi://pay?pn=SafarNama&am=${owes}&cu=INR&tn=Trip+expense+settlement`)}>GPay</button>
+                        <button className="pay-app pay-phonepe" onClick={() => window.open(`upi://pay?pn=SafarNama&am=${owes}&cu=INR&tn=Trip+expense+settlement`)}>PhonePe</button>
+                        <button className="pay-app pay-paytm" onClick={() => window.open(`upi://pay?pn=SafarNama&am=${owes}&cu=INR&tn=Trip+expense+settlement`)}>Paytm</button>
+                      </div>
+                    )}
+                  </div>
+                ) : <span style={{color:'var(--green)',fontWeight:700,fontSize:13}}>Gets {fmtCurrency(Math.abs(owes))}</span>}
+              </div>
             </div>);
           })}
         </div>
@@ -1262,6 +1375,288 @@ function AiChatScreen({ trip }) {
       <div style={{marginTop:10,display:'flex',gap:8,flexWrap:'wrap'}}>
         {['budget','best time','places','hotel','transport'].map(q => <button key={q} className="chip" style={{cursor:'pointer'}} onClick={() => setInput(q)}>{q}</button>)}
       </div>
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   NOTIFICATION BELL
+══════════════════════════════════════════ */
+function NotificationBell({ notifications, session, markAllRead }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+  const unread = (notifications || []).filter(n => !n.read).length;
+
+  useEffect(() => {
+    function handleClick(e) { if (ref.current && !ref.current.contains(e.target)) setOpen(false); }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
+  function toggle() {
+    setOpen(o => !o);
+    if (!open && unread > 0 && session?.user?.id) markAllRead(session.user.id);
+  }
+
+  function timeAgo(ts) {
+    const s = Math.floor((Date.now() - new Date(ts)) / 1000);
+    if (s < 60) return 'just now';
+    if (s < 3600) return `${Math.floor(s/60)}m ago`;
+    if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+    return `${Math.floor(s/86400)}d ago`;
+  }
+
+  return (
+    <div style={{position:'relative'}} ref={ref}>
+      <button className="notif-bell" onClick={toggle} title="Notifications">
+        🔔
+        {unread > 0 && <span className="notif-badge">{unread > 9 ? '9+' : unread}</span>}
+      </button>
+      {open && (
+        <div className="notif-dropdown">
+          <div className="notif-header">
+            <span>Notifications</span>
+            {unread > 0 && <span style={{fontSize:11,color:'var(--teal)',fontWeight:600,cursor:'pointer'}}>Mark all read</span>}
+          </div>
+          {(!notifications || notifications.length === 0) ? (
+            <div className="notif-empty">🔔 No notifications yet</div>
+          ) : (
+            notifications.slice(0, 8).map(n => (
+              <div key={n.id} className={'notif-item' + (n.read ? '' : ' unread')}>
+                <div className="notif-msg">{n.message}</div>
+                <div className="notif-time">{timeAgo(n.created_at)}</div>
+              </div>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ══════════════════════════════════════════
+   VOTING SCREEN
+══════════════════════════════════════════ */
+function VotingScreen({ trip, members, session, sendNotifications }) {
+  const [votes, setVotes] = useState([]);
+  const [myVotes, setMyVotes] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [consensus, setConsensus] = useState('');
+  const [generating, setGenerating] = useState(false);
+  const uid = session?.user?.id;
+
+  const categories = [
+    { id: 'destination', label: '📍 Destination options', options: [`${trip.destination}`, 'Goa, India', 'Manali, Himachal Pradesh', 'Pondicherry', 'Coorg, Karnataka'] },
+    { id: 'transport', label: '🚗 How do we travel?', options: ['✈️ Flight', '🚂 Train', '🚌 Bus', '🚗 Self-drive'] },
+    { id: 'hotel', label: '🏨 Where do we stay?', options: ['Budget guesthouse (₹500-1000/night)', 'Mid-range hotel (₹1500-3000/night)', 'Premium resort (₹4000+/night)', 'Airbnb/Villa'] },
+    { id: 'dates', label: '📅 When do we go?', options: [trip.start_date ? `Planned: ${trip.start_date}` : 'This weekend', 'Next weekend', 'Next month', 'Flexible — whenever works'] },
+  ];
+
+  useEffect(() => { loadVotes(); }, [trip.id]);
+
+  async function loadVotes() {
+    setLoading(true);
+    const { data } = await sb.from('trip_votes').select('*').eq('trip_id', trip.id);
+    if (data) {
+      setVotes(data);
+      const mine = {};
+      data.filter(v => v.user_id === uid).forEach(v => { mine[v.category] = v.option_text; });
+      setMyVotes(mine);
+    }
+    setLoading(false);
+  }
+
+  async function castVote(category, option) {
+    const prev = myVotes[category];
+    setMyVotes(m => ({ ...m, [category]: option }));
+    const { data } = await sb.from('trip_votes').upsert(
+      { trip_id: trip.id, user_id: uid, category, option_text: option },
+      { onConflict: 'trip_id,user_id,category' }
+    ).select();
+    await loadVotes();
+    if (prev !== option) {
+      const myName = members.find(m => m.user_id === uid)?.profiles?.name || 'Someone';
+      await sendNotifications(trip.id, members, uid, `${myName} voted for "${option}" in ${trip.destination} trip`);
+    }
+  }
+
+  async function getAIConsensus() {
+    setGenerating(true); setConsensus('');
+    const summary = categories.map(cat => {
+      const catVotes = votes.filter(v => v.category === cat.id);
+      const tally = {};
+      catVotes.forEach(v => { tally[v.option_text] = (tally[v.option_text] || 0) + 1; });
+      const top = Object.entries(tally).sort((a,b) => b[1]-a[1]).slice(0,3).map(([o,c]) => `${o} (${c} votes)`).join(', ');
+      return `${cat.label}: ${top || 'No votes yet'}`;
+    }).join('\n');
+
+    const prompt = `You are SafarNama AI. A group is voting on a trip to ${trip.destination} with ${members.length} members. Here are the vote results:\n\n${summary}\n\nGive a friendly AI recommendation for the best overall choice for the group. Be concise (under 120 words), mention the winning option in each category, and add a practical tip. Use emojis.`;
+    try {
+      const reply = await callGemini(prompt);
+      setConsensus(reply);
+    } catch(e) {
+      setConsensus(e.message === 'NO_KEY' ? '⚠️ Add Gemini API key in Profile → AI Settings to get AI consensus.' : `⚠️ ${e.message}`);
+    }
+    setGenerating(false);
+  }
+
+  function votesForOption(category, option) {
+    return votes.filter(v => v.category === category && v.option_text === option).length;
+  }
+  const totalMembers = members.length || 1;
+
+  if (loading) return <div style={{textAlign:'center',padding:40,color:'var(--muted)'}}>Loading votes…</div>;
+
+  return (
+    <>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+        <div className="sec-title">🗳️ Group Vote</div>
+        <span className="chip">{members.length} voters</span>
+      </div>
+      <div style={{fontSize:13,color:'var(--muted)',marginBottom:16}}>Tap to cast your vote. Results update live for the whole group.</div>
+
+      {categories.map(cat => (
+        <div key={cat.id} className="vote-category">
+          <div className="vote-cat-title">{cat.label}</div>
+          <div className="vote-options">
+            {cat.options.map(opt => {
+              const count = votesForOption(cat.id, opt);
+              const pct = Math.round((count / totalMembers) * 100);
+              const isMyVote = myVotes[cat.id] === opt;
+              return (
+                <button key={opt} className={'vote-option' + (isMyVote ? ' selected' : '')} onClick={() => castVote(cat.id, opt)}>
+                  <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:4,flex:1}}>
+                    <span>{opt}</span>
+                    {count > 0 && (
+                      <div style={{display:'flex',alignItems:'center',gap:6,width:'100%'}}>
+                        <div className="vote-bar-outer"><div className="vote-bar-inner" style={{width:pct+'%'}}/></div>
+                        <span className="vote-tally">{count}/{totalMembers}</span>
+                      </div>
+                    )}
+                  </div>
+                  {isMyVote && <span style={{fontSize:16,marginLeft:8}}>✅</span>}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+
+      {consensus && (
+        <div className="consensus-box">
+          <div className="consensus-title">🤖 AI Consensus Pick</div>
+          <div className="consensus-text">{consensus}</div>
+        </div>
+      )}
+
+      <button className="btn btn-primary" onClick={getAIConsensus} disabled={generating} style={{marginBottom:12}}>
+        {generating ? '⏳ AI is thinking…' : '🤖 Get AI Consensus'}
+      </button>
+      <div style={{fontSize:12,color:'var(--muted)',textAlign:'center'}}>AI analyses all votes and recommends the best option for your group</div>
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   ITINERARY SCREEN
+══════════════════════════════════════════ */
+function ItineraryScreen({ trip, members }) {
+  const [itinerary, setItinerary] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [generating, setGenerating] = useState(false);
+
+  useEffect(() => { loadItinerary(); }, [trip.id]);
+
+  async function loadItinerary() {
+    setLoading(true);
+    const { data } = await sb.from('itineraries').select('*').eq('trip_id', trip.id).single();
+    if (data) setItinerary(data.content);
+    setLoading(false);
+  }
+
+  async function generateItinerary() {
+    setGenerating(true);
+    const days = trip.start_date && trip.end_date
+      ? Math.max(1, Math.round((new Date(trip.end_date) - new Date(trip.start_date)) / 86400000) + 1)
+      : 4;
+    const prompt = `You are SafarNama AI, an expert Indian travel planner. Create a detailed ${days}-day itinerary for a group of ${members.length} people going to ${trip.destination}${trip.start_date ? ` from ${trip.start_date} to ${trip.end_date}` : ''}.\n\nFormat EXACTLY like this for each day:\nDAY 1: [Theme/Title]\n08:00 - [Morning activity]\n12:00 - [Lunch suggestion with restaurant name]\n14:00 - [Afternoon activity]\n19:00 - [Dinner suggestion]\n21:00 - [Evening activity]\n\nInclude practical tips, estimated costs in INR, and local food recommendations. Keep each activity description to 1-2 sentences. Make it realistic and fun for a group!`;
+    try {
+      const reply = await callGemini(prompt);
+      // Save to DB
+      await sb.from('itineraries').upsert({ trip_id: trip.id, content: reply, generated_at: new Date().toISOString() }, { onConflict: 'trip_id' });
+      setItinerary(reply);
+    } catch(e) {
+      setItinerary(e.message === 'NO_KEY' ? '⚠️ Add your Gemini API key in Profile → AI Settings to generate itinerary.' : `⚠️ Error: ${e.message}`);
+    }
+    setGenerating(false);
+  }
+
+  function parseItinerary(text) {
+    if (!text || text.startsWith('⚠️')) return null;
+    const days = text.split(/DAY \d+:/i).filter(Boolean);
+    return days.map((day, i) => {
+      const lines = day.trim().split('\n').filter(Boolean);
+      const title = lines[0];
+      const activities = lines.slice(1).map(l => {
+        const match = l.match(/^(\d{1,2}:\d{2})\s*[-–]\s*(.+)/);
+        return match ? { time: match[1], desc: match[2] } : { time: '', desc: l };
+      });
+      return { day: i + 1, title, activities };
+    });
+  }
+
+  const parsed = itinerary ? parseItinerary(itinerary) : null;
+
+  if (loading) return <div style={{textAlign:'center',padding:40,color:'var(--muted)'}}>Loading itinerary…</div>;
+
+  return (
+    <>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+        <div className="sec-title">📋 Trip Itinerary</div>
+        <button className="btn btn-primary btn-sm" onClick={generateItinerary} disabled={generating}>
+          {generating ? '⏳' : itinerary ? '🔄 Regenerate' : '✨ Generate'}
+        </button>
+      </div>
+
+      {!itinerary && !generating && (
+        <div className="empty-state" style={{padding:'32px 0'}}>
+          <div className="empty-icon">📋</div>
+          <div className="empty-title">No itinerary yet</div>
+          <div className="empty-sub">Tap Generate to create an AI day-by-day plan for {trip.destination}</div>
+          <button className="btn btn-primary" style={{maxWidth:240,margin:'0 auto'}} onClick={generateItinerary}>✨ Generate AI Itinerary</button>
+        </div>
+      )}
+
+      {generating && (
+        <div style={{textAlign:'center',padding:40}}>
+          <div style={{fontSize:40,marginBottom:12}}>🤖</div>
+          <div style={{color:'var(--teal)',fontWeight:700}}>AI is planning your trip…</div>
+          <div style={{fontSize:13,color:'var(--muted)',marginTop:6}}>This takes about 10 seconds</div>
+        </div>
+      )}
+
+      {itinerary && itinerary.startsWith('⚠️') && (
+        <div className="err-msg">{itinerary}</div>
+      )}
+
+      {parsed && parsed.map(d => (
+        <div key={d.day} className="itin-day">
+          <div className="itin-day-header">
+            <div className="itin-day-num">D{d.day}</div>
+            <div className="itin-day-title">{d.title}</div>
+          </div>
+          {d.activities.map((a, i) => (
+            <div key={i} className="itin-activity">
+              {a.time && <div className="itin-time">{a.time}</div>}
+              <div className="itin-desc">{a.desc}</div>
+            </div>
+          ))}
+        </div>
+      ))}
+
+      {itinerary && !parsed && !itinerary.startsWith('⚠️') && (
+        <div className="card"><div style={{fontSize:14,lineHeight:1.7,whiteSpace:'pre-wrap'}}>{itinerary}</div></div>
+      )}
     </>
   );
 }

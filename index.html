@@ -404,8 +404,26 @@ const initials = (name='') => name.split(' ').map(w=>w[0]).join('').toUpperCase(
 const fmtCurrency = n => '₹' + Number(n).toLocaleString('en-IN');
 const getInviteUrl = code => `${window.location.origin}${window.location.pathname}?invite=${code}`;
 
+/* ── Gemini AI ── */
+const GEMINI_KEY_STORE = 'sn_gemini_key';
+const getGeminiKey = () => { try { return localStorage.getItem(GEMINI_KEY_STORE)||''; } catch(e){return '';} };
+const setGeminiKey = k => { try { localStorage.setItem(GEMINI_KEY_STORE, k.trim()); } catch(e){} };
+
+async function callGemini(prompt) {
+  const key = getGeminiKey();
+  if (!key) throw new Error('NO_KEY');
+  const r = await fetch(
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
+    { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ contents:[{parts:[{text: prompt}]}], generationConfig:{maxOutputTokens:600,temperature:0.7} }) }
+  );
+  const d = await r.json();
+  if (!r.ok) throw new Error(d.error?.message || 'Gemini error');
+  return d.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI.';
+}
+
 /* ── Logo (base64 embedded) ── */
-const LOGO_URI = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA0MDAgNDAwIj48ZGVmcz48Y2xpcFBhdGggaWQ9ImNjIj48Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjE5MSIvPjwvY2xpcFBhdGg+PHJhZGlhbEdyYWRpZW50IGlkPSJzZyIgY3g9IjYwJSIgY3k9IjIyJSIgcj0iNzUlIj48c3RvcCBvZmZzZXQ9IjAlIiBzdG9wLWNvbG9yPSIjRkY1NTAwIi8+PHN0b3Agb2Zmc2V0PSIzNSUiIHN0b3AtY29sb3I9IiNGNzk0MUQiLz48c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNGRkIzNDciLz48L3JhZGlhbEdyYWRpZW50PjwvZGVmcz48Y2lyY2xlIGN4PSIyMDAiIGN5PSIyMDAiIHI9IjE5MSIgZmlsbD0id2hpdGUiLz48cGF0aCBkPSJNIDkgMjAwIEEgMTkxIDE5MSAwIDAgMSAzOTEgMjAwIFoiIGZpbGw9InVybCgjc2cpIiBjbGlwLXBhdGg9InVybCgjY2MpIi8+PHRleHQgeD0iMjAwIiB5PSIyMTUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZvbnQtZmFtaWx5PSJHZW9yZ2lhLHNlcmlmIiBmb250LXNpemU9IjM4IiBmb250LXN0eWxlPSJpdGFsaWMiIGZvbnQtd2VpZ2h0PSJib2xkIj48dHNwYW4gZmlsbD0iIzFCMkI2QiI+U2FmYXI8L3RzcGFuPjx0c3BhbiBmaWxsPSIjRjc5NDFEIj5OYW1hPC90c3Bhbj48L3RleHQ+PGNpcmNsZSBjeD0iMjAwIiBjeT0iMjAwIiByPSIxOTEiIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFCMkI2QiIgc3Ryb2tlLXdpZHRoPSI1LjUiLz48L3N2Zz4=';
+const LOGO_URI = 'data:image/png;base64,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';
 
 
 /* ══════════════════════════════════════════
@@ -566,8 +584,7 @@ function AuthScreen({ authMode, setAuthMode, setScr, setProfile, setSession }) {
   return (
     <div className="auth-screen">
       <div style={{marginBottom:24,textAlign:'center'}}>
-        <div style={{fontSize:48,marginBottom:8}}>✈️</div>
-        <div style={{fontSize:26,fontWeight:900,color:'#fff'}}>Safar<span style={{color:'#F7941D'}}>Nama</span></div>
+        <img src={LOGO_URI} alt="SafarNama" style={{width:90,height:90,borderRadius:'50%',marginBottom:10,boxShadow:'0 4px 20px rgba(0,0,0,.3)'}} />
         <div style={{fontSize:13,color:'rgba(255,255,255,.6)',marginTop:4}}>Plan group trips, together</div>
       </div>
       <div className="auth-card">
@@ -611,7 +628,8 @@ function DashboardScreen({ profile, trips, session, setScr, loadTripData }) {
   const tapTimer = useRef(null);
   const [aiFrom, setAiFrom] = useState('');
   const [aiBudget, setAiBudget] = useState('');
-  const [aiDates, setAiDates] = useState('');
+  const [aiDateFrom, setAiDateFrom] = useState('');
+  const [aiDateTo, setAiDateTo] = useState('');
   const [aiResult, setAiResult] = useState(null);
   const [aiLoading, setAiLoading] = useState(false);
 
@@ -623,16 +641,20 @@ function DashboardScreen({ profile, trips, session, setScr, loadTripData }) {
     tapTimer.current = setTimeout(() => setTapCount(0), 2000);
   }
 
-  function generateAiPlan() {
+  async function generateAiPlan() {
+    const aiDates = aiDateFrom && aiDateTo ? `${aiDateFrom} to ${aiDateTo}` : aiDateFrom || '';
     if (!aiFrom && !aiBudget && !aiDates) return;
-    setAiLoading(true);
-    setAiResult(null);
-    setTimeout(() => {
-      const budget = aiBudget ? `₹${Number(aiBudget).toLocaleString('en-IN')}/person` : 'flexible budget';
-      const dates = aiDates || 'your preferred dates';
-      setAiResult(`✨ **AI Trip Plan for you:**\n\nDeparting from ${aiFrom||'your city'} with ${budget} around ${dates}.\n\n🏖️ **Top picks:** Goa (3N), Pondicherry (2N), or Coorg (2N) all work great for groups.\n\n📋 **Suggested itinerary:** Day 1 – Travel & check-in → Day 2-3 – Explore beaches & local food → Day 4 – Day trip → Day 5 – Return\n\n💡 **Pro tip:** Book trains 45+ days in advance for best prices. Tatkal opens 1 day before if you're flexible!`);
-      setAiLoading(false);
-    }, 1200);
+    setAiLoading(true); setAiResult(null);
+    const budget = aiBudget ? `₹${Number(aiBudget).toLocaleString('en-IN')}/person` : 'flexible budget';
+    const prompt = `You are SafarNama AI, a friendly Indian travel planning assistant. Suggest a group trip plan for someone departing from "${aiFrom||'India'}" with a budget of "${budget}" for dates "${aiDates||'flexible'}". Give 2-3 destination options with a 4-5 day itinerary, practical transport tips, and budget breakdown. Keep it concise and use emojis. Reply in 200 words max.`;
+    try {
+      const reply = await callGemini(prompt);
+      setAiResult(reply);
+    } catch(e) {
+      if (e.message==='NO_KEY') setAiResult('⚠️ Please add your Gemini API key in Profile → AI Settings to enable real AI suggestions.');
+      else setAiResult(`⚠️ AI error: ${e.message}`);
+    }
+    setAiLoading(false);
   }
 
   if (!profile) return <LoadingScreen />;
@@ -643,8 +665,9 @@ function DashboardScreen({ profile, trips, session, setScr, loadTripData }) {
     <div>
       {/* ── TOP NAVBAR ── */}
       <nav className="top-navbar">
-        <div className="nav-brand" style={{cursor:'pointer'}} onClick={handleLogoTap}>
-          Safar<em>Nama</em> ✈️
+        <div className="nav-brand" style={{cursor:'pointer',display:'flex',alignItems:'center',gap:8}} onClick={handleLogoTap}>
+          <img src={LOGO_URI} alt="SafarNama" style={{width:32,height:32,borderRadius:'50%'}} />
+          Safar<em>Nama</em>
         </div>
         {tapCount > 0 && tapCount < 5 && <span style={{fontSize:10,color:'var(--muted)'}}>{5-tapCount} more…</span>}
         <div className="nav-links">
@@ -685,7 +708,11 @@ function DashboardScreen({ profile, trips, session, setScr, loadTripData }) {
               </div>
               <div className="ai-creator-inp-wrap">
                 <span className="ai-creator-inp-icon">📅</span>
-                <input className="ai-creator-inp" placeholder="Travel dates?" value={aiDates} onChange={e => setAiDates(e.target.value)} />
+                <input className="ai-creator-inp" type="date" title="Travel from date" value={aiDateFrom} onChange={e => setAiDateFrom(e.target.value)} min={new Date().toISOString().split('T')[0]} />
+              </div>
+              <div className="ai-creator-inp-wrap">
+                <span className="ai-creator-inp-icon">🏁</span>
+                <input className="ai-creator-inp" type="date" title="Travel to date" value={aiDateTo} onChange={e => setAiDateTo(e.target.value)} min={aiDateFrom || new Date().toISOString().split('T')[0]} />
               </div>
               <button className="ai-creator-btn" onClick={generateAiPlan} disabled={aiLoading}>
                 {aiLoading ? '⏳ Thinking…' : '✨ Generate AI Trip Plan'}
@@ -1202,18 +1229,24 @@ function AiChatScreen({ trip }) {
   const [input, setInput] = useState('');
   const [thinking, setThinking] = useState(false);
   const endRef = useRef(null);
-  function send() {
+  async function send() {
     if (!input.trim() || thinking) return;
     const q = input.trim();
     setMessages(prev => [...prev, {role:'user',text:q}]);
     setInput(''); setThinking(true);
-    setTimeout(() => {
-      const key = Object.keys(AI_RESPONSES).find(k => q.toLowerCase().includes(k));
-      const reply = key ? AI_RESPONSES[key] : `Great question about ${trip.destination}! 🌍 I'd suggest exploring local cuisine, checking weather, and booking early for best deals.`;
+    const prompt = `You are SafarNama AI, a helpful Indian travel assistant. The user is planning a group trip to "${trip.destination}". Answer this question concisely in 100 words max using emojis where relevant:\n\nUser: ${q}`;
+    try {
+      const reply = await callGemini(prompt);
       setMessages(prev => [...prev, {role:'ai',text:reply}]);
-      setThinking(false);
-      setTimeout(() => endRef.current?.scrollIntoView({behavior:'smooth'}), 100);
-    }, 900);
+    } catch(e) {
+      const fallbackKey = Object.keys(AI_RESPONSES).find(k => q.toLowerCase().includes(k));
+      const fallback = e.message==='NO_KEY'
+        ? `⚠️ Add your Gemini API key in Profile → AI Settings for real AI answers!\n\n${fallbackKey ? AI_RESPONSES[fallbackKey] : `Here's a tip about ${trip.destination}: check local weather, book early, and explore street food! 🌍`}`
+        : `⚠️ AI error: ${e.message}`;
+      setMessages(prev => [...prev, {role:'ai',text:fallback}]);
+    }
+    setThinking(false);
+    setTimeout(() => endRef.current?.scrollIntoView({behavior:'smooth'}), 100);
   }
   return (
     <>
@@ -1265,7 +1298,10 @@ function InviteModal({ trip, onClose }) {
    PROFILE SCREEN
 ══════════════════════════════════════════ */
 function ProfileScreen({ profile, session, setScr, setSession }) {
+  const [apiKey, setApiKey] = React.useState(getGeminiKey);
+  const [keySaved, setKeySaved] = React.useState(false);
   async function logout() { await sb.auth.signOut(); setSession(null); setScr('auth'); }
+  function saveKey() { setGeminiKey(apiKey); setKeySaved(true); setTimeout(() => setKeySaved(false), 2000); }
   return (
     <div>
       <div className="back-nav">
@@ -1288,6 +1324,27 @@ function ProfileScreen({ profile, session, setScr, setSession }) {
             <div><strong>Phone:</strong> {profile?.phone||'—'}</div>
             <div><strong>Member since:</strong> {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '—'}</div>
           </div>
+        </div>
+        <div className="card">
+          <div className="card-title">🤖 AI Settings</div>
+          <div style={{fontSize:13,color:'var(--muted)',marginBottom:10}}>
+            Add your free Gemini API key to enable real AI trip planning and chat.<br/>
+            Get one at <a href="https://aistudio.google.com/app/apikey" target="_blank" style={{color:'var(--primary)'}}>aistudio.google.com</a> (free, no card needed).
+          </div>
+          <div style={{display:'flex',gap:8}}>
+            <input
+              className="form-input"
+              style={{flex:1,fontFamily:'monospace',fontSize:12}}
+              type="password"
+              placeholder="Paste Gemini API key here…"
+              value={apiKey}
+              onChange={e => setApiKey(e.target.value)}
+            />
+            <button className="btn" style={{whiteSpace:'nowrap',padding:'0 16px'}} onClick={saveKey}>
+              {keySaved ? '✅ Saved!' : 'Save'}
+            </button>
+          </div>
+          {apiKey && <div style={{marginTop:8,fontSize:12,color:'var(--green)'}}>✅ Key set — AI features are active</div>}
         </div>
         <button className="btn btn-outline" style={{borderColor:'var(--red)',color:'var(--red)'}} onClick={logout}>🚪 Logout</button>
       </div>

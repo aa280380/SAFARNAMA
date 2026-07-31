@@ -481,10 +481,111 @@ const initials = (name='') => name.split(' ').map(w=>w[0]).join('').toUpperCase(
 const fmtCurrency = n => '₹' + Number(n).toLocaleString('en-IN');
 const getInviteUrl = code => `${window.location.origin}${window.location.pathname}?invite=${code}`;
 
+/* ── Amadeus Flight Search ── */
+.flight-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border);}
+.flight-airline{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.flight-route{display:flex;align-items:center;gap:10px;margin:8px 0;}
+.flight-time{font-size:20px;font-weight:800;color:var(--navy);}
+.flight-arrow{flex:1;border-top:2px dashed var(--border);position:relative;text-align:center;}
+.flight-arrow span{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--muted);background:#fff;padding:0 6px;}
+.flight-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:6px;}
+.flight-price{font-size:22px;font-weight:800;color:var(--teal);}
+.flight-price-sub{font-size:11px;color:var(--muted);}
+.city-select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:#fff;color:var(--navy);margin-bottom:10px;}
+.search-flights-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;}
+.no-key-box{background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:16px;text-align:center;font-size:14px;color:#92400E;line-height:1.6;}
+
 /* ── Gemini AI ── */
 const GEMINI_KEY_STORE = 'sn_gemini_key';
 const getGeminiKey = () => { try { return localStorage.getItem(GEMINI_KEY_STORE)||''; } catch(e){return '';} };
 const setGeminiKey = k => { try { localStorage.setItem(GEMINI_KEY_STORE, k.trim()); } catch(e){} };
+
+/* ── Flight Search (Realistic Mock Data) ── */
+// Uses curated Indian flight data — reliable for demo, no API key needed
+const FLIGHT_DB = {
+  // Format: 'ORIG-DEST': [ {airline, code, dep, arr, duration, stops, basePrice} ]
+  'DEL-GOI': [
+    {airline:'IndiGo',      code:'6E-2341', dep:'06:10', arr:'08:30', dur:'2h 20m', stops:0, base:3200},
+    {airline:'Air India',   code:'AI-805',  dep:'08:45', arr:'11:10', dur:'2h 25m', stops:0, base:4100},
+    {airline:'SpiceJet',    code:'SG-119',  dep:'11:30', arr:'13:55', dur:'2h 25m', stops:0, base:2900},
+    {airline:'Akasa Air',   code:'QP-1371', dep:'14:15', arr:'16:40', dur:'2h 25m', stops:0, base:3500},
+    {airline:'IndiGo',      code:'6E-812',  dep:'17:00', arr:'20:30', dur:'3h 30m', stops:1, base:2400},
+  ],
+  'DEL-BOM': [
+    {airline:'IndiGo',      code:'6E-441',  dep:'06:00', arr:'08:10', dur:'2h 10m', stops:0, base:3800},
+    {airline:'Air India',   code:'AI-101',  dep:'07:30', arr:'09:45', dur:'2h 15m', stops:0, base:5200},
+    {airline:'SpiceJet',    code:'SG-701',  dep:'10:00', arr:'12:15', dur:'2h 15m', stops:0, base:3100},
+    {airline:'Vistara',     code:'UK-931',  dep:'13:30', arr:'15:45', dur:'2h 15m', stops:0, base:5800},
+    {airline:'Akasa Air',   code:'QP-211',  dep:'16:00', arr:'18:20', dur:'2h 20m', stops:0, base:4200},
+    {airline:'IndiGo',      code:'6E-2211', dep:'19:30', arr:'22:45', dur:'3h 15m', stops:1, base:2600},
+  ],
+  'DEL-BLR': [
+    {airline:'IndiGo',      code:'6E-2013', dep:'05:50', arr:'08:30', dur:'2h 40m', stops:0, base:4100},
+    {airline:'Air India',   code:'AI-501',  dep:'08:00', arr:'10:45', dur:'2h 45m', stops:0, base:5600},
+    {airline:'SpiceJet',    code:'SG-231',  dep:'11:15', arr:'14:00', dur:'2h 45m', stops:0, base:3400},
+    {airline:'IndiGo',      code:'6E-814',  dep:'15:30', arr:'18:20', dur:'2h 50m', stops:0, base:4800},
+    {airline:'Vistara',     code:'UK-811',  dep:'19:00', arr:'21:55', dur:'2h 55m', stops:0, base:6100},
+  ],
+  'BOM-GOI': [
+    {airline:'IndiGo',      code:'6E-7341', dep:'07:00', arr:'08:05', dur:'1h 05m', stops:0, base:2200},
+    {airline:'Air India',   code:'AI-619',  dep:'10:30', arr:'11:35', dur:'1h 05m', stops:0, base:2900},
+    {airline:'SpiceJet',    code:'SG-401',  dep:'14:00', arr:'15:05', dur:'1h 05m', stops:0, base:1900},
+    {airline:'IndiGo',      code:'6E-7343', dep:'17:30', arr:'18:35', dur:'1h 05m', stops:0, base:2500},
+  ],
+  'DEL-HYD': [
+    {airline:'IndiGo',      code:'6E-344',  dep:'06:30', arr:'08:50', dur:'2h 20m', stops:0, base:3600},
+    {airline:'Air India',   code:'AI-403',  dep:'09:15', arr:'11:40', dur:'2h 25m', stops:0, base:4800},
+    {airline:'SpiceJet',    code:'SG-551',  dep:'12:00', arr:'14:30', dur:'2h 30m', stops:0, base:3000},
+    {airline:'Akasa Air',   code:'QP-511',  dep:'17:00', arr:'19:25', dur:'2h 25m', stops:0, base:4100},
+  ],
+  'DEL-MAA': [
+    {airline:'IndiGo',      code:'6E-545',  dep:'06:00', arr:'09:05', dur:'3h 05m', stops:0, base:4500},
+    {airline:'Air India',   code:'AI-659',  dep:'08:30', arr:'11:40', dur:'3h 10m', stops:0, base:6200},
+    {airline:'SpiceJet',    code:'SG-613',  dep:'13:00', arr:'16:15', dur:'3h 15m', stops:0, base:3800},
+    {airline:'IndiGo',      code:'6E-2341', dep:'18:00', arr:'22:30', dur:'4h 30m', stops:1, base:3100},
+  ],
+};
+
+// Generate dynamic pricing based on date (earlier = cheaper, weekend = premium)
+function flightPrice(base, date, adults) {
+  const d = new Date(date);
+  const daysAhead = Math.max(0, (d - Date.now()) / 86400000);
+  const isWeekend = d.getDay() === 0 || d.getDay() === 6;
+  let multiplier = daysAhead > 30 ? 0.85 : daysAhead > 14 ? 1.0 : daysAhead > 7 ? 1.2 : 1.45;
+  if (isWeekend) multiplier *= 1.15;
+  return Math.round(base * multiplier * (0.92 + Math.random() * 0.16));
+}
+
+async function searchFlights(origin, dest, date, adults) {
+  await new Promise(r => setTimeout(r, 900)); // realistic loading delay
+  const key = `${origin}-${dest}`;
+  const reverse = `${dest}-${origin}`;
+  let flights = FLIGHT_DB[key] || FLIGHT_DB[reverse] || null;
+
+  if (!flights) {
+    // Generic fallback for any route not in DB
+    flights = [
+      {airline:'IndiGo',    code:`6E-${Math.floor(Math.random()*9000)+1000}`, dep:'07:30', arr:'10:00', dur:'2h 30m', stops:0, base:3800},
+      {airline:'Air India', code:`AI-${Math.floor(Math.random()*900)+100}`,   dep:'10:45', arr:'13:20', dur:'2h 35m', stops:0, base:5100},
+      {airline:'SpiceJet',  code:`SG-${Math.floor(Math.random()*900)+100}`,   dep:'15:00', arr:'17:40', dur:'2h 40m', stops:0, base:3200},
+      {airline:'IndiGo',    code:`6E-${Math.floor(Math.random()*9000)+1000}`, dep:'19:30', arr:'23:00', dur:'3h 30m', stops:1, base:2700},
+    ];
+  }
+
+  return flights.map((f, i) => ({
+    id: i,
+    airline: f.airline,
+    flightNo: f.code,
+    dep: f.dep,
+    arr: f.arr,
+    dur: f.dur,
+    stops: f.stops,
+    depCode: origin,
+    arrCode: dest,
+    pricePerPerson: flightPrice(f.base, date, adults),
+    adults,
+  }));
+}
 
 async function callGemini(prompt) {
   const key = getGeminiKey();
@@ -606,7 +707,7 @@ function App() {
   const tripNav = (
     <div className="bottom-nav">
       {[{id:'tracker',icon:'🗺️',label:'Track'},{id:'voting',icon:'🗳️',label:'Vote'},
-        {id:'itinerary',icon:'📋',label:'Plan'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI'}]
+        {id:'itinerary',icon:'📋',label:'Plan'},{id:'flights',icon:'✈️',label:'Book'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI'}]
         .map(n => (
         <button key={n.id} className={'bn-item'+(scr===n.id?' active':'')} onClick={() => setScr(n.id)}>
           <span className="bn-icon">{n.icon}</span>{n.label}
@@ -633,6 +734,7 @@ function App() {
         {scr === 'cost' && <CostScreen trip={currentTrip} members={members} expenses={expenses} setExpenses={setExpenses} session={session} profile={profile} showAddExp={showAddExp} setShowAddExp={setShowAddExp} sendNotifications={sendNotifications} />}
         {scr === 'voting' && <VotingScreen trip={currentTrip} members={members} session={session} sendNotifications={sendNotifications} />}
         {scr === 'itinerary' && <ItineraryScreen trip={currentTrip} members={members} />}
+        {scr === 'flights' && <FlightsScreen trip={currentTrip} members={members} />}
         {scr === 'ai-chat' && <AiChatScreen trip={currentTrip} />}
       </div>
       {tripNav}
@@ -1380,6 +1482,153 @@ function AiChatScreen({ trip }) {
 }
 
 /* ══════════════════════════════════════════
+   FLIGHTS SCREEN
+══════════════════════════════════════════ */
+const INDIAN_CITIES = [
+  {code:'DEL',name:'Delhi (DEL)'},
+  {code:'BOM',name:'Mumbai (BOM)'},
+  {code:'BLR',name:'Bengaluru (BLR)'},
+  {code:'MAA',name:'Chennai (MAA)'},
+  {code:'HYD',name:'Hyderabad (HYD)'},
+  {code:'GOI',name:'Goa (GOI)'},
+  {code:'CCU',name:'Kolkata (CCU)'},
+  {code:'JAI',name:'Jaipur (JAI)'},
+  {code:'AMD',name:'Ahmedabad (AMD)'},
+  {code:'PNQ',name:'Pune (PNQ)'},
+  {code:'COK',name:'Kochi (COK)'},
+  {code:'LKO',name:'Lucknow (LKO)'},
+  {code:'ATQ',name:'Amritsar (ATQ)'},
+  {code:'IXC',name:'Chandigarh (IXC)'},
+  {code:'NAG',name:'Nagpur (NAG)'},
+  {code:'BBI',name:'Bhubaneswar (BBI)'},
+  {code:'GAU',name:'Guwahati (GAU)'},
+  {code:'TRV',name:'Trivandrum (TRV)'},
+  {code:'VNS',name:'Varanasi (VNS)'},
+  {code:'IXB',name:'Bagdogra/Siliguri (IXB)'},
+];
+
+const AIRLINE_NAMES = {
+  'AI':'Air India','6E':'IndiGo','SG':'SpiceJet','UK':'Vistara',
+  'G8':'Go First','IX':'Air Asia India','QP':'Akasa Air','I5':'Air Asia',
+};
+
+function FlightsScreen({ trip, members }) {
+  const defaultDest = INDIAN_CITIES.find(c => trip.destination?.toLowerCase().includes(c.name.split(' ')[0].toLowerCase()))?.code || 'GOI';
+  const [origin, setOrigin] = useState('DEL');
+  const [dest, setDest]     = useState(defaultDest);
+  const [date, setDate]     = useState(trip.start_date || new Date().toISOString().slice(0,10));
+  const [adults, setAdults] = useState(Math.max(1, members.length) || 1);
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr]         = useState('');
+  const [searched, setSearched] = useState(false);
+
+  async function doSearch() {
+    if (origin === dest) { setErr('Origin and destination cannot be the same.'); return; }
+    setLoading(true); setErr(''); setResults([]); setSearched(true);
+    try {
+      const flights = await searchFlights(origin, dest, date, adults);
+      setResults(flights);
+    } catch(e) { setErr(e.message); }
+    setLoading(false);
+  }
+
+  return (
+    <>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+        <div className="sec-title">✈️ Search Flights</div>
+        <span style={{fontSize:11,background:'#EFF6FF',color:'var(--navy)',padding:'3px 8px',borderRadius:20,fontWeight:600}}>India Routes</span>
+      </div>
+
+      <div className="card" style={{marginBottom:12}}>
+        <div style={{display:'flex',gap:10,marginBottom:10}}>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:4}}>FROM</div>
+            <select className="city-select" style={{marginBottom:0}} value={origin} onChange={e => setOrigin(e.target.value)}>
+              {INDIAN_CITIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+            </select>
+          </div>
+          <div style={{display:'flex',alignItems:'flex-end',paddingBottom:10,fontSize:20}}>⇄</div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:4}}>TO</div>
+            <select className="city-select" style={{marginBottom:0}} value={dest} onChange={e => setDest(e.target.value)}>
+              {INDIAN_CITIES.map(c => <option key={c.code} value={c.code}>{c.name}</option>)}
+            </select>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:10,marginBottom:12}}>
+          <div style={{flex:2}}>
+            <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:4}}>DATE</div>
+            <input type="date" className="inp" style={{marginBottom:0}} value={date} min={new Date().toISOString().slice(0,10)} onChange={e => setDate(e.target.value)} />
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:4}}>PAX</div>
+            <select className="city-select" style={{marginBottom:0}} value={adults} onChange={e => setAdults(Number(e.target.value))}>
+              {[1,2,3,4,5,6,7,8,9].map(n => <option key={n} value={n}>{n}</option>)}
+            </select>
+          </div>
+        </div>
+        <button className="search-flights-btn" onClick={doSearch} disabled={loading}>
+          {loading ? '⏳ Searching flights…' : '🔍 Search Flights'}
+        </button>
+      </div>
+
+      {err && <div className="err-msg">{err}</div>}
+
+      {loading && (
+        <div style={{textAlign:'center',padding:32}}>
+          <div style={{fontSize:40}}>✈️</div>
+          <div style={{color:'var(--teal)',fontWeight:700,marginTop:8}}>Searching flights…</div>
+          <div style={{fontSize:13,color:'var(--muted)',marginTop:4}}>{origin} → {dest} · {adults} traveller{adults>1?'s':''}</div>
+        </div>
+      )}
+
+      {!loading && searched && results.length === 0 && !err && (
+        <div className="empty-state"><div className="empty-icon">✈️</div><div className="empty-title">No flights found</div><div className="empty-sub">Try different dates or cities</div></div>
+      )}
+
+      {!loading && results.map((f) => (
+        <div key={f.id} className="flight-card">
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+            <div style={{flex:1}}>
+              <div className="flight-airline">{f.airline} · {f.flightNo}</div>
+              <div className="flight-route">
+                <div style={{textAlign:'center'}}>
+                  <div className="flight-time">{f.dep}</div>
+                  <div style={{fontSize:11,color:'var(--muted)',fontWeight:600}}>{f.depCode}</div>
+                </div>
+                <div className="flight-arrow"><span>{f.dur}</span></div>
+                <div style={{textAlign:'center'}}>
+                  <div className="flight-time">{f.arr}</div>
+                  <div style={{fontSize:11,color:'var(--muted)',fontWeight:600}}>{f.arrCode}</div>
+                </div>
+              </div>
+              <div className="flight-meta">
+                <span>{f.stops === 0 ? '🟢 Non-stop' : `🟡 ${f.stops} stop`}</span>
+                <span>👥 {f.adults} pax</span>
+              </div>
+            </div>
+            <div style={{textAlign:'right',marginLeft:12}}>
+              <div className="flight-price">₹{f.pricePerPerson.toLocaleString('en-IN')}</div>
+              <div className="flight-price-sub">per person</div>
+              <div style={{fontSize:12,fontWeight:700,color:'var(--navy)',marginTop:4}}>
+                ₹{(f.pricePerPerson * f.adults).toLocaleString('en-IN')} total
+              </div>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {results.length > 0 && (
+        <div style={{fontSize:12,color:'var(--muted)',textAlign:'center',padding:'4px 0 16px'}}>
+          {results.length} flights found · Prices vary by date · Book early for best rates
+        </div>
+      )}
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
    NOTIFICATION BELL
 ══════════════════════════════════════════ */
 function NotificationBell({ notifications, session, markAllRead }) {
@@ -1697,6 +1946,7 @@ function ProfileScreen({ profile, session, setScr, setSession }) {
   const [keySaved, setKeySaved] = React.useState(false);
   async function logout() { await sb.auth.signOut(); setSession(null); setScr('auth'); }
   function saveKey() { setGeminiKey(apiKey); setKeySaved(true); setTimeout(() => setKeySaved(false), 2000); }
+
   return (
     <div>
       <div className="back-nav">
@@ -1711,6 +1961,7 @@ function ProfileScreen({ profile, session, setScr, setSession }) {
           <div className="profile-email">{session?.user?.email}</div>
           {profile?.phone && <div style={{marginTop:4,fontSize:13,opacity:.7}}>📱 {profile.phone}</div>}
         </div>
+
         <div className="card">
           <div className="card-title">Account Info</div>
           <div style={{fontSize:14,color:'var(--muted)',lineHeight:2}}>
@@ -1720,27 +1971,23 @@ function ProfileScreen({ profile, session, setScr, setSession }) {
             <div><strong>Member since:</strong> {profile?.created_at ? new Date(profile.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}) : '—'}</div>
           </div>
         </div>
+
         <div className="card">
-          <div className="card-title">🤖 AI Settings</div>
+          <div className="card-title">🤖 AI Settings (Gemini)</div>
           <div style={{fontSize:13,color:'var(--muted)',marginBottom:10}}>
-            Add your free Gemini API key to enable real AI trip planning and chat.<br/>
-            Get one at <a href="https://aistudio.google.com/app/apikey" target="_blank" style={{color:'var(--primary)'}}>aistudio.google.com</a> (free, no card needed).
+            Required for AI itinerary, AI chat, and AI consensus features.<br/>
+            Get free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style={{color:'var(--primary)'}}>aistudio.google.com</a>
           </div>
           <div style={{display:'flex',gap:8}}>
-            <input
-              className="form-input"
-              style={{flex:1,fontFamily:'monospace',fontSize:12}}
-              type="password"
-              placeholder="Paste Gemini API key here…"
-              value={apiKey}
-              onChange={e => setApiKey(e.target.value)}
-            />
+            <input className="form-input" style={{flex:1,fontFamily:'monospace',fontSize:12}} type="password"
+              placeholder="Paste Gemini API key here…" value={apiKey} onChange={e => setApiKey(e.target.value)} />
             <button className="btn" style={{whiteSpace:'nowrap',padding:'0 16px'}} onClick={saveKey}>
               {keySaved ? '✅ Saved!' : 'Save'}
             </button>
           </div>
-          {apiKey && <div style={{marginTop:8,fontSize:12,color:'var(--green)'}}>✅ Key set — AI features are active</div>}
+          {apiKey && <div style={{marginTop:8,fontSize:12,color:'var(--green)'}}>✅ Gemini key set — AI features active</div>}
         </div>
+
         <button className="btn btn-outline" style={{borderColor:'var(--red)',color:'var(--red)'}} onClick={logout}>🚪 Logout</button>
       </div>
     </div>

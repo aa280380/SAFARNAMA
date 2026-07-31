@@ -246,6 +246,19 @@ input,textarea,select{font-family:inherit;outline:none;}
 .ai-response-title{font-size:13px;font-weight:700;color:var(--teal);margin-bottom:8px;}
 .ai-response-text{font-size:14px;line-height:1.6;color:var(--text);}
 
+/* ── FLIGHT SEARCH ── */
+.flight-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border);}
+.flight-airline{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;}
+.flight-route{display:flex;align-items:center;gap:10px;margin:8px 0;}
+.flight-time{font-size:20px;font-weight:800;color:var(--navy);}
+.flight-arrow{flex:1;border-top:2px dashed var(--border);position:relative;text-align:center;}
+.flight-arrow span{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--muted);background:#fff;padding:0 6px;}
+.flight-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:6px;}
+.flight-price{font-size:22px;font-weight:800;color:var(--teal);}
+.flight-price-sub{font-size:11px;color:var(--muted);}
+.city-select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:#fff;color:var(--navy);margin-bottom:10px;}
+.search-flights-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;}
+
 /* ── NOTIFICATION BELL ── */
 .notif-bell{position:relative;background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;padding:4px;}
 .notif-badge{position:absolute;top:-2px;right:-2px;background:var(--red);color:#fff;font-size:9px;font-weight:800;min-width:16px;height:16px;border-radius:8px;display:flex;align-items:center;justify-content:center;padding:0 3px;}
@@ -480,20 +493,6 @@ function tripStatus(trip) {
 const initials = (name='') => name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
 const fmtCurrency = n => '₹' + Number(n).toLocaleString('en-IN');
 const getInviteUrl = code => `${window.location.origin}${window.location.pathname}?invite=${code}`;
-
-/* ── Amadeus Flight Search ── */
-.flight-card{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 10px rgba(0,0,0,.07);border:1px solid var(--border);}
-.flight-airline{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;}
-.flight-route{display:flex;align-items:center;gap:10px;margin:8px 0;}
-.flight-time{font-size:20px;font-weight:800;color:var(--navy);}
-.flight-arrow{flex:1;border-top:2px dashed var(--border);position:relative;text-align:center;}
-.flight-arrow span{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:12px;color:var(--muted);background:#fff;padding:0 6px;}
-.flight-meta{display:flex;gap:16px;font-size:12px;color:var(--muted);margin-top:6px;}
-.flight-price{font-size:22px;font-weight:800;color:var(--teal);}
-.flight-price-sub{font-size:11px;color:var(--muted);}
-.city-select{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-size:15px;background:#fff;color:var(--navy);margin-bottom:10px;}
-.search-flights-btn{width:100%;padding:14px;background:linear-gradient(135deg,var(--navy),var(--teal));color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;margin-top:4px;}
-.no-key-box{background:#FFF7ED;border:1px solid #FED7AA;border-radius:12px;padding:16px;text-align:center;font-size:14px;color:#92400E;line-height:1.6;}
 
 /* ── Gemini AI ── */
 const GEMINI_KEY_STORE = 'sn_gemini_key';

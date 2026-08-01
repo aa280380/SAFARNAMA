@@ -291,14 +291,31 @@ input,textarea,select{font-family:inherit;outline:none;}
 .vote-bar-inner{height:100%;background:var(--teal);border-radius:3px;transition:width .5s ease;}
 
 /* ── ITINERARY SCREEN ── */
-.itin-day{background:#fff;border-radius:16px;padding:16px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
-.itin-day-header{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.itin-day-num{width:36px;height:36px;border-radius:50%;background:var(--navy);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
-.itin-day-title{font-size:15px;font-weight:800;color:var(--navy);}
-.itin-activity{display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--border);}
+.itin-day{background:#fff;border-radius:16px;padding:0;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.08);overflow:hidden;}
+.itin-day-header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:linear-gradient(135deg,var(--navy) 0%,#2a4a7f 100%);}
+.itin-day-num{width:38px;height:38px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
+.itin-day-title{font-size:15px;font-weight:800;color:#fff;}
+.itin-activities{padding:8px 0;}
+.itin-activity{display:flex;gap:12px;padding:10px 16px;border-bottom:1px solid #F3F4F6;transition:background .15s;}
 .itin-activity:last-child{border-bottom:none;}
-.itin-time{font-size:12px;color:var(--muted);font-weight:600;min-width:52px;}
-.itin-desc{font-size:13px;color:var(--text);line-height:1.5;}
+.itin-activity:hover{background:#FAFBFC;}
+.itin-time-col{display:flex;flex-direction:column;align-items:center;min-width:48px;}
+.itin-time{font-size:11px;color:var(--orange);font-weight:700;background:#FFF8F0;padding:3px 6px;border-radius:6px;white-space:nowrap;}
+.itin-time-dot{width:2px;flex:1;background:#E5E7EB;margin:4px auto;}
+.itin-desc{font-size:13px;color:var(--text);line-height:1.6;padding-top:2px;}
+.itin-cost{display:inline-block;font-size:11px;font-weight:700;color:var(--teal);background:#F0FDFA;padding:2px 7px;border-radius:10px;margin-top:4px;}
+.itin-tip{background:linear-gradient(135deg,#FFF8F0,#FFF3E0);border-left:3px solid var(--orange);padding:10px 14px;margin:8px 16px 12px;border-radius:0 8px 8px 0;font-size:12px;color:var(--text);line-height:1.5;}
+.itin-edit-btn{font-size:12px;padding:4px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;color:var(--muted);font-weight:600;}
+.itin-edit-btn:hover{border-color:var(--teal);color:var(--teal);}
+.itin-edit-area{width:100%;min-height:400px;font-size:13px;font-family:monospace;padding:12px;border:1.5px solid var(--border);border-radius:10px;line-height:1.7;resize:vertical;}
+/* Memory feature */
+.memory-card{background:#fff;border-radius:14px;padding:14px 16px;margin-bottom:10px;box-shadow:0 2px 8px rgba(0,0,0,.06);display:flex;gap:12px;align-items:flex-start;}
+.memory-emoji{font-size:28px;flex-shrink:0;}
+.memory-content{flex:1;}
+.memory-author{font-size:12px;font-weight:700;color:var(--navy);}
+.memory-text{font-size:13px;color:var(--text);line-height:1.5;margin-top:2px;}
+.memory-time{font-size:11px;color:var(--muted);margin-top:4px;}
+.memory-input-row{display:flex;gap:8px;align-items:center;margin-bottom:16px;}
 
 /* ── UPI / PAYMENT ── */
 .pay-btn{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;border:1.5px solid #00BA60;background:#F0FFF4;color:#00874A;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;white-space:nowrap;}
@@ -749,7 +766,7 @@ function App() {
   const tripNav = (
     <div className="bottom-nav">
       {[{id:'tracker',icon:'🗺️',label:'Track'},{id:'voting',icon:'🗳️',label:'Vote'},
-        {id:'itinerary',icon:'📋',label:'Plan'},{id:'flights',icon:'✈️',label:'Book'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI'}]
+        {id:'itinerary',icon:'📋',label:'Plan'},{id:'flights',icon:'✈️',label:'Book'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI'},{id:'memories',icon:'📸',label:'Memory'}]
         .map(n => (
         <button key={n.id} className={'bn-item'+(scr===n.id?' active':'')} onClick={() => setScr(n.id)}>
           <span className="bn-icon">{n.icon}</span>{n.label}
@@ -778,6 +795,7 @@ function App() {
         {scr === 'itinerary' && <ItineraryScreen trip={currentTrip} members={members} />}
         {scr === 'flights' && <FlightsScreen trip={currentTrip} members={members} />}
         {scr === 'ai-chat' && <AiChatScreen trip={currentTrip} />}
+        {scr === 'memories' && <MemoriesScreen trip={currentTrip} members={members} session={session} />}
       </div>
       {tripNav}
       {showInviteModal && <InviteModal trip={currentTrip} onClose={() => setShowInviteModal(false)} />}
@@ -1737,11 +1755,12 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
   const uid = session?.user?.id;
 
   const categories = [
-    { id: 'destination', label: '📍 Destination options', options: [`${trip.destination}`, 'Goa, India', 'Manali, Himachal Pradesh', 'Pondicherry', 'Coorg, Karnataka'] },
-    { id: 'transport', label: '🚗 How do we travel?', options: ['✈️ Flight', '🚂 Train', '🚌 Bus', '🚗 Self-drive'] },
-    { id: 'hotel', label: '🏨 Where do we stay?', options: ['Budget guesthouse (₹500-1000/night)', 'Mid-range hotel (₹1500-3000/night)', 'Premium resort (₹4000+/night)', 'Airbnb/Villa'] },
+    { id: 'destination', label: '📍 Destination options', options: [`${trip.destination}`, 'Goa, India', 'Manali, Himachal Pradesh', 'Pondicherry', 'Coorg, Karnataka', 'Jaipur, Rajasthan'] },
+    { id: 'transport', label: '🚗 How do we travel?', options: ['✈️ Flight', '🚂 Train', '🚌 Bus', '🚗 Self-drive', '✈️ Flight + 🚗 Cab', '🚂 Train + 🚗 Car', '🚌 Bus + 🚂 Train'] },
+    { id: 'hotel', label: '🏨 Where do we stay?', options: ['Budget guesthouse (₹500-1000/night)', 'Mid-range hotel (₹1500-3000/night)', 'Premium resort (₹4000+/night)', 'Airbnb/Villa', 'Hostel/Dorm'] },
     { id: 'dates', label: '📅 When do we go?', options: [trip.start_date ? `Planned: ${trip.start_date}` : 'This weekend', 'Next weekend', 'Next month', 'Flexible — whenever works'] },
   ];
+  const [customInputs, setCustomInputs] = React.useState({ destination:'', transport:'', hotel:'', dates:'' });
 
   useEffect(() => { loadVotes(); }, [trip.id]);
 
@@ -1806,32 +1825,60 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
       </div>
       <div style={{fontSize:13,color:'var(--muted)',marginBottom:16}}>Tap to cast your vote. Results update live for the whole group.</div>
 
-      {categories.map(cat => (
-        <div key={cat.id} className="vote-category">
-          <div className="vote-cat-title">{cat.label}</div>
-          <div className="vote-options">
-            {cat.options.map(opt => {
-              const count = votesForOption(cat.id, opt);
-              const pct = Math.round((count / totalMembers) * 100);
-              const isMyVote = myVotes[cat.id] === opt;
-              return (
-                <button key={opt} className={'vote-option' + (isMyVote ? ' selected' : '')} onClick={() => castVote(cat.id, opt)}>
-                  <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:4,flex:1}}>
-                    <span>{opt}</span>
-                    {count > 0 && (
-                      <div style={{display:'flex',alignItems:'center',gap:6,width:'100%'}}>
-                        <div className="vote-bar-outer"><div className="vote-bar-inner" style={{width:pct+'%'}}/></div>
-                        <span className="vote-tally">{count}/{totalMembers}</span>
-                      </div>
-                    )}
-                  </div>
-                  {isMyVote && <span style={{fontSize:16,marginLeft:8}}>✅</span>}
-                </button>
-              );
-            })}
+      {categories.map(cat => {
+        // Merge preset options with any custom voted options not in the preset list
+        const customVotedOpts = votes
+          .filter(v => v.category === cat.id && !cat.options.includes(v.option_text))
+          .map(v => v.option_text)
+          .filter((v, i, a) => a.indexOf(v) === i);
+        const allOptions = [...cat.options, ...customVotedOpts];
+        return (
+          <div key={cat.id} className="vote-category">
+            <div className="vote-cat-title">{cat.label}</div>
+            <div className="vote-options">
+              {allOptions.map(opt => {
+                const count = votesForOption(cat.id, opt);
+                const pct = Math.round((count / totalMembers) * 100);
+                const isMyVote = myVotes[cat.id] === opt;
+                return (
+                  <button key={opt} className={'vote-option' + (isMyVote ? ' selected' : '')} onClick={() => castVote(cat.id, opt)}>
+                    <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:4,flex:1}}>
+                      <span>{opt}</span>
+                      {count > 0 && (
+                        <div style={{display:'flex',alignItems:'center',gap:6,width:'100%'}}>
+                          <div className="vote-bar-outer"><div className="vote-bar-inner" style={{width:pct+'%'}}/></div>
+                          <span className="vote-tally">{count}/{totalMembers}</span>
+                        </div>
+                      )}
+                    </div>
+                    {isMyVote && <span style={{fontSize:16,marginLeft:8}}>✅</span>}
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{display:'flex',gap:8,marginTop:10}}>
+              <input className="form-input" style={{flex:1,fontSize:13,padding:'8px 12px'}}
+                placeholder={`Add your own ${cat.id} option…`}
+                value={customInputs[cat.id]}
+                onChange={e => setCustomInputs(prev => ({...prev, [cat.id]: e.target.value}))}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' && customInputs[cat.id].trim()) {
+                    castVote(cat.id, customInputs[cat.id].trim());
+                    setCustomInputs(prev => ({...prev, [cat.id]: ''}));
+                  }
+                }}
+              />
+              <button className="btn btn-primary btn-sm" style={{whiteSpace:'nowrap'}}
+                onClick={() => {
+                  if (customInputs[cat.id].trim()) {
+                    castVote(cat.id, customInputs[cat.id].trim());
+                    setCustomInputs(prev => ({...prev, [cat.id]: ''}));
+                  }
+                }}>+ Vote</button>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {consensus && (
         <div className="consensus-box">
@@ -1855,44 +1902,71 @@ function ItineraryScreen({ trip, members }) {
   const [itinerary, setItinerary] = useState(null);
   const [loading, setLoading] = useState(true);
   const [generating, setGenerating] = useState(false);
+  const [editMode, setEditMode] = useState(false);
+  const [editText, setEditText] = useState('');
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => { loadItinerary(); }, [trip.id]);
 
   async function loadItinerary() {
     setLoading(true);
     const { data } = await sb.from('itineraries').select('*').eq('trip_id', trip.id).single();
-    if (data) setItinerary(data.content);
+    if (data) { setItinerary(data.content); setEditText(data.content); }
     setLoading(false);
   }
 
   async function generateItinerary() {
-    setGenerating(true);
+    setGenerating(true); setEditMode(false);
     const days = trip.start_date && trip.end_date
       ? Math.max(1, Math.round((new Date(trip.end_date) - new Date(trip.start_date)) / 86400000) + 1)
       : 4;
-    const prompt = `You are SafarNama AI, an expert Indian travel planner. Create a detailed ${days}-day itinerary for a group of ${members.length} people going to ${trip.destination}${trip.start_date ? ` from ${trip.start_date} to ${trip.end_date}` : ''}.\n\nFormat EXACTLY like this for each day:\nDAY 1: [Theme/Title]\n08:00 - [Morning activity]\n12:00 - [Lunch suggestion with restaurant name]\n14:00 - [Afternoon activity]\n19:00 - [Dinner suggestion]\n21:00 - [Evening activity]\n\nInclude practical tips, estimated costs in INR, and local food recommendations. Keep each activity description to 1-2 sentences. Make it realistic and fun for a group!`;
+    const prompt = `You are SafarNama AI, an expert Indian travel planner. Create a detailed ${days}-day itinerary for a group of ${members.length} people going to ${trip.destination}${trip.start_date ? ` from ${trip.start_date} to ${trip.end_date}` : ''}.
+
+Format EXACTLY like this for each day:
+DAY 1: [Catchy Theme Title with emoji]
+08:00 - [Activity name] — [1 sentence description] (₹[cost per person])
+12:00 - Lunch at [Restaurant name] — [specialty dish] (₹[cost per person])
+14:00 - [Activity] — [description] (₹[cost])
+19:00 - Dinner at [Restaurant] — [description] (₹[cost])
+21:00 - [Evening plan] — [description] (₹[cost])
+
+End each day with:
+💡 Day Tip: [One practical tip for the day]
+
+Include real restaurant names, realistic INR costs, and make it fun for a group!`;
     try {
       const reply = await callGemini(prompt);
-      // Save to DB
       await sb.from('itineraries').upsert({ trip_id: trip.id, content: reply, generated_at: new Date().toISOString() }, { onConflict: 'trip_id' });
-      setItinerary(reply);
+      setItinerary(reply); setEditText(reply);
     } catch(e) {
       setItinerary(e.message === 'NO_KEY' ? '⚠️ Add your Groq API key in Profile → AI Settings to generate itinerary.' : `⚠️ Error: ${e.message}`);
     }
     setGenerating(false);
   }
 
+  async function saveEdit() {
+    setSaving(true);
+    await sb.from('itineraries').upsert({ trip_id: trip.id, content: editText, generated_at: new Date().toISOString() }, { onConflict: 'trip_id' });
+    setItinerary(editText); setEditMode(false);
+    setSaving(false);
+  }
+
   function parseItinerary(text) {
     if (!text || text.startsWith('⚠️')) return null;
-    const days = text.split(/DAY \d+:/i).filter(Boolean);
+    const days = text.split(/(?=DAY \d+:)/i).filter(s => s.trim().match(/^DAY \d+:/i));
+    if (!days.length) return null;
     return days.map((day, i) => {
       const lines = day.trim().split('\n').filter(Boolean);
-      const title = lines[0];
-      const activities = lines.slice(1).map(l => {
+      const headerLine = lines[0].replace(/^DAY \d+:\s*/i, '');
+      const tip = lines.find(l => l.startsWith('💡'));
+      const activities = lines.slice(1).filter(l => !l.startsWith('💡')).map(l => {
         const match = l.match(/^(\d{1,2}:\d{2})\s*[-–]\s*(.+)/);
-        return match ? { time: match[1], desc: match[2] } : { time: '', desc: l };
-      });
-      return { day: i + 1, title, activities };
+        if (!match) return null;
+        const descFull = match[2];
+        const costMatch = descFull.match(/(₹[\d,]+[\s\w]*)/);
+        return { time: match[1], desc: descFull.replace(/(₹[\d,]+[\s\w]*)/, '').replace(/\(\s*\)/, '').trim(), cost: costMatch ? costMatch[1] : null };
+      }).filter(Boolean);
+      return { day: i + 1, title: headerLine, activities, tip: tip ? tip.replace('💡 Day Tip:', '').trim() : null };
     });
   }
 
@@ -1902,18 +1976,28 @@ function ItineraryScreen({ trip, members }) {
 
   return (
     <>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16,flexWrap:'wrap',gap:8}}>
         <div className="sec-title">📋 Trip Itinerary</div>
-        <button className="btn btn-primary btn-sm" onClick={generateItinerary} disabled={generating}>
-          {generating ? '⏳' : itinerary ? '🔄 Regenerate' : '✨ Generate'}
-        </button>
+        <div style={{display:'flex',gap:8}}>
+          {itinerary && !itinerary.startsWith('⚠️') && (
+            editMode
+              ? <>
+                  <button className="itin-edit-btn" onClick={() => setEditMode(false)}>✕ Cancel</button>
+                  <button className="btn btn-primary btn-sm" onClick={saveEdit} disabled={saving}>{saving ? '⏳' : '💾 Save'}</button>
+                </>
+              : <button className="itin-edit-btn" onClick={() => { setEditText(itinerary); setEditMode(true); }}>✏️ Edit</button>
+          )}
+          <button className="btn btn-primary btn-sm" onClick={generateItinerary} disabled={generating}>
+            {generating ? '⏳' : itinerary ? '🔄 Regenerate' : '✨ Generate'}
+          </button>
+        </div>
       </div>
 
       {!itinerary && !generating && (
         <div className="empty-state" style={{padding:'32px 0'}}>
           <div className="empty-icon">📋</div>
           <div className="empty-title">No itinerary yet</div>
-          <div className="empty-sub">Tap Generate to create an AI day-by-day plan for {trip.destination}</div>
+          <div className="empty-sub">Tap Generate to create a beautiful AI day-by-day plan for {trip.destination}</div>
           <button className="btn btn-primary" style={{maxWidth:240,margin:'0 auto'}} onClick={generateItinerary}>✨ Generate AI Itinerary</button>
         </div>
       )}
@@ -1921,33 +2005,155 @@ function ItineraryScreen({ trip, members }) {
       {generating && (
         <div style={{textAlign:'center',padding:40}}>
           <div style={{fontSize:40,marginBottom:12}}>🤖</div>
-          <div style={{color:'var(--teal)',fontWeight:700}}>AI is planning your trip…</div>
-          <div style={{fontSize:13,color:'var(--muted)',marginTop:6}}>This takes about 10 seconds</div>
+          <div style={{color:'var(--teal)',fontWeight:700}}>AI is crafting your perfect itinerary…</div>
+          <div style={{fontSize:13,color:'var(--muted)',marginTop:6}}>Planning activities, restaurants & tips — takes ~15 seconds</div>
         </div>
       )}
 
-      {itinerary && itinerary.startsWith('⚠️') && (
-        <div className="err-msg">{itinerary}</div>
+      {itinerary && itinerary.startsWith('⚠️') && <div className="err-msg">{itinerary}</div>}
+
+      {editMode && (
+        <div>
+          <div style={{fontSize:12,color:'var(--muted)',marginBottom:8}}>Edit the itinerary text below and click Save:</div>
+          <textarea className="itin-edit-area" value={editText} onChange={e => setEditText(e.target.value)} />
+        </div>
       )}
 
-      {parsed && parsed.map(d => (
+      {!editMode && parsed && parsed.map(d => (
         <div key={d.day} className="itin-day">
           <div className="itin-day-header">
             <div className="itin-day-num">D{d.day}</div>
             <div className="itin-day-title">{d.title}</div>
           </div>
-          {d.activities.map((a, i) => (
-            <div key={i} className="itin-activity">
-              {a.time && <div className="itin-time">{a.time}</div>}
-              <div className="itin-desc">{a.desc}</div>
-            </div>
-          ))}
+          <div className="itin-activities">
+            {d.activities.map((a, i) => (
+              <div key={i} className="itin-activity">
+                <div className="itin-time-col">
+                  <div className="itin-time">{a.time}</div>
+                  {i < d.activities.length - 1 && <div className="itin-time-dot"/>}
+                </div>
+                <div style={{flex:1}}>
+                  <div className="itin-desc">{a.desc}</div>
+                  {a.cost && <div className="itin-cost">{a.cost}</div>}
+                </div>
+              </div>
+            ))}
+            {d.tip && <div className="itin-tip">💡 {d.tip}</div>}
+          </div>
         </div>
       ))}
 
-      {itinerary && !parsed && !itinerary.startsWith('⚠️') && (
-        <div className="card"><div style={{fontSize:14,lineHeight:1.7,whiteSpace:'pre-wrap'}}>{itinerary}</div></div>
+      {!editMode && itinerary && !parsed && !itinerary.startsWith('⚠️') && (
+        <div className="card"><div style={{fontSize:14,lineHeight:1.8,whiteSpace:'pre-wrap'}}>{itinerary}</div></div>
       )}
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   MEMORIES SCREEN
+══════════════════════════════════════════ */
+const MEMORY_EMOJIS = ['📸','🌅','🍽️','🎉','😂','🏖️','⛰️','🚗','🎵','❤️','🤩','🌊'];
+
+function MemoriesScreen({ trip, members, session }) {
+  const [memories, setMemories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [text, setText] = useState('');
+  const [emoji, setEmoji] = useState('📸');
+  const [adding, setAdding] = useState(false);
+  const uid = session?.user?.id;
+
+  useEffect(() => { loadMemories(); }, [trip.id]);
+
+  async function loadMemories() {
+    setLoading(true);
+    const { data } = await sb.from('trip_memories').select('*, profiles(name)').eq('trip_id', trip.id).order('created_at', { ascending: false });
+    if (data) setMemories(data);
+    setLoading(false);
+  }
+
+  async function addMemory() {
+    if (!text.trim()) return;
+    setAdding(true);
+    const { data } = await sb.from('trip_memories').insert({
+      trip_id: trip.id, user_id: uid, content: text.trim(), emoji
+    }).select('*, profiles(name)');
+    if (data) setMemories(prev => [data[0], ...prev]);
+    setText(''); setEmoji('📸');
+    setAdding(false);
+  }
+
+  async function deleteMemory(id) {
+    await sb.from('trip_memories').delete().eq('id', id).eq('user_id', uid);
+    setMemories(prev => prev.filter(m => m.id !== id));
+  }
+
+  function timeAgo(ts) {
+    const diff = Date.now() - new Date(ts).getTime();
+    if (diff < 60000) return 'just now';
+    if (diff < 3600000) return Math.floor(diff/60000) + 'm ago';
+    if (diff < 86400000) return Math.floor(diff/3600000) + 'h ago';
+    return Math.floor(diff/86400000) + 'd ago';
+  }
+
+  if (loading) return <div style={{textAlign:'center',padding:40,color:'var(--muted)'}}>Loading memories…</div>;
+
+  return (
+    <>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
+        <div className="sec-title">📸 Trip Memories</div>
+        <span className="chip">{memories.length} moments</span>
+      </div>
+      <div style={{fontSize:13,color:'var(--muted)',marginBottom:16}}>Capture moments, laughs, and highlights from your trip — shared with the whole group.</div>
+
+      {/* Add memory input */}
+      <div className="card" style={{marginBottom:16}}>
+        <div style={{marginBottom:10,fontWeight:700,fontSize:14}}>✍️ Add a moment</div>
+        <div style={{marginBottom:8}}>
+          <div style={{fontSize:12,color:'var(--muted)',marginBottom:6}}>Pick an emoji:</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+            {MEMORY_EMOJIS.map(e => (
+              <button key={e} onClick={() => setEmoji(e)}
+                style={{fontSize:20,background:emoji===e?'#FFF8F0':'transparent',border:emoji===e?'2px solid var(--orange)':'2px solid transparent',borderRadius:8,padding:'2px 6px',cursor:'pointer'}}>
+                {e}
+              </button>
+            ))}
+          </div>
+        </div>
+        <textarea className="form-input" style={{width:'100%',minHeight:80,resize:'vertical',fontSize:14,lineHeight:1.6}}
+          placeholder="What happened? Share a memory, funny moment, or highlight…"
+          value={text} onChange={e => setText(e.target.value)} />
+        <button className="btn btn-primary" style={{marginTop:10,width:'100%'}} onClick={addMemory} disabled={adding||!text.trim()}>
+          {adding ? '⏳ Saving…' : `${emoji} Add Memory`}
+        </button>
+      </div>
+
+      {memories.length === 0 && (
+        <div className="empty-state" style={{padding:'24px 0'}}>
+          <div className="empty-icon">📸</div>
+          <div className="empty-title">No memories yet</div>
+          <div className="empty-sub">Be the first to capture a moment from this trip!</div>
+        </div>
+      )}
+
+      {memories.map(m => (
+        <div key={m.id} className="memory-card">
+          <div className="memory-emoji">{m.emoji}</div>
+          <div className="memory-content">
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div className="memory-author">{m.profiles?.name || 'Member'}</div>
+              <div style={{display:'flex',gap:8,alignItems:'center'}}>
+                <div className="memory-time">{timeAgo(m.created_at)}</div>
+                {m.user_id === uid && (
+                  <button onClick={() => deleteMemory(m.id)}
+                    style={{fontSize:11,color:'var(--muted)',background:'none',border:'none',cursor:'pointer',padding:0}}>✕</button>
+                )}
+              </div>
+            </div>
+            <div className="memory-text">{m.content}</div>
+          </div>
+        </div>
+      ))}
     </>
   );
 }

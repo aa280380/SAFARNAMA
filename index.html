@@ -517,9 +517,21 @@ const fmtCurrency = n => '₹' + Number(n).toLocaleString('en-IN');
 const getInviteUrl = code => `${window.location.origin}${window.location.pathname}?invite=${code}`;
 
 /* ── Gemini AI ── */
-const GEMINI_KEY_STORE = 'sn_gemini_key';
-const getGeminiKey = () => { try { return localStorage.getItem(GEMINI_KEY_STORE)||''; } catch(e){return '';} };
-const setGeminiKey = k => { try { localStorage.setItem(GEMINI_KEY_STORE, k.trim()); } catch(e){} };
+const GEMINI_KEY_STORE = 'sn_groq_key';
+// Key priority: 1) localStorage (admin override) 2) Supabase app_settings (shared for all users)
+const setGeminiKey = k => { try { localStorage.setItem(GEMINI_KEY_STORE, k.trim()); _groqKeyCache = null; } catch(e){} };
+let _groqKeyCache = null;
+async function getGeminiKey() {
+  // 1. localStorage first (admin can override locally)
+  try { const k = localStorage.getItem(GEMINI_KEY_STORE); if (k) return k; } catch(e){}
+  // 2. Supabase shared key (works for entire team)
+  if (_groqKeyCache) return _groqKeyCache;
+  try {
+    const { data } = await sb.from('app_settings').select('value').eq('key','groq_api_key').single();
+    if (data?.value) { _groqKeyCache = data.value; return _groqKeyCache; }
+  } catch(e){}
+  return '';
+}
 
 /* ── Flight Search (Realistic Mock Data) ── */
 // Uses curated Indian flight data — reliable for demo, no API key needed
@@ -609,16 +621,21 @@ async function searchFlights(origin, dest, date, adults) {
 }
 
 async function callGemini(prompt) {
-  const key = getGeminiKey();
+  const key = await getGeminiKey();
   if (!key) throw new Error('NO_KEY');
-  const r = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${key}`,
-    { method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ contents:[{parts:[{text: prompt}]}], generationConfig:{maxOutputTokens:600,temperature:0.7} }) }
-  );
+  const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method:'POST',
+    headers:{ 'Content-Type':'application/json', 'Authorization':`Bearer ${key}` },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      messages: [{ role:'user', content: prompt }],
+      max_tokens: 600,
+      temperature: 0.7
+    })
+  });
   const d = await r.json();
-  if (!r.ok) throw new Error(d.error?.message || 'Gemini error');
-  return d.candidates?.[0]?.content?.parts?.[0]?.text || 'No response from AI.';
+  if (!r.ok) throw new Error(d.error?.message || 'Groq error');
+  return d.choices?.[0]?.message?.content || 'No response from AI.';
 }
 
 /* ── Logo (base64 embedded) ── */
@@ -873,7 +890,7 @@ function DashboardScreen({ profile, trips, session, setScr, loadTripData, notifi
       const reply = await callGemini(prompt);
       setAiResult(reply);
     } catch(e) {
-      if (e.message==='NO_KEY') setAiResult('⚠️ Please add your Gemini API key in Profile → AI Settings to enable real AI suggestions.');
+      if (e.message==='NO_KEY') setAiResult('⚠️ Please add your Groq API key in Profile → AI Settings to enable real AI suggestions.');
       else setAiResult(`⚠️ AI error: ${e.message}`);
     }
     setAiLoading(false);
@@ -1477,7 +1494,7 @@ function AiChatScreen({ trip }) {
     } catch(e) {
       const fallbackKey = Object.keys(AI_RESPONSES).find(k => q.toLowerCase().includes(k));
       const fallback = e.message==='NO_KEY'
-        ? `⚠️ Add your Gemini API key in Profile → AI Settings for real AI answers!\n\n${fallbackKey ? AI_RESPONSES[fallbackKey] : `Here's a tip about ${trip.destination}: check local weather, book early, and explore street food! 🌍`}`
+        ? `⚠️ Add your Groq API key in Profile → AI Settings for real AI answers!\n\n${fallbackKey ? AI_RESPONSES[fallbackKey] : `Here's a tip about ${trip.destination}: check local weather, book early, and explore street food! 🌍`}`
         : `⚠️ AI error: ${e.message}`;
       setMessages(prev => [...prev, {role:'ai',text:fallback}]);
     }
@@ -1765,7 +1782,7 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
       const reply = await callGemini(prompt);
       setConsensus(reply);
     } catch(e) {
-      setConsensus(e.message === 'NO_KEY' ? '⚠️ Add Gemini API key in Profile → AI Settings to get AI consensus.' : `⚠️ ${e.message}`);
+      setConsensus(e.message === 'NO_KEY' ? '⚠️ Add Groq API key in Profile → AI Settings to get AI consensus.' : `⚠️ ${e.message}`);
     }
     setGenerating(false);
   }
@@ -1856,7 +1873,7 @@ function ItineraryScreen({ trip, members }) {
       await sb.from('itineraries').upsert({ trip_id: trip.id, content: reply, generated_at: new Date().toISOString() }, { onConflict: 'trip_id' });
       setItinerary(reply);
     } catch(e) {
-      setItinerary(e.message === 'NO_KEY' ? '⚠️ Add your Gemini API key in Profile → AI Settings to generate itinerary.' : `⚠️ Error: ${e.message}`);
+      setItinerary(e.message === 'NO_KEY' ? '⚠️ Add your Groq API key in Profile → AI Settings to generate itinerary.' : `⚠️ Error: ${e.message}`);
     }
     setGenerating(false);
   }
@@ -1994,19 +2011,20 @@ function ProfileScreen({ profile, session, setScr, setSession }) {
         </div>
 
         <div className="card">
-          <div className="card-title">🤖 AI Settings (Gemini)</div>
+          <div className="card-title">🤖 AI Settings (Groq)</div>
           <div style={{fontSize:13,color:'var(--muted)',marginBottom:10}}>
-            Required for AI itinerary, AI chat, and AI consensus features.<br/>
-            Get free key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style={{color:'var(--primary)'}}>aistudio.google.com</a>
+            Powers AI itinerary, AI chat, and AI consensus — free, 14,400 requests/day.<br/>
+            <strong>Team members:</strong> AI works automatically (key is shared by admin).<br/>
+            <strong>Admin only:</strong> Override key at <a href="https://console.groq.com/keys" target="_blank" style={{color:'var(--primary)'}}>console.groq.com/keys</a> ↗
           </div>
           <div style={{display:'flex',gap:8}}>
             <input className="form-input" style={{flex:1,fontFamily:'monospace',fontSize:12}} type="password"
-              placeholder="Paste Gemini API key here…" value={apiKey} onChange={e => setApiKey(e.target.value)} />
+              placeholder="Paste Groq API key here… (gsk_...)" value={apiKey} onChange={e => setApiKey(e.target.value)} />
             <button className="btn" style={{whiteSpace:'nowrap',padding:'0 16px'}} onClick={saveKey}>
               {keySaved ? '✅ Saved!' : 'Save'}
             </button>
           </div>
-          {apiKey && <div style={{marginTop:8,fontSize:12,color:'var(--green)'}}>✅ Gemini key set — AI features active</div>}
+          {apiKey && <div style={{marginTop:8,fontSize:12,color:'var(--green)'}}>✅ Groq key set — AI features active</div>}
         </div>
 
         <button className="btn btn-outline" style={{borderColor:'var(--red)',color:'var(--red)'}} onClick={logout}>🚪 Logout</button>

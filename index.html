@@ -528,7 +528,11 @@ async function getGeminiKey() {
   if (_groqKeyCache) return _groqKeyCache;
   try {
     const { data } = await sb.from('app_settings').select('value').eq('key','groq_api_key').single();
-    if (data?.value) { _groqKeyCache = data.value; return _groqKeyCache; }
+    if (data?.value) {
+      _groqKeyCache = data.value.trim();
+      console.log('[SafarNama] Groq key loaded from Supabase:', _groqKeyCache.slice(0,8)+'...');
+      return _groqKeyCache;
+    }
   } catch(e){}
   return '';
 }
@@ -1980,7 +1984,11 @@ function InviteModal({ trip, onClose }) {
    PROFILE SCREEN
 ══════════════════════════════════════════ */
 function ProfileScreen({ profile, session, setScr, setSession }) {
-  const [apiKey, setApiKey] = React.useState(getGeminiKey);
+  const [apiKey, setApiKey] = React.useState(() => { try { return localStorage.getItem('sn_groq_key')||''; } catch(e){return '';} });
+  // Load from Supabase on mount if localStorage is empty
+  React.useEffect(() => {
+    if (!apiKey) { getGeminiKey().then(k => { if (k) setApiKey(k); }); }
+  }, []);
   const [keySaved, setKeySaved] = React.useState(false);
   async function logout() { await sb.auth.signOut(); setSession(null); setScr('auth'); }
   function saveKey() { setGeminiKey(apiKey); setKeySaved(true); setTimeout(() => setKeySaved(false), 2000); }

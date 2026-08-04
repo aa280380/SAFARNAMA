@@ -364,6 +364,7 @@ input,textarea,select{font-family:inherit;outline:none;}
   .admin-stat-grid{grid-template-columns:1fr 1fr;}
 }
 @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes dropDown{from{opacity:0;transform:translateY(-12px) scaleY(.96)}to{opacity:1;transform:translateY(0) scaleY(1)}}
 </style>
 </head>
 <body>
@@ -847,20 +848,21 @@ function App() {
       )}
       {tripNav}
       {showInviteModal && <InviteModal trip={currentTrip} onClose={() => setShowInviteModal(false)} />}
-      {/* ── GLOBAL CHAT BOTTOM SHEET ── */}
+      {/* ── CHAT DROPDOWN PANEL (WhatsApp-style, drops from top nav) ── */}
       {chatOpen && (
-        <div style={{position:'fixed',inset:0,zIndex:500}} onClick={e => { if(e.target===e.currentTarget) setChatOpen(false); }}>
-          <div style={{position:'absolute',inset:0,background:'rgba(10,22,40,.45)'}} />
-          <div style={{position:'absolute',bottom:0,left:0,right:0,height:'65vh',background:'#fff',borderRadius:'20px 20px 0 0',
-            display:'flex',flexDirection:'column',overflow:'hidden',
-            animation:'slideUp .3s ease-out'}}>
-            <div style={{background:'#0F2048',padding:'12px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
-              <div>
-                <div style={{fontWeight:800,fontSize:14,color:'#fff'}}>💬 {currentTrip?.destination} Group Chat</div>
-                <div style={{fontSize:11,color:'rgba(255,255,255,.6)'}}>{members.length} members · live</div>
-              </div>
-              <button onClick={() => setChatOpen(false)} style={{background:'rgba(255,255,255,.15)',border:'none',borderRadius:'50%',width:28,height:28,color:'#fff',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
+        <div style={{position:'fixed',top:64,right:24,zIndex:600,width:360,height:520,
+          borderRadius:16,overflow:'hidden',boxShadow:'0 20px 60px rgba(0,0,0,.28)',
+          display:'flex',flexDirection:'column',animation:'dropDown .25s ease-out',transformOrigin:'top right'}}>
+          <div style={{background:'#075E54',padding:'10px 14px',display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
+            <div style={{width:36,height:36,borderRadius:'50%',background:'#128C7E',display:'flex',alignItems:'center',justifyContent:'center',fontSize:16,flexShrink:0}}>✈️</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontWeight:700,fontSize:13,color:'#fff',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{currentTrip?.destination} Group</div>
+              <div style={{fontSize:10,color:'rgba(255,255,255,.7)'}}>{members.length} members · live</div>
             </div>
+            <button onClick={() => setChatOpen(false)}
+              style={{background:'none',border:'none',color:'rgba(255,255,255,.8)',cursor:'pointer',fontSize:18,lineHeight:1,padding:4,flexShrink:0}}>✕</button>
+          </div>
+          <div style={{flex:1,overflow:'hidden',background:'#ECE5DD'}}>
             <GroupChatScreen trip={currentTrip} members={members} session={session} />
           </div>
         </div>
@@ -2008,7 +2010,6 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
   const [aiQ, setAiQ] = useState('');
   const [aiA, setAiA] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
-  const [leftPanel, setLeftPanel] = useState('photo'); // 'photo' | 'chat'
   const uid = session?.user?.id;
 
   const destKey = getDestKey(trip.destination);
@@ -2088,66 +2089,42 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
 
       {/* ── LEFT: PHOTO or CHAT ── */}
       <div style={{position:'relative',overflow:'hidden',minHeight:500,background:'#0a1628'}}>
-        {/* PHOTO layer — always rendered, fades out when chat is open */}
-        <div style={{position:'absolute',inset:0,opacity:leftPanel==='photo'?1:0,transition:'opacity .4s ease',pointerEvents:leftPanel==='photo'?'auto':'none'}}>
-          {photos.map((src,i) => (
-            <img key={i} src={src} alt={trip.destination}
-              style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',
-                opacity: i===photoIdx ? 1 : 0, transition:'opacity 1.2s ease-in-out'}} />
+        {photos.map((src,i) => (
+          <img key={i} src={src} alt={trip.destination}
+            style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',
+              opacity: i===photoIdx ? 1 : 0, transition:'opacity 1.2s ease-in-out'}} />
+        ))}
+        <div style={{position:'absolute',inset:0,background:'linear-gradient(to top, rgba(10,22,40,.85) 0%, rgba(10,22,40,.2) 60%, transparent 100%)'}}/>
+        <div style={{position:'absolute',top:0,left:0,right:0,padding:'14px 16px',background:'linear-gradient(to bottom,rgba(10,22,40,.7),transparent)'}}>
+          <div style={{fontSize:22,fontWeight:900,color:'#fff',letterSpacing:.5}}>{trip.destination}</div>
+          <div style={{fontSize:12,color:'rgba(255,255,255,.7)',marginTop:2}}>{members.length} travellers · {trip.start_date || 'Dates TBD'}</div>
+        </div>
+        <div style={{position:'absolute',bottom:60,left:12,display:'flex',gap:6}}>
+          {photos.map((_,i) => (
+            <button key={i} onClick={() => setPhotoIdx(i)}
+              style={{width:i===photoIdx?40:32,height:i===photoIdx?30:24,borderRadius:6,border:i===photoIdx?'2px solid #F97316':'2px solid rgba(255,255,255,.4)',
+                background:'rgba(255,255,255,.2)',cursor:'pointer',transition:'all .3s',padding:0,flexShrink:0}} />
           ))}
-          <div style={{position:'absolute',inset:0,background:'linear-gradient(to top, rgba(10,22,40,.85) 0%, rgba(10,22,40,.2) 60%, transparent 100%)'}}/>
-          <div style={{position:'absolute',top:0,left:0,right:0,padding:'14px 16px',background:'linear-gradient(to bottom,rgba(10,22,40,.7),transparent)'}}>
-            <div style={{fontSize:22,fontWeight:900,color:'#fff',letterSpacing:.5}}>{trip.destination}</div>
-            <div style={{fontSize:12,color:'rgba(255,255,255,.7)',marginTop:2}}>{members.length} travellers · {trip.start_date || 'Dates TBD'}</div>
-          </div>
-          <div style={{position:'absolute',bottom:60,left:12,display:'flex',gap:6}}>
-            {photos.map((_,i) => (
-              <button key={i} onClick={() => setPhotoIdx(i)}
-                style={{width:i===photoIdx?40:32,height:i===photoIdx?30:24,borderRadius:6,border:i===photoIdx?'2px solid #F97316':'2px solid rgba(255,255,255,.4)',
-                  background:'rgba(255,255,255,.2)',cursor:'pointer',transition:'all .3s',padding:0,flexShrink:0}} />
-            ))}
-          </div>
-          <div style={{position:'absolute',bottom:16,left:12,right:12,display:'flex',gap:6,flexWrap:'wrap'}}>
-            {vibes.map(v => (
-              <span key={v} style={{background:'rgba(255,255,255,.18)',backdropFilter:'blur(4px)',color:'#fff',fontSize:11,fontWeight:600,padding:'4px 10px',borderRadius:20}}>{v}</span>
-            ))}
-          </div>
-          {/* AD_SLOT: position absolute bottom-0, 48px height banner — future monetization */}
         </div>
-
-        {/* CHAT layer — slides in over the photo */}
-        <div style={{position:'absolute',inset:0,display:'flex',flexDirection:'column',background:'#fff',
-          opacity:leftPanel==='chat'?1:0,transform:leftPanel==='chat'?'translateX(0)':'translateX(-100%)',
-          transition:'opacity .35s ease, transform .35s ease',pointerEvents:leftPanel==='chat'?'auto':'none'}}>
-          <div style={{background:'#0F2048',padding:'10px 14px',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
-            <div style={{width:8,height:8,borderRadius:'50%',background:'#22C55E',boxShadow:'0 0 0 3px rgba(34,197,94,.25)'}}/>
-            <div style={{color:'#fff',fontWeight:800,fontSize:13}}>💬 Group Chat</div>
-            <div style={{marginLeft:'auto',fontSize:10,color:'rgba(255,255,255,.55)'}}>{members.length} members · live</div>
-          </div>
-          <div style={{flex:1,overflow:'hidden'}}>
-            <GroupChatScreen trip={trip} members={members} session={session} />
-          </div>
+        <div style={{position:'absolute',bottom:16,left:12,right:12,display:'flex',gap:6,flexWrap:'wrap'}}>
+          {vibes.map(v => (
+            <span key={v} style={{background:'rgba(255,255,255,.18)',backdropFilter:'blur(4px)',color:'#fff',fontSize:11,fontWeight:600,padding:'4px 10px',borderRadius:20}}>{v}</span>
+          ))}
         </div>
+        {/* AD_SLOT: position absolute bottom-0, 48px height banner — future monetization */}
       </div>
 
       {/* ── RIGHT: DECISIONS ── */}
       <div style={{display:'flex',flexDirection:'column',background:'#F8FAFC',overflowY:'auto',maxHeight:'calc(100vh - 120px)'}}>
 
-        {/* Right header with AI + Chat toggles */}
+        {/* Right header with AI toggle only */}
         <div style={{background:'#0F2048',padding:'10px 14px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:800,fontSize:13}}>🗳️ Cast Your Votes</div>
-          <div style={{display:'flex',gap:6}}>
-            <button onClick={() => { setLeftPanel(p => p==='chat' ? 'photo' : 'chat'); setAiOpen(false); }}
-              style={{background: leftPanel==='chat' ? '#22C55E' : 'rgba(255,255,255,.15)',border:'none',borderRadius:20,padding:'4px 12px',
-                color:'#fff',fontSize:11,fontWeight:700,cursor:'pointer',transition:'background .2s'}}>
-              {leftPanel==='chat' ? '🖼️ Photos' : '💬 Chat'}
-            </button>
-            <button onClick={() => { setAiOpen(o => !o); setLeftPanel('photo'); }}
-              style={{background: aiOpen ? '#F97316' : 'rgba(255,255,255,.15)',border:'none',borderRadius:20,padding:'4px 12px',
-                color:'#fff',fontSize:11,fontWeight:700,cursor:'pointer',transition:'background .2s'}}>
-              {aiOpen ? '✕ AI' : '🤖 AI'}
-            </button>
-          </div>
+          <button onClick={() => setAiOpen(o => !o)}
+            style={{background: aiOpen ? '#F97316' : 'rgba(255,255,255,.15)',border:'none',borderRadius:20,padding:'4px 12px',
+              color:'#fff',fontSize:11,fontWeight:700,cursor:'pointer',transition:'background .2s'}}>
+            {aiOpen ? '✕ Close AI' : '🤖 Ask AI'}
+          </button>
         </div>
 
         {/* AI panel */}

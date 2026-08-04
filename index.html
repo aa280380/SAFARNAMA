@@ -828,20 +828,23 @@ function App() {
   return (
     <div style={{position:'relative'}}>
       {tripTopNav}
-      <div className="mobile-wrap screen-inner">
-        {scr === 'tracker' && <TrackerScreen trip={currentTrip} members={members} session={session} profile={profile} loadTripData={loadTripData} />}
-        {scr === 'places' && <PlacesScreen places={places} setPlaces={setPlaces} trip={currentTrip} members={members} />}
-        {scr === 'hotels' && <HotelsScreen trip={currentTrip} members={members} />}
-        {scr === 'cost' && <CostScreen trip={currentTrip} members={members} expenses={expenses} setExpenses={setExpenses} session={session} profile={profile} showAddExp={showAddExp} setShowAddExp={setShowAddExp} sendNotifications={sendNotifications} />}
-        {scr === 'voting' && <VotingScreen trip={currentTrip} members={members} session={session} sendNotifications={sendNotifications} />}
-        {scr === 'itinerary' && <ItineraryScreen trip={currentTrip} members={members} />}
-        {scr === 'flights' && <FlightsScreen trip={currentTrip} members={members} />}
-        {scr === 'ai-chat' && <AiChatScreen trip={currentTrip} />}
-        {scr === 'memories' && <MemoriesScreen trip={currentTrip} members={members} session={session} />}
-        {scr === 'chat' && <GroupChatScreen trip={currentTrip} members={members} session={session} />}
-        {scr === 'more' && <MoreScreen trip={currentTrip} members={members} expenses={expenses} session={session} setScr={setScr} />}
-        {scr === 'agent' && <AgentScreen trip={currentTrip} members={members} expenses={expenses} />}
-      </div>
+      {/* VotingScreen is full-width — rendered outside mobile-wrap */}
+      {scr === 'voting' && <VotingScreen trip={currentTrip} members={members} session={session} sendNotifications={sendNotifications} />}
+      {scr !== 'voting' && (
+        <div className="mobile-wrap screen-inner">
+          {scr === 'tracker' && <TrackerScreen trip={currentTrip} members={members} session={session} profile={profile} loadTripData={loadTripData} />}
+          {scr === 'places' && <PlacesScreen places={places} setPlaces={setPlaces} trip={currentTrip} members={members} />}
+          {scr === 'hotels' && <HotelsScreen trip={currentTrip} members={members} />}
+          {scr === 'cost' && <CostScreen trip={currentTrip} members={members} expenses={expenses} setExpenses={setExpenses} session={session} profile={profile} showAddExp={showAddExp} setShowAddExp={setShowAddExp} sendNotifications={sendNotifications} />}
+          {scr === 'itinerary' && <ItineraryScreen trip={currentTrip} members={members} />}
+          {scr === 'flights' && <FlightsScreen trip={currentTrip} members={members} />}
+          {scr === 'ai-chat' && <AiChatScreen trip={currentTrip} />}
+          {scr === 'memories' && <MemoriesScreen trip={currentTrip} members={members} session={session} />}
+          {scr === 'chat' && <GroupChatScreen trip={currentTrip} members={members} session={session} />}
+          {scr === 'more' && <MoreScreen trip={currentTrip} members={members} expenses={expenses} session={session} setScr={setScr} />}
+          {scr === 'agent' && <AgentScreen trip={currentTrip} members={members} expenses={expenses} />}
+        </div>
+      )}
       {tripNav}
       {showInviteModal && <InviteModal trip={currentTrip} onClose={() => setShowInviteModal(false)} />}
       {/* ── GLOBAL CHAT BOTTOM SHEET ── */}
@@ -2081,7 +2084,7 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
   function votesForOption(cat, opt) { return votes.filter(v => v.category===cat && v.option_text===opt).length; }
 
   return (
-    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:0,margin:'-12px',minHeight:'calc(100vh - 120px)'}}>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:0,minHeight:'calc(100vh - 120px)'}}>
 
       {/* ── LEFT: PHOTO or CHAT ── */}
       <div style={{position:'relative',overflow:'hidden',minHeight:500,background:'#0a1628'}}>

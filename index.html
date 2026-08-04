@@ -293,21 +293,27 @@ input,textarea,select{font-family:inherit;outline:none;}
 .vote-bar-inner{height:100%;background:var(--teal);border-radius:3px;transition:width .5s ease;}
 
 /* ── ITINERARY SCREEN ── */
-.itin-day{background:#fff;border-radius:16px;padding:0;margin-bottom:14px;box-shadow:0 2px 12px rgba(0,0,0,.08);overflow:hidden;}
-.itin-day-header{display:flex;align-items:center;gap:12px;padding:14px 16px;background:linear-gradient(135deg,var(--navy) 0%,#2a4a7f 100%);}
-.itin-day-num{width:38px;height:38px;border-radius:50%;background:var(--orange);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;flex-shrink:0;}
-.itin-day-title{font-size:15px;font-weight:800;color:#fff;}
-.itin-activities{padding:8px 0;}
-.itin-activity{display:flex;gap:12px;padding:10px 16px;border-bottom:1px solid #F3F4F6;transition:background .15s;}
-.itin-activity:last-child{border-bottom:none;}
-.itin-activity:hover{background:#FAFBFC;}
-.itin-time-col{display:flex;flex-direction:column;align-items:center;min-width:48px;}
-.itin-time{font-size:11px;color:var(--orange);font-weight:700;background:#FFF8F0;padding:3px 6px;border-radius:6px;white-space:nowrap;}
-.itin-time-dot{width:2px;flex:1;background:#E5E7EB;margin:4px auto;}
-.itin-desc{font-size:13px;color:var(--text);line-height:1.6;padding-top:2px;}
-.itin-cost{display:inline-block;font-size:11px;font-weight:700;color:var(--teal);background:#F0FDFA;padding:2px 7px;border-radius:10px;margin-top:4px;}
-.itin-tip{background:linear-gradient(135deg,#FFF8F0,#FFF3E0);border-left:3px solid var(--orange);padding:10px 14px;margin:8px 16px 12px;border-radius:0 8px 8px 0;font-size:12px;color:var(--text);line-height:1.5;}
-.itin-edit-btn{font-size:12px;padding:4px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;color:var(--muted);font-weight:600;}
+.itin-day{background:#fff;border-radius:18px;margin-bottom:16px;overflow:hidden;border:1px solid #E8EDF5;}
+.itin-day-header{padding:16px 18px 12px;background:linear-gradient(135deg,#0F2048 0%,#1B4F8C 100%);position:relative;}
+.itin-day-date-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+.itin-day-badge{font-size:11px;font-weight:800;color:#fff;background:var(--orange);padding:3px 10px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;}
+.itin-day-datestr{font-size:12px;color:rgba(255,255,255,.65);font-weight:500;}
+.itin-day-title{font-size:16px;font-weight:800;color:#fff;line-height:1.3;}
+.itin-day-meta{display:flex;gap:12px;margin-top:8px;}
+.itin-day-meta-pill{font-size:11px;background:rgba(255,255,255,.15);color:rgba(255,255,255,.85);padding:3px 10px;border-radius:20px;font-weight:600;}
+.itin-timeline{padding:16px 18px;position:relative;}
+.itin-slot{display:flex;gap:14px;margin-bottom:0;position:relative;}
+.itin-slot:not(:last-child) .itin-line{position:absolute;left:19px;top:38px;width:2px;bottom:-8px;background:#E8EDF5;}
+.itin-slot-marker{display:flex;flex-direction:column;align-items:center;width:38px;flex-shrink:0;padding-top:4px;}
+.itin-dot{width:10px;height:10px;border-radius:50%;border:2px solid #fff;flex-shrink:0;margin-top:5px;box-shadow:0 0 0 2px currentColor;}
+.itin-slot-body{flex:1;padding-bottom:18px;}
+.itin-slot-time{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;letter-spacing:.3px;}
+.itin-slot-name{font-size:14px;font-weight:700;color:#0F2048;line-height:1.4;margin-bottom:3px;}
+.itin-slot-desc{font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:5px;}
+.itin-slot-cost{font-size:11px;font-weight:700;color:var(--teal);background:#F0FDFA;border:1px solid #99F6E4;padding:2px 8px;border-radius:12px;display:inline-block;}
+.itin-meal-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
+.itin-tip{background:#FFFBEB;border-left:3px solid #F59E0B;padding:10px 14px;margin-top:4px;border-radius:0 10px 10px 0;font-size:12px;color:#92400E;line-height:1.5;font-weight:500;}
+.itin-edit-btn{font-size:12px;padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;color:var(--muted);font-weight:600;}
 .itin-edit-btn:hover{border-color:var(--teal);color:var(--teal);}
 .itin-edit-area{width:100%;min-height:400px;font-size:13px;font-family:monospace;padding:12px;border:1.5px solid var(--border);border-radius:10px;line-height:1.7;resize:vertical;}
 /* Memory feature */
@@ -2227,14 +2233,42 @@ Include real restaurant names, realistic INR costs, and make it fun for a group!
         const match = l.match(/^(\d{1,2}:\d{2})\s*[-–]\s*(.+)/);
         if (!match) return null;
         const descFull = match[2];
-        const costMatch = descFull.match(/(₹[\d,]+[\s\w]*)/);
-        return { time: match[1], desc: descFull.replace(/(₹[\d,]+[\s\w]*)/, '').replace(/\(\s*\)/, '').trim(), cost: costMatch ? costMatch[1] : null };
+        const costMatch = descFull.match(/(₹[\d,]+(?:[\s\w]*)?)/);
+        const rawDesc = descFull.replace(/(\(₹[\d,]+[^)]*\)|₹[\d,]+[\s\w]*)/, '').replace(/\(\s*\)/, '').trim();
+        // Split "Activity name — description" on em dash or —
+        const splitMatch = rawDesc.match(/^(.+?)(?:\s*[—–-]{1,2}\s*)(.+)$/);
+        const name = splitMatch ? splitMatch[1].trim() : rawDesc;
+        const desc = splitMatch ? splitMatch[2].trim() : '';
+        const hr = parseInt(match[1].split(':')[0]);
+        const period = hr < 12 ? 'morning' : hr < 17 ? 'afternoon' : 'evening';
+        const isMeal = /breakfast|lunch|dinner|brunch|snack|cafe|restaurant|dhaba/i.test(rawDesc);
+        return { time: match[1], name, desc, cost: costMatch ? costMatch[1] : null, period, isMeal };
       }).filter(Boolean);
-      return { day: i + 1, title: headerLine, activities, tip: tip ? tip.replace('💡 Day Tip:', '').trim() : null };
+      // Calculate day date from trip start
+      let dateStr = null;
+      if (trip.start_date) {
+        const d = new Date(trip.start_date);
+        d.setDate(d.getDate() + i);
+        dateStr = d.toLocaleDateString('en-IN', { weekday:'short', day:'numeric', month:'short' });
+      }
+      // Calculate total estimated cost
+      const totalCost = activities.reduce((sum, a) => {
+        if (!a.cost) return sum;
+        const n = parseInt(a.cost.replace(/[₹,\s]/g,''));
+        return sum + (isNaN(n) ? 0 : n);
+      }, 0);
+      return { day: i + 1, title: headerLine, activities, tip: tip ? tip.replace('💡 Day Tip:', '').trim() : null, dateStr, totalCost };
     });
   }
 
   const parsed = itinerary ? parseItinerary(itinerary) : null;
+
+  const periodStyle = {
+    morning:   { dot:'#F59E0B', timeBg:'#FFFBEB', timeColor:'#92400E' },
+    afternoon: { dot:'#0D9488', timeBg:'#F0FDFA', timeColor:'#0F766E' },
+    evening:   { dot:'#6366F1', timeBg:'#EEF2FF', timeColor:'#4338CA' },
+  };
+  const mealLabel = { breakfast:'🌅 Breakfast', lunch:'☀️ Lunch', dinner:'🌙 Dinner', brunch:'🥞 Brunch' };
 
   if (loading) return <div style={{textAlign:'center',padding:40,color:'var(--muted)'}}>Loading itinerary…</div>;
 
@@ -2285,24 +2319,54 @@ Include real restaurant names, realistic INR costs, and make it fun for a group!
 
       {!editMode && parsed && parsed.map(d => (
         <div key={d.day} className="itin-day">
+          {/* Day Header */}
           <div className="itin-day-header">
-            <div className="itin-day-num">D{d.day}</div>
+            <div className="itin-day-date-row">
+              <span className="itin-day-badge">Day {d.day}</span>
+              {d.dateStr && <span className="itin-day-datestr">📅 {d.dateStr}</span>}
+            </div>
             <div className="itin-day-title">{d.title}</div>
+            <div className="itin-day-meta">
+              <span className="itin-day-meta-pill">🗓️ {d.activities.length} stops</span>
+              {d.totalCost > 0 && <span className="itin-day-meta-pill">💰 ~₹{d.totalCost.toLocaleString('en-IN')} est.</span>}
+            </div>
           </div>
-          <div className="itin-activities">
-            {d.activities.map((a, i) => (
-              <div key={i} className="itin-activity">
-                <div className="itin-time-col">
-                  <div className="itin-time">{a.time}</div>
-                  {i < d.activities.length - 1 && <div className="itin-time-dot"/>}
+
+          {/* Timeline */}
+          <div className="itin-timeline">
+            {d.activities.map((a, i) => {
+              const ps = periodStyle[a.period] || periodStyle.morning;
+              const mealKey = Object.keys(mealLabel).find(k => a.name.toLowerCase().includes(k) || a.desc.toLowerCase().includes(k));
+              return (
+                <div key={i} className="itin-slot" style={{position:'relative'}}>
+                  {/* Vertical connector line */}
+                  {i < d.activities.length - 1 && (
+                    <div style={{position:'absolute',left:18,top:26,width:2,bottom:-10,background:'#E8EDF5',zIndex:0}}/>
+                  )}
+                  {/* Dot */}
+                  <div className="itin-slot-marker">
+                    <div className="itin-dot" style={{color:ps.dot,background:ps.dot,width:12,height:12,borderRadius:'50%',border:'2px solid #fff',boxShadow:`0 0 0 2px ${ps.dot}`,zIndex:1}}/>
+                  </div>
+                  {/* Content */}
+                  <div className="itin-slot-body">
+                    <div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap',marginBottom:4}}>
+                      <span className="itin-slot-time" style={{background:ps.timeBg,color:ps.timeColor}}>{a.time}</span>
+                      {a.isMeal && mealKey && (
+                        <span className="itin-meal-badge" style={{background:'#FFF3E0',color:'#E65100'}}>{mealLabel[mealKey]}</span>
+                      )}
+                    </div>
+                    <div className="itin-slot-name">{a.name}</div>
+                    {a.desc && <div className="itin-slot-desc">{a.desc}</div>}
+                    {a.cost && <span className="itin-slot-cost">{a.cost} per person</span>}
+                  </div>
                 </div>
-                <div style={{flex:1}}>
-                  <div className="itin-desc">{a.desc}</div>
-                  {a.cost && <div className="itin-cost">{a.cost}</div>}
-                </div>
+              );
+            })}
+            {d.tip && (
+              <div className="itin-tip">
+                <strong>💡 Local Tip:</strong> {d.tip}
               </div>
-            ))}
-            {d.tip && <div className="itin-tip">💡 {d.tip}</div>}
+            )}
           </div>
         </div>
       ))}

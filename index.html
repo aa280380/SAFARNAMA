@@ -773,7 +773,7 @@ function App() {
   const tripNav = (
     <div className="bottom-nav">
       {[{id:'tracker',icon:'🗺️',label:'Track'},{id:'voting',icon:'🗳️',label:'Vote'},
-        {id:'itinerary',icon:'📋',label:'Plan'},{id:'flights',icon:'✈️',label:'Book'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI'},{id:'memories',icon:'📸',label:'Memory'}]
+        {id:'itinerary',icon:'📋',label:'Plan'},{id:'flights',icon:'✈️',label:'Book'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI'},{id:'memories',icon:'📸',label:'Memory'},{id:'agent',icon:'🛡️',label:'Agent'}]
         .map(n => (
         <button key={n.id} className={'bn-item'+(scr===n.id?' active':'')} onClick={() => setScr(n.id)}>
           <span className="bn-icon">{n.icon}</span>{n.label}
@@ -782,14 +782,29 @@ function App() {
     </div>
   );
 
+  async function confirmTrip() {
+    await sb.from('trips').update({ status: 'confirmed' }).eq('id', currentTrip.id);
+    setCurrentTrip(prev => ({ ...prev, status: 'confirmed' }));
+  }
+
   const tripTopNav = (
     <div className="back-nav">
       <button className="back-btn" onClick={() => setScr('dashboard')}>←</button>
-      <div className="back-title">📍 {currentTrip.destination}</div>
-      <button className="back-action" onClick={() => setShowInviteModal(true)}>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.52 5.845L0 24l6.335-1.502A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.727.883.936-3.638-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
-        Invite
-      </button>
+      <div className="back-title" style={{flex:1}}>
+        📍 {currentTrip.destination}
+        {currentTrip.status === 'confirmed' && <span style={{marginLeft:8,fontSize:11,background:'#22C55E',color:'#fff',padding:'2px 8px',borderRadius:10,fontWeight:700}}>✓ Confirmed</span>}
+      </div>
+      <div style={{display:'flex',gap:8,alignItems:'center'}}>
+        {currentTrip.myRole === 'coordinator' && currentTrip.status !== 'confirmed' && (
+          <button onClick={confirmTrip} style={{background:'#22C55E',border:'none',color:'#fff',fontSize:12,fontWeight:700,padding:'6px 12px',borderRadius:16,cursor:'pointer',whiteSpace:'nowrap'}}>
+            🎉 Confirm Trip
+          </button>
+        )}
+        <button className="back-action" onClick={() => setShowInviteModal(true)}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.52 5.845L0 24l6.335-1.502A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.727.883.936-3.638-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
+          Invite
+        </button>
+      </div>
     </div>
   );
 
@@ -806,6 +821,7 @@ function App() {
         {scr === 'flights' && <FlightsScreen trip={currentTrip} members={members} />}
         {scr === 'ai-chat' && <AiChatScreen trip={currentTrip} />}
         {scr === 'memories' && <MemoriesScreen trip={currentTrip} members={members} session={session} />}
+        {scr === 'agent' && <AgentScreen trip={currentTrip} members={members} expenses={expenses} />}
       </div>
       {tripNav}
       {showInviteModal && <InviteModal trip={currentTrip} onClose={() => setShowInviteModal(false)} />}
@@ -1557,8 +1573,17 @@ function CostScreen({ trip, members, expenses, setExpenses, session, profile, sh
   const [title, setTitle] = useState('');
   const [amount, setAmount] = useState('');
   const [loading, setLoading] = useState(false);
+  const [settled, setSettled] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sn_settled_'+trip.id)||'[]'); } catch(e) { return []; }
+  });
   const total = expenses.reduce((s,e) => s+Number(e.amount), 0);
   const perPerson = members.length > 0 ? Math.round(total/members.length) : 0;
+
+  function markSettled(userId) {
+    const next = settled.includes(userId) ? settled.filter(id => id !== userId) : [...settled, userId];
+    setSettled(next);
+    try { localStorage.setItem('sn_settled_'+trip.id, JSON.stringify(next)); } catch(e) {}
+  }
 
   async function addExpense() {
     if (!title || !amount) return;
@@ -1596,7 +1621,12 @@ function CostScreen({ trip, members, expenses, setExpenses, session, profile, sh
               <div style={{width:36,height:36,borderRadius:'50%',background:m.profiles?.avatar_color||COLORS[i%COLORS.length],display:'flex',alignItems:'center',justifyContent:'center',fontSize:12,fontWeight:700,color:'#fff'}}>{initials(m.profiles?.name||'?')}</div>
               <div className="m-info"><div className="m-name">{m.profiles?.name||'Unknown'}</div><div className="m-city">Paid: {fmtCurrency(paid)}</div></div>
               <div style={{textAlign:'right'}}>
-                {owes>0 ? (
+                {settled.includes(m.user_id) ? (
+                  <div>
+                    <div style={{color:'var(--green)',fontWeight:700,fontSize:13}}>✅ Settled</div>
+                    <button onClick={() => markSettled(m.user_id)} style={{fontSize:10,color:'var(--muted)',background:'none',border:'none',cursor:'pointer',marginTop:2}}>Undo</button>
+                  </div>
+                ) : owes>0 ? (
                   <div>
                     <div style={{color:'var(--red)',fontWeight:700,fontSize:13}}>Owes {fmtCurrency(owes)}</div>
                     {m.user_id === session?.user?.id && (
@@ -1606,6 +1636,10 @@ function CostScreen({ trip, members, expenses, setExpenses, session, profile, sh
                         <button className="pay-app pay-paytm" onClick={() => window.open(`upi://pay?pn=SafarNama&am=${owes}&cu=INR&tn=Trip+expense+settlement`)}>Paytm</button>
                       </div>
                     )}
+                    <button onClick={() => markSettled(m.user_id)}
+                      style={{marginTop:6,fontSize:11,fontWeight:700,color:'var(--teal)',background:'#F0FDFA',border:'1.5px solid var(--teal)',borderRadius:8,padding:'4px 10px',cursor:'pointer',display:'block',width:'100%'}}>
+                      ✅ Mark Settled
+                    </button>
                   </div>
                 ) : <span style={{color:'var(--green)',fontWeight:700,fontSize:13}}>Gets {fmtCurrency(Math.abs(owes))}</span>}
               </div>
@@ -2275,6 +2309,224 @@ function MemoriesScreen({ trip, members, session }) {
           </div>
         </div>
       ))}
+    </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   AI DISRUPTION AGENT (Agent #5)
+══════════════════════════════════════════ */
+function AgentScreen({ trip, members, expenses }) {
+  const [alerts, setAlerts] = useState([]);
+  const [scanning, setScanning] = useState(false);
+  const [lastScan, setLastScan] = useState(null);
+  const [chatInput, setChatInput] = useState('');
+  const [chatHistory, setChatHistory] = useState([]);
+  const [chatLoading, setChatLoading] = useState(false);
+
+  const daysUntilTrip = trip.start_date
+    ? Math.ceil((new Date(trip.start_date) - new Date()) / 86400000)
+    : null;
+  const totalSpend = expenses.reduce((s,e) => s+Number(e.amount), 0);
+
+  async function runAgent() {
+    setScanning(true); setAlerts([]);
+
+    // Gather trip intelligence
+    const tripInfo = {
+      destination: trip.destination,
+      status: trip.status || 'planning',
+      members: members.length,
+      daysUntil: daysUntilTrip,
+      totalSpend,
+      startDate: trip.start_date,
+      endDate: trip.end_date,
+    };
+
+    const prompt = `You are SafarNama Disruption Agent — an AI agent that proactively monitors a group trip and detects issues, risks, and opportunities.
+
+Trip details:
+- Destination: ${tripInfo.destination}
+- Status: ${tripInfo.status}
+- Members: ${tripInfo.members} people
+- Days until trip: ${tripInfo.daysUntil !== null ? tripInfo.daysUntil + ' days' : 'not set'}
+- Total spend logged: ₹${tripInfo.totalSpend.toLocaleString('en-IN')}
+- Dates: ${tripInfo.startDate || 'not set'} to ${tripInfo.endDate || 'not set'}
+
+Analyze this trip and generate EXACTLY 5 alerts in this JSON format (no markdown, just pure JSON array):
+[
+  {"type":"warning|info|success|critical","icon":"emoji","title":"short title","message":"2-sentence actionable message"},
+  ...
+]
+
+Alert types to consider:
+- Budget alerts (over/under spending)
+- Booking urgency (days left to book flights/hotels)  
+- Weather risks for the destination and season
+- Group coordination gaps (members, voting)
+- Travel document reminders
+- Local tips and opportunities
+
+Be specific to ${tripInfo.destination}. Make alerts genuinely useful.`;
+
+    try {
+      const reply = await callGemini(prompt);
+      // Try to parse JSON from response
+      const jsonMatch = reply.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        const parsed = JSON.parse(jsonMatch[0]);
+        setAlerts(parsed);
+      } else {
+        // Fallback: generate structured alerts manually
+        setAlerts(generateFallbackAlerts(tripInfo));
+      }
+    } catch(e) {
+      setAlerts(generateFallbackAlerts(tripInfo));
+    }
+    setLastScan(new Date());
+    setScanning(false);
+  }
+
+  function generateFallbackAlerts(info) {
+    const alerts = [];
+    if (info.daysUntil !== null && info.daysUntil < 30 && info.daysUntil > 0) {
+      alerts.push({type:'critical',icon:'⚡',title:'Book Now — Time Running Out',message:`Only ${info.daysUntil} days until your trip to ${info.destination}. Flight and hotel prices surge in the last 2 weeks. Book immediately to avoid 40-60% price increases.`});
+    }
+    if (info.daysUntil !== null && info.daysUntil > 0) {
+      alerts.push({type:'warning',icon:'🌧️',title:'Check Weather Window',message:`Verify the weather forecast for ${info.destination} before finalising activities. Monsoon-sensitive destinations need backup indoor plans.`});
+    }
+    if (info.totalSpend === 0) {
+      alerts.push({type:'info',icon:'💸',title:'No Expenses Logged Yet',message:`Start logging trip expenses now so the budget split stays accurate. Add flight tickets, hotel bookings and group meals as they happen.`});
+    }
+    if (info.members < 3) {
+      alerts.push({type:'info',icon:'👥',title:'Small Group — Invite More',message:`Your group has only ${info.members} member(s). More members mean lower per-person costs. Share the invite code to grow the group.`});
+    }
+    if (info.status !== 'confirmed') {
+      alerts.push({type:'warning',icon:'🗳️',title:'Trip Not Confirmed Yet',message:`The trip status is still "${info.status}". Once the group finishes voting, the coordinator should confirm the trip to lock in the final plan.`});
+    }
+    alerts.push({type:'success',icon:'✅',title:'Group Travel Detected',message:`SafarNama is actively monitoring your trip to ${info.destination}. All group preferences, votes and budgets are being tracked in real time.`});
+    return alerts.slice(0, 5);
+  }
+
+  async function sendAgentChat() {
+    if (!chatInput.trim()) return;
+    const userMsg = chatInput.trim();
+    setChatInput('');
+    setChatHistory(prev => [...prev, {role:'user', text:userMsg}]);
+    setChatLoading(true);
+
+    const context = `You are SafarNama Disruption Agent for a trip to ${trip.destination} with ${members.length} members, ${daysUntilTrip !== null ? daysUntilTrip+' days away' : 'dates TBD'}, total spend ₹${totalSpend.toLocaleString('en-IN')}. Answer concisely in 2-3 sentences.`;
+    try {
+      const reply = await callGemini(context + '\n\nUser: ' + userMsg);
+      setChatHistory(prev => [...prev, {role:'agent', text:reply}]);
+    } catch(e) {
+      setChatHistory(prev => [...prev, {role:'agent', text:'⚠️ Agent unavailable. Check Groq API key in Profile.'}]);
+    }
+    setChatLoading(false);
+  }
+
+  const alertColors = {
+    critical: {bg:'#FEF2F2',border:'#FCA5A5',title:'#991B1B',text:'#7F1D1D'},
+    warning:  {bg:'#FFFBEB',border:'#FCD34D',title:'#92400E',text:'#78350F'},
+    info:     {bg:'#EFF6FF',border:'#93C5FD',title:'#1E40AF',text:'#1E3A8A'},
+    success:  {bg:'#F0FDF4',border:'#86EFAC',title:'#166534',text:'#14532D'},
+  };
+
+  return (
+    <>
+      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+        <div>
+          <div className="sec-title">🛡️ AI Disruption Agent</div>
+          <div style={{fontSize:12,color:'var(--muted)',marginTop:2}}>Proactively monitors your trip for risks & opportunities</div>
+        </div>
+        <button className="btn btn-primary btn-sm" onClick={runAgent} disabled={scanning}>
+          {scanning ? '⏳ Scanning…' : '🔍 Run Scan'}
+        </button>
+      </div>
+
+      {lastScan && <div style={{fontSize:11,color:'var(--muted)',marginBottom:12}}>Last scan: {lastScan.toLocaleTimeString()}</div>}
+
+      {/* Agent Status Card */}
+      <div style={{background:'linear-gradient(135deg,#0F2048,#1B4F8C)',borderRadius:16,padding:16,marginBottom:16,color:'#fff'}}>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
+          <div style={{width:40,height:40,borderRadius:'50%',background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>🛡️</div>
+          <div>
+            <div style={{fontWeight:800,fontSize:15}}>SafarNama Agent</div>
+            <div style={{fontSize:11,color:'rgba(255,255,255,.65)'}}>Monitoring • {trip.destination}</div>
+          </div>
+          <div style={{marginLeft:'auto',background:'#22C55E',borderRadius:20,padding:'3px 10px',fontSize:11,fontWeight:700}}>● Active</div>
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>
+          <div style={{background:'rgba(255,255,255,.1)',borderRadius:10,padding:'8px 10px',textAlign:'center'}}>
+            <div style={{fontSize:18,fontWeight:800}}>{members.length}</div>
+            <div style={{fontSize:10,color:'rgba(255,255,255,.65)'}}>Members</div>
+          </div>
+          <div style={{background:'rgba(255,255,255,.1)',borderRadius:10,padding:'8px 10px',textAlign:'center'}}>
+            <div style={{fontSize:18,fontWeight:800}}>{daysUntilTrip !== null ? (daysUntilTrip > 0 ? daysUntilTrip : 'Now!') : '—'}</div>
+            <div style={{fontSize:10,color:'rgba(255,255,255,.65)'}}>Days to Go</div>
+          </div>
+          <div style={{background:'rgba(255,255,255,.1)',borderRadius:10,padding:'8px 10px',textAlign:'center'}}>
+            <div style={{fontSize:18,fontWeight:800}}>{alerts.length}</div>
+            <div style={{fontSize:10,color:'rgba(255,255,255,.65)'}}>Alerts</div>
+          </div>
+        </div>
+      </div>
+
+      {scanning && (
+        <div style={{textAlign:'center',padding:32}}>
+          <div style={{fontSize:36,marginBottom:8}}>🔍</div>
+          <div style={{fontWeight:700,color:'var(--navy)'}}>Agent is scanning your trip…</div>
+          <div style={{fontSize:13,color:'var(--muted)',marginTop:4}}>Checking budget, bookings, weather risks & group coordination</div>
+        </div>
+      )}
+
+      {!scanning && alerts.length === 0 && (
+        <div className="empty-state" style={{padding:'24px 0'}}>
+          <div className="empty-icon">🛡️</div>
+          <div className="empty-title">No alerts yet</div>
+          <div className="empty-sub">Tap "Run Scan" to let the agent analyse your trip for risks and opportunities.</div>
+        </div>
+      )}
+
+      {alerts.map((alert, i) => {
+        const c = alertColors[alert.type] || alertColors.info;
+        return (
+          <div key={i} style={{background:c.bg,border:`1.5px solid ${c.border}`,borderRadius:14,padding:14,marginBottom:10}}>
+            <div style={{display:'flex',gap:10,alignItems:'flex-start'}}>
+              <span style={{fontSize:24,flexShrink:0}}>{alert.icon}</span>
+              <div style={{flex:1}}>
+                <div style={{fontWeight:800,fontSize:14,color:c.title,marginBottom:4}}>{alert.title}</div>
+                <div style={{fontSize:13,color:c.text,lineHeight:1.5}}>{alert.message}</div>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+
+      {/* Agent Chat */}
+      <div className="card" style={{marginTop:16}}>
+        <div style={{fontWeight:800,fontSize:14,marginBottom:8}}>💬 Ask the Agent</div>
+        <div style={{maxHeight:200,overflowY:'auto',marginBottom:10}}>
+          {chatHistory.length === 0 && (
+            <div style={{fontSize:13,color:'var(--muted)'}}>Ask the agent anything about your trip risks, budget, or what to prepare…</div>
+          )}
+          {chatHistory.map((m, i) => (
+            <div key={i} style={{marginBottom:8,textAlign:m.role==='user'?'right':'left'}}>
+              <div style={{display:'inline-block',maxWidth:'85%',padding:'8px 12px',borderRadius:12,fontSize:13,lineHeight:1.5,
+                background:m.role==='user'?'var(--navy)':'#F1F5F9',color:m.role==='user'?'#fff':'var(--text)'}}>
+                {m.text}
+              </div>
+            </div>
+          ))}
+          {chatLoading && <div style={{fontSize:13,color:'var(--muted)'}}>🛡️ Agent is thinking…</div>}
+        </div>
+        <div style={{display:'flex',gap:8}}>
+          <input className="form-input" style={{flex:1,fontSize:13}} placeholder="e.g. Should we buy travel insurance?"
+            value={chatInput} onChange={e => setChatInput(e.target.value)}
+            onKeyDown={e => { if(e.key==='Enter') sendAgentChat(); }} />
+          <button className="btn btn-primary btn-sm" onClick={sendAgentChat} disabled={chatLoading}>Send</button>
+        </div>
+      </div>
     </>
   );
 }

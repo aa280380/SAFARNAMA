@@ -363,6 +363,7 @@ input,textarea,select{font-family:inherit;outline:none;}
   .form-row{grid-template-columns:1fr;}
   .admin-stat-grid{grid-template-columns:1fr 1fr;}
 }
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
 </style>
 </head>
 <body>
@@ -692,6 +693,7 @@ function App() {
   const [expenses, setExpenses] = useState([]);
   const [places, setPlaces] = useState(PLACES);
   const [scr, setScr] = useState('loading');
+  const [chatOpen, setChatOpen] = useState(false);
   const [authMode, setAuthMode] = useState('login');
   const [showInviteModal, setShowInviteModal] = useState(false);
   const [showAddExp, setShowAddExp] = useState(false);
@@ -782,14 +784,7 @@ function App() {
 
   const tripNav = (
     <>
-    <button onClick={() => setScr('chat')}
-          style={{position:'fixed',bottom:72,right:16,width:50,height:50,borderRadius:'50%',
-            background:'#22C55E',border:'none',cursor:'pointer',fontSize:22,
-            boxShadow:'0 4px 16px rgba(34,197,94,.45)',zIndex:200,display:'flex',
-            alignItems:'center',justifyContent:'center'}}>
-          💬
-        </button>
-        <div className="bottom-nav">
+    <div className="bottom-nav">
       {[{id:'voting',icon:'🗳️',label:'Decide'},{id:'itinerary',icon:'📋',label:'Plan'},{id:'cost',icon:'💸',label:'Split'},{id:'tracker',icon:'🗺️',label:'Track'},{id:'more',icon:'✨',label:'More'}]
         .map(n => (
         <button key={n.id} className={'bn-item'+(scr===n.id?' active':'')} onClick={() => setScr(n.id)}>
@@ -818,6 +813,10 @@ function App() {
             🎉 Confirm Trip
           </button>
         )}
+        <button onClick={() => setChatOpen(o => !o)}
+          style={{background:chatOpen?'#22C55E':'rgba(34,197,94,.15)',border:'1.5px solid #22C55E',borderRadius:20,padding:'5px 12px',cursor:'pointer',fontSize:12,fontWeight:700,color:chatOpen?'#fff':'#166534',display:'flex',alignItems:'center',gap:4}}>
+          💬 {chatOpen ? 'Close' : 'Chat'}
+        </button>
         <button className="back-action" onClick={() => setShowInviteModal(true)}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.553 4.116 1.52 5.845L0 24l6.335-1.502A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.373l-.36-.214-3.727.883.936-3.638-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
           Invite
@@ -827,7 +826,7 @@ function App() {
   );
 
   return (
-    <div>
+    <div style={{position:'relative'}}>
       {tripTopNav}
       <div className="mobile-wrap screen-inner">
         {scr === 'tracker' && <TrackerScreen trip={currentTrip} members={members} session={session} profile={profile} loadTripData={loadTripData} />}
@@ -1950,45 +1949,66 @@ function NotificationBell({ notifications, session, markAllRead }) {
 /* ══════════════════════════════════════════
    VOTING SCREEN
 ══════════════════════════════════════════ */
+
+/* ══════════════════════════════════════════
+   DECIDE SCREEN — split layout
+══════════════════════════════════════════ */
+const DEST_PHOTOS = {
+  goa:        ['https://images.unsplash.com/photo-1512343879784-a960bf40e7f2?w=800&q=80','https://images.unsplash.com/photo-1548013146-72479768bada?w=800&q=80','https://images.unsplash.com/photo-1477587458883-47145ed31fd8?w=800&q=80','https://images.unsplash.com/photo-1506461883276-594a12b11cf3?w=800&q=80'],
+  manali:     ['https://images.unsplash.com/photo-1626621341517-bbf3d9990a23?w=800&q=80','https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?w=800&q=80','https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80'],
+  rajasthan:  ['https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&q=80','https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&q=80','https://images.unsplash.com/photo-1477587458883-47145ed31fd8?w=800&q=80'],
+  kerala:     ['https://images.unsplash.com/photo-1602216056096-3b40cc0c9944?w=800&q=80','https://images.unsplash.com/photo-1603262110263-fb0112e7cc33?w=800&q=80','https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80'],
+  jaipur:     ['https://images.unsplash.com/photo-1599661046289-e31897846e41?w=800&q=80','https://images.unsplash.com/photo-1524230572899-a752b3835840?w=800&q=80'],
+  mumbai:     ['https://images.unsplash.com/photo-1567157577867-05ccb1388e66?w=800&q=80','https://images.unsplash.com/photo-1529253355930-ddbe423a2ac7?w=800&q=80'],
+  delhi:      ['https://images.unsplash.com/photo-1587474260584-136574528ed5?w=800&q=80','https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800&q=80'],
+  default:    ['https://images.unsplash.com/photo-1524492412937-b28074a5d7da?w=800&q=80','https://images.unsplash.com/photo-1477587458883-47145ed31fd8?w=800&q=80','https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&q=80'],
+};
+const DEST_VIBES = {
+  goa: ['🌊 Beaches','🍹 Nightlife','🛕 Heritage','🐠 Water Sports'],
+  manali: ['🏔️ Mountains','❄️ Snow','🪂 Adventure','🌲 Nature'],
+  rajasthan: ['🏰 Palaces','🐪 Desert','🎨 Culture','👑 Royalty'],
+  kerala: ['🌴 Backwaters','🐘 Wildlife','🍃 Ayurveda','🌊 Beaches'],
+  default: ['✨ Explore','📸 Scenic','🍽️ Food','🎭 Culture'],
+};
+function getDestKey(dest) {
+  if (!dest) return 'default';
+  const d = dest.toLowerCase();
+  return Object.keys(DEST_PHOTOS).find(k => d.includes(k)) || 'default';
+}
+
 function VotingScreen({ trip, members, session, sendNotifications }) {
   const [votes, setVotes] = useState([]);
   const [myVotes, setMyVotes] = useState({});
   const [loading, setLoading] = useState(true);
   const [consensus, setConsensus] = useState('');
   const [generating, setGenerating] = useState(false);
+  const [photoIdx, setPhotoIdx] = useState(0);
+  const [aiOpen, setAiOpen] = useState(false);
+  const [aiQ, setAiQ] = useState('');
+  const [aiA, setAiA] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
   const uid = session?.user?.id;
 
+  const destKey = getDestKey(trip.destination);
+  const photos = DEST_PHOTOS[destKey] || DEST_PHOTOS.default;
+  const vibes = DEST_VIBES[destKey] || DEST_VIBES.default;
+
   const categories = [
-    { id: 'destination', label: '📍 Destination options', options: [`${trip.destination}`, 'Goa, India', 'Manali, Himachal Pradesh', 'Pondicherry', 'Coorg, Karnataka', 'Jaipur, Rajasthan'] },
-    { id: 'transport', label: '🚗 How do we travel?', options: ['✈️ Flight', '🚂 Train', '🚌 Bus', '🚗 Self-drive', '✈️ Flight + 🚗 Cab', '🚂 Train + 🚗 Car', '🚌 Bus + 🚂 Train'] },
-    { id: 'hotel', label: '🏨 Where do we stay?', options: ['Budget guesthouse (₹500-1000/night)', 'Mid-range hotel (₹1500-3000/night)', 'Premium resort (₹4000+/night)', 'Airbnb/Villa', 'Hostel/Dorm'] },
-    { id: 'dates', label: '📅 When do we go?', options: [trip.start_date ? `Planned: ${trip.start_date}` : 'This weekend', 'Next weekend', 'Next month', 'Flexible — whenever works'] },
+    { id:'transport', label:'🚗 How do we get there?', options:['✈️ Flight','🚂 Train','🚌 Bus','🚗 Self-drive','✈️ Flight + 🚗 Cab','🚂 Train + 🚗 Car'] },
+    { id:'hotel', label:'🏨 Where do we stay?', options:['Budget guesthouse (₹500-1000/night)','Mid-range hotel (₹1500-3000/night)','Premium resort (₹4000+/night)','Airbnb/Villa','Hostel/Dorm'] },
+    { id:'dates', label:'📅 When do we go?', options:[trip.start_date ? `Planned: ${trip.start_date}` : 'This weekend','Next weekend','Next month','Flexible — whenever works'] },
   ];
-  const [customInputs, setCustomInputs] = React.useState({ destination:'', transport:'', hotel:'', dates:'' });
+  const [customInputs, setCustomInputs] = React.useState({transport:'',hotel:'',dates:''});
   const [prefOpen, setPrefOpen] = React.useState(false);
-  const [myPref, setMyPref] = React.useState(() => {
-    try { return JSON.parse(localStorage.getItem('sn_pref_'+trip.id+'_'+session?.user?.id)||'{}'); } catch(e) { return {}; }
-  });
+  const [myPref, setMyPref] = React.useState(() => { try { return JSON.parse(localStorage.getItem('sn_pref_'+trip.id+'_'+uid)||'{}'); } catch(e){return{};} });
   const [allPrefs, setAllPrefs] = React.useState([]);
   const [prefSaved, setPrefSaved] = React.useState(false);
 
-  async function loadPrefs() {
-    const { data } = await sb.from('member_preferences').select('*,profiles(name)').eq('trip_id', trip.id);
-    if (data) setAllPrefs(data);
-  }
-
-  async function savePrefs() {
-    try { localStorage.setItem('sn_pref_'+trip.id+'_'+uid, JSON.stringify(myPref)); } catch(e) {}
-    await sb.from('member_preferences').upsert(
-      { trip_id: trip.id, user_id: uid, budget: myPref.budget||'', dietary: myPref.dietary||'', room: myPref.room||'', note: myPref.note||'' },
-      { onConflict: 'trip_id,user_id' }
-    );
-    await loadPrefs();
-    setPrefSaved(true);
-    setTimeout(() => setPrefSaved(false), 2000);
-  }
-
   useEffect(() => { loadVotes(); loadPrefs(); }, [trip.id]);
+  useEffect(() => {
+    const t = setInterval(() => setPhotoIdx(i => (i+1) % photos.length), 4000);
+    return () => clearInterval(t);
+  }, [photos.length]);
 
   async function loadVotes() {
     setLoading(true);
@@ -2001,216 +2021,223 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
     }
     setLoading(false);
   }
-
-  async function castVote(category, option) {
-    const prev = myVotes[category];
-    setMyVotes(m => ({ ...m, [category]: option }));
-    const { data } = await sb.from('trip_votes').upsert(
-      { trip_id: trip.id, user_id: uid, category, option_text: option },
-      { onConflict: 'trip_id,user_id,category' }
-    ).select();
-    await loadVotes();
-    if (prev !== option) {
-      const myName = members.find(m => m.user_id === uid)?.profiles?.name || 'Someone';
-      await sendNotifications(trip.id, members, uid, `${myName} voted for "${option}" in ${trip.destination} trip`);
-    }
+  async function loadPrefs() {
+    const { data } = await sb.from('member_preferences').select('*,profiles(name)').eq('trip_id', trip.id);
+    if (data) setAllPrefs(data);
   }
-
+  async function castVote(category, option) {
+    setMyVotes(m => ({ ...m, [category]: option }));
+    await sb.from('trip_votes').upsert({ trip_id: trip.id, user_id: uid, category, option_text: option }, { onConflict:'trip_id,user_id,category' });
+    await loadVotes();
+    const myName = members.find(m => m.user_id === uid)?.profiles?.name || 'Someone';
+    await sendNotifications(trip.id, members, uid, `${myName} voted for "${option}"`);
+  }
+  async function savePrefs() {
+    try { localStorage.setItem('sn_pref_'+trip.id+'_'+uid, JSON.stringify(myPref)); } catch(e){}
+    await sb.from('member_preferences').upsert({ trip_id:trip.id, user_id:uid, budget:myPref.budget||'', dietary:myPref.dietary||'', room:myPref.room||'', note:myPref.note||'' }, { onConflict:'trip_id,user_id' });
+    await loadPrefs(); setPrefSaved(true); setTimeout(() => setPrefSaved(false), 2000);
+  }
+  async function askAI() {
+    if (!aiQ.trim()) return;
+    setAiLoading(true); setAiA('');
+    const ctx = `Trip to ${trip.destination} with ${members.length} people. User asks: ${aiQ}. Answer in 2-3 sentences, be specific and helpful.`;
+    try { const r = await callGemini(ctx); setAiA(r); } catch(e) { setAiA('⚠️ AI unavailable — check Groq key in Profile.'); }
+    setAiLoading(false);
+  }
   async function getAIConsensus() {
     setGenerating(true); setConsensus('');
     const summary = categories.map(cat => {
       const catVotes = votes.filter(v => v.category === cat.id);
       const tally = {};
-      catVotes.forEach(v => { tally[v.option_text] = (tally[v.option_text] || 0) + 1; });
-      const top = Object.entries(tally).sort((a,b) => b[1]-a[1]).slice(0,3).map(([o,c]) => `${o} (${c} votes)`).join(', ');
-      return `${cat.label}: ${top || 'No votes yet'}`;
+      catVotes.forEach(v => { tally[v.option_text] = (tally[v.option_text]||0)+1; });
+      const top = Object.entries(tally).sort((a,b)=>b[1]-a[1]).slice(0,3).map(([o,c])=>`${o} (${c} votes)`).join(', ');
+      return `${cat.label}: ${top||'No votes yet'}`;
     }).join('\n');
-
-    const prompt = `You are SafarNama AI. A group is voting on a trip to ${trip.destination} with ${members.length} members. Here are the vote results:\n\n${summary}\n\nGive a friendly AI recommendation for the best overall choice for the group. Be concise (under 120 words), mention the winning option in each category, and add a practical tip. Use emojis.`;
-    try {
-      const reply = await callGemini(prompt);
-      setConsensus(reply);
-    } catch(e) {
-      setConsensus(e.message === 'NO_KEY' ? '⚠️ Add Groq API key in Profile → AI Settings to get AI consensus.' : `⚠️ ${e.message}`);
-    }
+    const prompt = `You are SafarNama AI. Group trip to ${trip.destination} with ${members.length} members.\n\nVote results:\n${summary}\n\nGive a warm 3-sentence recommendation for the best overall plan. Be specific and enthusiastic.`;
+    try { const r = await callGemini(prompt); setConsensus(r); } catch(e) { setConsensus('⚠️ '+e.message); }
     setGenerating(false);
   }
 
-  function votesForOption(category, option) {
-    return votes.filter(v => v.category === category && v.option_text === option).length;
-  }
   const totalMembers = members.length || 1;
-
-  if (loading) return <div style={{textAlign:'center',padding:40,color:'var(--muted)'}}>Loading votes…</div>;
+  function votesForOption(cat, opt) { return votes.filter(v => v.category===cat && v.option_text===opt).length; }
 
   return (
-    <>
-      <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:16}}>
-        <div className="sec-title">🗳️ Group Vote</div>
-        <span className="chip">{members.length} voters</span>
+    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:0,margin:'-12px',minHeight:'calc(100vh - 120px)'}}>
+
+      {/* ── LEFT: DESTINATION PHOTOS ── */}
+      <div style={{position:'relative',overflow:'hidden',minHeight:500,background:'#0a1628'}}>
+        {photos.map((src,i) => (
+          <img key={i} src={src} alt={trip.destination}
+            style={{position:'absolute',inset:0,width:'100%',height:'100%',objectFit:'cover',
+              opacity: i===photoIdx ? 1 : 0, transition:'opacity 1.2s ease-in-out'}} />
+        ))}
+        {/* Dark overlay */}
+        <div style={{position:'absolute',inset:0,background:'linear-gradient(to top, rgba(10,22,40,.85) 0%, rgba(10,22,40,.2) 60%, transparent 100%)'}}/>
+
+        {/* Top: destination name */}
+        <div style={{position:'absolute',top:0,left:0,right:0,padding:'14px 16px',background:'linear-gradient(to bottom,rgba(10,22,40,.7),transparent)'}}>
+          <div style={{fontSize:22,fontWeight:900,color:'#fff',letterSpacing:.5}}>{trip.destination}</div>
+          <div style={{fontSize:12,color:'rgba(255,255,255,.7)',marginTop:2}}>{members.length} travellers · {trip.start_date || 'Dates TBD'}</div>
+        </div>
+
+        {/* Photo thumbnails */}
+        <div style={{position:'absolute',bottom:60,left:12,display:'flex',gap:6}}>
+          {photos.map((_,i) => (
+            <button key={i} onClick={() => setPhotoIdx(i)}
+              style={{width:i===photoIdx?40:32,height:i===photoIdx?30:24,borderRadius:6,border:i===photoIdx?'2px solid #F97316':'2px solid rgba(255,255,255,.4)',
+                background:'rgba(255,255,255,.2)',cursor:'pointer',transition:'all .3s',padding:0,flexShrink:0}} />
+          ))}
+        </div>
+
+        {/* Vibe tags */}
+        <div style={{position:'absolute',bottom:16,left:12,right:12,display:'flex',gap:6,flexWrap:'wrap'}}>
+          {vibes.map(v => (
+            <span key={v} style={{background:'rgba(255,255,255,.18)',backdropFilter:'blur(4px)',color:'#fff',fontSize:11,fontWeight:600,padding:'4px 10px',borderRadius:20}}>{v}</span>
+          ))}
+        </div>
+
+        {/* Future ad space — bottom strip, hidden for now */}
+        {/* AD_SLOT: position absolute bottom-0, 48px height banner — future monetization */}
       </div>
-      <div style={{fontSize:13,color:'var(--muted)',marginBottom:16}}>Tap to cast your vote. Results update live for the whole group.</div>
 
-      {/* ── MEMBER PREFERENCES CARD ── */}
-      <div className="card" style={{marginBottom:16,padding:0,overflow:'hidden'}}>
-        <button onClick={() => setPrefOpen(o => !o)}
-          style={{width:'100%',display:'flex',justifyContent:'space-between',alignItems:'center',
-            padding:'12px 16px',background:'none',border:'none',cursor:'pointer',textAlign:'left'}}>
-          <div style={{display:'flex',alignItems:'center',gap:8}}>
-            <span style={{fontSize:18}}>🙋</span>
-            <div>
-              <div style={{fontWeight:800,fontSize:14,color:'var(--navy)'}}>My Travel Preferences</div>
-              <div style={{fontSize:11,color:'var(--muted)'}}>Help the group plan better — takes 30 seconds</div>
+      {/* ── RIGHT: DECISIONS ── */}
+      <div style={{display:'flex',flexDirection:'column',background:'#F8FAFC',overflowY:'auto',maxHeight:'calc(100vh - 120px)'}}>
+
+        {/* Right header with AI toggle */}
+        <div style={{background:'#0F2048',padding:'10px 14px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+          <div style={{color:'#fff',fontWeight:800,fontSize:13}}>🗳️ Cast Your Votes</div>
+          <button onClick={() => setAiOpen(o => !o)}
+            style={{background: aiOpen ? '#F97316' : 'rgba(255,255,255,.15)',border:'none',borderRadius:20,padding:'4px 12px',
+              color:'#fff',fontSize:11,fontWeight:700,cursor:'pointer',transition:'background .2s'}}>
+            {aiOpen ? '✕ Close AI' : '🤖 Ask AI'}
+          </button>
+        </div>
+
+        {/* AI panel */}
+        {aiOpen && (
+          <div style={{background:'#EFF6FF',borderBottom:'1px solid #BFDBFE',padding:'12px 14px',flexShrink:0}}>
+            <div style={{fontSize:12,fontWeight:700,color:'#1E40AF',marginBottom:8}}>🤖 AI Travel Assistant</div>
+            <div style={{display:'flex',gap:6,marginBottom:8}}>
+              <input className="form-input" style={{flex:1,fontSize:12,padding:'6px 10px'}}
+                placeholder={`Ask about ${trip.destination}…`}
+                value={aiQ} onChange={e => setAiQ(e.target.value)}
+                onKeyDown={e => e.key==='Enter' && askAI()} />
+              <button className="btn btn-primary btn-sm" onClick={askAI} disabled={aiLoading} style={{whiteSpace:'nowrap'}}>
+                {aiLoading ? '⏳' : 'Ask'}
+              </button>
             </div>
-          </div>
-          <span style={{fontSize:18,color:'var(--muted)',transition:'transform .2s',transform:prefOpen?'rotate(180deg)':'rotate(0deg)'}}>▾</span>
-        </button>
-        {prefOpen && (
-          <div style={{padding:'0 16px 16px'}}>
-            <div style={{borderTop:'1px solid var(--border)',paddingTop:12,marginBottom:12}} />
-
-            <div style={{marginBottom:12}}>
-              <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:6,textTransform:'uppercase',letterSpacing:.5}}>Budget comfort</div>
-              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-                {['Tight (₹)', 'Comfortable (₹₹)', 'Flexible (₹₹₹)'].map(b => (
-                  <button key={b} onClick={() => setMyPref(p => ({...p, budget:b}))}
-                    style={{padding:'6px 14px',borderRadius:20,fontSize:13,border:'1.5px solid',cursor:'pointer',fontWeight:600,
-                      borderColor: myPref.budget===b ? 'var(--teal)' : 'var(--border)',
-                      background: myPref.budget===b ? '#F0FDFA' : '#fff',
-                      color: myPref.budget===b ? 'var(--teal)' : 'var(--text)'}}>
-                    {b}
-                  </button>
-                ))}
-              </div>
+            {aiA && <div style={{fontSize:12,color:'#1E3A8A',lineHeight:1.6,background:'#fff',padding:'8px 10px',borderRadius:8}}>{aiA}</div>}
+            <div style={{display:'flex',gap:6,flexWrap:'wrap',marginTop:8}}>
+              {[`Best time for ${trip.destination}?`,'What to pack?','Budget tips?'].map(q => (
+                <button key={q} onClick={() => { setAiQ(q); }} style={{fontSize:10,padding:'3px 8px',borderRadius:12,border:'1px solid #BFDBFE',background:'#fff',color:'#1E40AF',cursor:'pointer'}}>{q}</button>
+              ))}
             </div>
-
-            <div style={{marginBottom:12}}>
-              <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:6,textTransform:'uppercase',letterSpacing:.5}}>Room preference</div>
-              <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
-                {['Single room', 'Shared room', 'No preference'].map(r => (
-                  <button key={r} onClick={() => setMyPref(p => ({...p, room:r}))}
-                    style={{padding:'6px 14px',borderRadius:20,fontSize:13,border:'1.5px solid',cursor:'pointer',fontWeight:600,
-                      borderColor: myPref.room===r ? 'var(--orange)' : 'var(--border)',
-                      background: myPref.room===r ? '#FFF8F0' : '#fff',
-                      color: myPref.room===r ? 'var(--orange)' : 'var(--text)'}}>
-                    {r}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div style={{marginBottom:12}}>
-              <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:6,textTransform:'uppercase',letterSpacing:.5}}>Dietary needs</div>
-              <input className="form-input" style={{fontSize:13}} placeholder="e.g. Vegetarian, No peanuts, Jain food…"
-                value={myPref.dietary||''} onChange={e => setMyPref(p => ({...p, dietary:e.target.value}))} />
-            </div>
-
-            <div style={{marginBottom:14}}>
-              <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:6,textTransform:'uppercase',letterSpacing:.5}}>Anything else?</div>
-              <textarea className="form-input" rows={2} style={{fontSize:13,resize:'none'}}
-                placeholder="Special needs, mobility requirements, allergies, wish list…"
-                value={myPref.note||''} onChange={e => setMyPref(p => ({...p, note:e.target.value}))} />
-            </div>
-
-            <button className="btn btn-primary" style={{width:'100%'}} onClick={savePrefs}>
-              {prefSaved ? '✅ Saved!' : '💾 Save My Preferences'}
-            </button>
-
-            {allPrefs.length > 0 && (
-              <div style={{marginTop:14}}>
-                <div style={{fontSize:12,fontWeight:700,color:'var(--muted)',marginBottom:8,textTransform:'uppercase',letterSpacing:.5}}>
-                  Group preferences ({allPrefs.length}/{members.length} submitted)
-                </div>
-                {allPrefs.map((p,i) => (
-                  <div key={i} style={{background:'#F8FAFF',borderRadius:10,padding:'8px 12px',marginBottom:6,fontSize:13}}>
-                    <div style={{fontWeight:700,color:'var(--navy)',marginBottom:3}}>{p.profiles?.name || 'Member'}</div>
-                    <div style={{color:'var(--muted)',lineHeight:1.6}}>
-                      {p.budget && <span>💰 {p.budget} &nbsp;</span>}
-                      {p.room && <span>🛏️ {p.room} &nbsp;</span>}
-                      {p.dietary && <span>🍽️ {p.dietary} &nbsp;</span>}
-                      {p.note && <span>📝 {p.note}</span>}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
           </div>
         )}
-      </div>
 
-            {categories.map(cat => {
-        // Merge preset options with any custom voted options not in the preset list
-        const customVotedOpts = votes
-          .filter(v => v.category === cat.id && !cat.options.includes(v.option_text))
-          .map(v => v.option_text)
-          .filter((v, i, a) => a.indexOf(v) === i);
-        const allOptions = [...cat.options, ...customVotedOpts];
-        return (
-          <div key={cat.id} className="vote-category">
-            <div className="vote-cat-title">{cat.label}</div>
-            <div className="vote-options">
-              {allOptions.map(opt => {
-                const count = votesForOption(cat.id, opt);
-                const pct = Math.round((count / totalMembers) * 100);
-                const isMyVote = myVotes[cat.id] === opt;
+        {/* Voting categories */}
+        <div style={{flex:1,padding:'10px 14px',overflowY:'auto'}}>
+          {loading ? <div style={{textAlign:'center',padding:20,color:'var(--muted)'}}>Loading votes…</div> : (
+            <>
+              {categories.map(cat => {
+                const customVotedOpts = votes.filter(v => v.category===cat.id && !cat.options.includes(v.option_text)).map(v => v.option_text).filter((v,i,a)=>a.indexOf(v)===i);
+                const allOptions = [...cat.options, ...customVotedOpts];
                 return (
-                  <button key={opt} className={'vote-option' + (isMyVote ? ' selected' : '')} onClick={() => castVote(cat.id, opt)}>
-                    <div style={{display:'flex',flexDirection:'column',alignItems:'flex-start',gap:4,flex:1}}>
-                      <span>{opt}</span>
-                      {count > 0 && (
-                        <div style={{display:'flex',alignItems:'center',gap:6,width:'100%'}}>
-                          <div className="vote-bar-outer"><div className="vote-bar-inner" style={{width:pct+'%'}}/></div>
-                          <span className="vote-tally">{count}/{totalMembers}</span>
-                        </div>
-                      )}
+                  <div key={cat.id} style={{marginBottom:14}}>
+                    <div style={{fontSize:11,fontWeight:800,color:'#0F2048',marginBottom:6,textTransform:'uppercase',letterSpacing:.5}}>{cat.label}</div>
+                    <div style={{display:'flex',flexDirection:'column',gap:5}}>
+                      {allOptions.map(opt => {
+                        const count = votesForOption(cat.id, opt);
+                        const pct = Math.round((count/totalMembers)*100);
+                        const isMyVote = myVotes[cat.id]===opt;
+                        return (
+                          <button key={opt} onClick={() => castVote(cat.id, opt)}
+                            style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 10px',borderRadius:8,border: isMyVote ? '2px solid #F97316' : '1px solid #E2E8F0',
+                              background: isMyVote ? '#FFF7ED' : '#fff',cursor:'pointer',textAlign:'left',transition:'all .15s'}}>
+                            <div style={{flex:1}}>
+                              <div style={{fontSize:12,color:'#0F2048',fontWeight: isMyVote?700:400}}>{opt}</div>
+                              {count>0 && (
+                                <div style={{display:'flex',alignItems:'center',gap:6,marginTop:3}}>
+                                  <div style={{flex:1,height:3,background:'#E2E8F0',borderRadius:2}}>
+                                    <div style={{width:pct+'%',height:'100%',background:isMyVote?'#F97316':'#0D9488',borderRadius:2,transition:'width .3s'}}/>
+                                  </div>
+                                  <span style={{fontSize:10,color:isMyVote?'#C2410C':'#0D9488',fontWeight:700}}>{count}/{totalMembers}</span>
+                                </div>
+                              )}
+                            </div>
+                            {isMyVote && <span style={{marginLeft:8,fontSize:14}}>✅</span>}
+                          </button>
+                        );
+                      })}
                     </div>
-                    {isMyVote && <span style={{fontSize:16,marginLeft:8}}>✅</span>}
-                  </button>
+                    <div style={{display:'flex',gap:6,marginTop:6}}>
+                      <input className="form-input" style={{flex:1,fontSize:11,padding:'5px 8px'}}
+                        placeholder={`Add option…`} value={customInputs[cat.id]||''}
+                        onChange={e => setCustomInputs(p=>({...p,[cat.id]:e.target.value}))}
+                        onKeyDown={e => { if(e.key==='Enter'&&customInputs[cat.id]?.trim()){castVote(cat.id,customInputs[cat.id].trim());setCustomInputs(p=>({...p,[cat.id]:''}));} }} />
+                      <button className="btn btn-sm" style={{fontSize:11,padding:'5px 10px'}}
+                        onClick={() => { if(customInputs[cat.id]?.trim()){castVote(cat.id,customInputs[cat.id].trim());setCustomInputs(p=>({...p,[cat.id]:''}));} }}>+ Add</button>
+                    </div>
+                  </div>
                 );
               })}
-            </div>
-            <div style={{display:'flex',gap:8,marginTop:10}}>
-              <input className="form-input" style={{flex:1,fontSize:13,padding:'8px 12px'}}
-                placeholder={`Add your own ${cat.id} option…`}
-                value={customInputs[cat.id]}
-                onChange={e => setCustomInputs(prev => ({...prev, [cat.id]: e.target.value}))}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' && customInputs[cat.id].trim()) {
-                    castVote(cat.id, customInputs[cat.id].trim());
-                    setCustomInputs(prev => ({...prev, [cat.id]: ''}));
-                  }
-                }}
-              />
-              <button className="btn btn-primary btn-sm" style={{whiteSpace:'nowrap'}}
-                onClick={() => {
-                  if (customInputs[cat.id].trim()) {
-                    castVote(cat.id, customInputs[cat.id].trim());
-                    setCustomInputs(prev => ({...prev, [cat.id]: ''}));
-                  }
-                }}>+ Vote</button>
-            </div>
-          </div>
-        );
-      })}
 
-      {consensus && (
-        <div className="consensus-box">
-          <div className="consensus-title">🤖 AI Consensus Pick</div>
-          <div className="consensus-text">{consensus}</div>
+              {/* Member Preferences */}
+              <div style={{borderTop:'1px solid #E2E8F0',paddingTop:10,marginBottom:14}}>
+                <button onClick={() => setPrefOpen(o=>!o)} style={{width:'100%',display:'flex',justifyContent:'space-between',alignItems:'center',background:'none',border:'none',cursor:'pointer',padding:'4px 0'}}>
+                  <div style={{fontWeight:800,fontSize:11,color:'#0F2048',textTransform:'uppercase',letterSpacing:.5}}>🙋 My Preferences</div>
+                  <span style={{color:'var(--muted)',fontSize:14,transform:prefOpen?'rotate(180deg)':'none',transition:'transform .2s'}}>▾</span>
+                </button>
+                {prefOpen && (
+                  <div style={{marginTop:8}}>
+                    <div style={{marginBottom:8}}>
+                      <div style={{fontSize:10,color:'var(--muted)',marginBottom:5,fontWeight:700}}>Budget</div>
+                      <div style={{display:'flex',gap:5,flexWrap:'wrap'}}>
+                        {['Tight (₹)','Comfortable (₹₹)','Flexible (₹₹₹)'].map(b => (
+                          <button key={b} onClick={()=>setMyPref(p=>({...p,budget:b}))}
+                            style={{padding:'4px 10px',borderRadius:16,fontSize:11,border:'1.5px solid',cursor:'pointer',fontWeight:600,
+                              borderColor:myPref.budget===b?'#0D9488':'#E2E8F0',background:myPref.budget===b?'#F0FDFA':'#fff',color:myPref.budget===b?'#0D9488':'#374151'}}>
+                            {b}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <input className="form-input" style={{fontSize:11,marginBottom:6}} placeholder="Dietary needs…" value={myPref.dietary||''} onChange={e=>setMyPref(p=>({...p,dietary:e.target.value}))} />
+                    <input className="form-input" style={{fontSize:11,marginBottom:8}} placeholder="Room preference…" value={myPref.room||''} onChange={e=>setMyPref(p=>({...p,room:e.target.value}))} />
+                    <button className="btn btn-primary" style={{width:'100%',fontSize:12}} onClick={savePrefs}>{prefSaved?'✅ Saved!':'💾 Save Preferences'}</button>
+                    {allPrefs.length>0 && (
+                      <div style={{marginTop:10}}>
+                        <div style={{fontSize:10,fontWeight:700,color:'var(--muted)',marginBottom:5,textTransform:'uppercase'}}>Group preferences ({allPrefs.length}/{members.length})</div>
+                        {allPrefs.map((p,i)=>(
+                          <div key={i} style={{fontSize:11,color:'#374151',background:'#fff',borderRadius:6,padding:'5px 8px',marginBottom:4}}>
+                            <strong>{p.profiles?.name||'Member'}:</strong> {[p.budget,p.dietary,p.room].filter(Boolean).join(' · ')||'No preferences set'}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* AI Consensus */}
+              {consensus && (
+                <div style={{background:'#F0FDFA',border:'1.5px solid #99F6E4',borderRadius:10,padding:'10px 12px',marginBottom:10}}>
+                  <div style={{fontSize:11,fontWeight:800,color:'#065F46',marginBottom:4}}>🤖 AI Recommendation</div>
+                  <div style={{fontSize:12,color:'#0F766E',lineHeight:1.6}}>{consensus}</div>
+                </div>
+              )}
+              <button className="btn btn-primary" style={{width:'100%',marginBottom:6,fontSize:13}} onClick={getAIConsensus} disabled={generating}>
+                {generating ? '⏳ Analysing votes…' : '🤖 Get AI Consensus'}
+              </button>
+            </>
+          )}
         </div>
-      )}
-
-      <button className="btn btn-primary" onClick={getAIConsensus} disabled={generating} style={{marginBottom:12}}>
-        {generating ? '⏳ AI is thinking…' : '🤖 Get AI Consensus'}
-      </button>
-      <div style={{fontSize:12,color:'var(--muted)',textAlign:'center'}}>AI analyses all votes and recommends the best option for your group</div>
-    </>
+      </div>
+    </div>
   );
 }
 
-/* ══════════════════════════════════════════
-   ITINERARY SCREEN
-══════════════════════════════════════════ */
+
 function ItineraryScreen({ trip, members }) {
   const [itinerary, setItinerary] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -2978,6 +3005,24 @@ Be specific to ${tripInfo.destination}. Make alerts genuinely useful.`;
         </div>
       </div>
     </>
+      {/* ── GLOBAL CHAT BOTTOM SHEET ── */}
+      {chatOpen && (
+        <div style={{position:'fixed',inset:0,zIndex:500}} onClick={e => { if(e.target===e.currentTarget) setChatOpen(false); }}>
+          <div style={{position:'absolute',inset:0,background:'rgba(10,22,40,.45)'}} />
+          <div style={{position:'absolute',bottom:0,left:0,right:0,height:'65vh',background:'#fff',borderRadius:'20px 20px 0 0',
+            display:'flex',flexDirection:'column',overflow:'hidden',
+            animation:'slideUp .3s ease-out'}}>
+            <div style={{background:'#0F2048',padding:'12px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+              <div>
+                <div style={{fontWeight:800,fontSize:14,color:'#fff'}}>💬 {currentTrip?.destination} Group Chat</div>
+                <div style={{fontSize:11,color:'rgba(255,255,255,.6)'}}>{members.length} members · live</div>
+              </div>
+              <button onClick={() => setChatOpen(false)} style={{background:'rgba(255,255,255,.15)',border:'none',borderRadius:'50%',width:28,height:28,color:'#fff',cursor:'pointer',fontSize:16,display:'flex',alignItems:'center',justifyContent:'center'}}>✕</button>
+            </div>
+            <GroupChatScreen trip={currentTrip} members={members} session={session} />
+          </div>
+        </div>
+      )}
   );
 }
 

@@ -779,7 +779,7 @@ function App() {
   const tripNav = (
     <div className="bottom-nav">
       {[{id:'tracker',icon:'🗺️',label:'Track'},{id:'voting',icon:'🗳️',label:'Vote'},
-        {id:'itinerary',icon:'📋',label:'Plan'},{id:'flights',icon:'✈️',label:'Book'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI'},{id:'memories',icon:'📸',label:'Memory'},{id:'agent',icon:'🛡️',label:'Agent'}]
+        {id:'itinerary',icon:'📋',label:'Plan'},{id:'flights',icon:'✈️',label:'Book'},{id:'cost',icon:'💸',label:'Split'},{id:'ai-chat',icon:'🤖',label:'AI'},{id:'memories',icon:'📸',label:'Memory'},{id:'chat',icon:'💬',label:'Chat'},{id:'agent',icon:'🛡️',label:'Agent'}]
         .map(n => (
         <button key={n.id} className={'bn-item'+(scr===n.id?' active':'')} onClick={() => setScr(n.id)}>
           <span className="bn-icon">{n.icon}</span>{n.label}
@@ -827,6 +827,7 @@ function App() {
         {scr === 'flights' && <FlightsScreen trip={currentTrip} members={members} />}
         {scr === 'ai-chat' && <AiChatScreen trip={currentTrip} />}
         {scr === 'memories' && <MemoriesScreen trip={currentTrip} members={members} session={session} />}
+        {scr === 'chat' && <GroupChatScreen trip={currentTrip} members={members} session={session} />}
         {scr === 'agent' && <AgentScreen trip={currentTrip} members={members} expenses={expenses} />}
       </div>
       {tripNav}
@@ -2483,6 +2484,175 @@ function MemoriesScreen({ trip, members, session }) {
         </div>
       ))}
     </>
+  );
+}
+
+/* ══════════════════════════════════════════
+   GROUP CHAT SCREEN — Supabase Realtime
+══════════════════════════════════════════ */
+function GroupChatScreen({ trip, members, session }) {
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState('');
+  const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const bottomRef = React.useRef(null);
+  const pollRef = React.useRef(null);
+  const uid = session?.user?.id;
+  const myName = members.find(m => m.user_id === uid)?.profiles?.name || 'You';
+
+  useEffect(() => {
+    loadMessages(true);
+    // Poll every 2.5s — Supabase Realtime WebSocket pattern
+    pollRef.current = setInterval(() => loadMessages(false), 2500);
+    return () => clearInterval(pollRef.current);
+  }, [trip.id]);
+
+  useEffect(() => {
+    if (bottomRef.current) bottomRef.current.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  async function loadMessages(initial) {
+    if (initial) setLoading(true);
+    const { data } = await sb.from('trip_messages')
+      .select('*, profiles(name)')
+      .eq('trip_id', trip.id)
+      .order('created_at', { ascending: true })
+      .limit(100);
+    if (data) setMessages(data);
+    if (initial) setLoading(false);
+  }
+
+  async function sendMessage() {
+    if (!text.trim() || sending) return;
+    const msg = text.trim();
+    setText('');
+    setSending(true);
+    await sb.from('trip_messages').insert({
+      trip_id: trip.id,
+      user_id: uid,
+      message: msg
+    });
+    await loadMessages(false);
+    setSending(false);
+  }
+
+  function fmtTime(ts) {
+    const d = new Date(ts);
+    return d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+  }
+
+  function fmtDate(ts) {
+    const d = new Date(ts);
+    const today = new Date();
+    const yesterday = new Date(today); yesterday.setDate(yesterday.getDate()-1);
+    if (d.toDateString() === today.toDateString()) return 'Today';
+    if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
+    return d.toLocaleDateString('en-IN', { day:'numeric', month:'short' });
+  }
+
+  // Group messages by date
+  function groupByDate(msgs) {
+    const groups = [];
+    let lastDate = null;
+    msgs.forEach(m => {
+      const d = fmtDate(m.created_at);
+      if (d !== lastDate) { groups.push({ type:'date', label:d }); lastDate = d; }
+      groups.push({ type:'msg', ...m });
+    });
+    return groups;
+  }
+
+  const grouped = groupByDate(messages);
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',height:'calc(100vh - 140px)',margin:'-12px'}}>
+      {/* Header */}
+      <div style={{background:'linear-gradient(135deg,#0F2048,#1B4F8C)',padding:'12px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
+        <div style={{width:38,height:38,borderRadius:'50%',background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>💬</div>
+        <div>
+          <div style={{fontWeight:800,fontSize:14,color:'#fff'}}>{trip.destination} Group</div>
+          <div style={{fontSize:11,color:'rgba(255,255,255,.65)'}}>{members.length} members · live chat</div>
+        </div>
+        <div style={{marginLeft:'auto',display:'flex',alignItems:'center',gap:5}}>
+          <div style={{width:8,height:8,borderRadius:'50%',background:'#22C55E'}}/>
+          <span style={{fontSize:11,color:'rgba(255,255,255,.75)'}}>Live</span>
+        </div>
+      </div>
+
+      {/* Messages area */}
+      <div style={{flex:1,overflowY:'auto',padding:'12px 14px',background:'#F0F2F5'}}>
+        {loading && (
+          <div style={{textAlign:'center',padding:40,color:'#888'}}>Loading messages…</div>
+        )}
+        {!loading && messages.length === 0 && (
+          <div style={{textAlign:'center',padding:40}}>
+            <div style={{fontSize:40,marginBottom:8}}>👋</div>
+            <div style={{fontWeight:700,color:'#0F2048',fontSize:15}}>Start the conversation!</div>
+            <div style={{fontSize:13,color:'#888',marginTop:4}}>Say hi to your travel group</div>
+          </div>
+        )}
+        {grouped.map((item, i) => {
+          if (item.type === 'date') {
+            return (
+              <div key={i} style={{textAlign:'center',margin:'10px 0'}}>
+                <span style={{background:'rgba(255,255,255,.85)',padding:'3px 12px',borderRadius:12,fontSize:11,color:'#666',fontWeight:600}}>{item.label}</span>
+              </div>
+            );
+          }
+          const isMe = item.user_id === uid;
+          const senderName = item.profiles?.name || 'Member';
+          const initials = senderName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+          return (
+            <div key={item.id} style={{display:'flex',justifyContent:isMe?'flex-end':'flex-start',marginBottom:6,gap:8,alignItems:'flex-end'}}>
+              {!isMe && (
+                <div style={{width:30,height:30,borderRadius:'50%',background:'var(--teal)',color:'#fff',display:'flex',alignItems:'center',justifyContent:'center',fontSize:11,fontWeight:800,flexShrink:0,marginBottom:2}}>
+                  {initials}
+                </div>
+              )}
+              <div style={{maxWidth:'72%'}}>
+                {!isMe && (
+                  <div style={{fontSize:11,color:'#666',fontWeight:700,marginBottom:2,marginLeft:4}}>{senderName}</div>
+                )}
+                <div style={{
+                  background: isMe ? '#0F2048' : '#fff',
+                  color: isMe ? '#fff' : '#1a1a1a',
+                  padding:'9px 13px',
+                  borderRadius: isMe ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
+                  fontSize:14,
+                  lineHeight:1.5,
+                  boxShadow:'0 1px 3px rgba(0,0,0,.08)'
+                }}>
+                  {item.message}
+                </div>
+                <div style={{fontSize:10,color:'#999',marginTop:2,textAlign:isMe?'right':'left',paddingRight:isMe?2:0,paddingLeft:isMe?0:4}}>
+                  {fmtTime(item.created_at)}
+                  {isMe && <span style={{marginLeft:4}}>✓✓</span>}
+                </div>
+              </div>
+            </div>
+          );
+        })}
+        <div ref={bottomRef}/>
+      </div>
+
+      {/* Input bar */}
+      <div style={{background:'#fff',borderTop:'1px solid #E5E7EB',padding:'10px 12px',display:'flex',gap:8,alignItems:'center',flexShrink:0}}>
+        <input
+          style={{flex:1,border:'1.5px solid #E5E7EB',borderRadius:24,padding:'9px 16px',fontSize:14,outline:'none',background:'#F8FAFC'}}
+          placeholder="Message the group…"
+          value={text}
+          onChange={e => setText(e.target.value)}
+          onKeyDown={e => { if(e.key==='Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+        />
+        <button onClick={sendMessage} disabled={!text.trim() || sending}
+          style={{width:42,height:42,borderRadius:'50%',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0,
+            background: text.trim() ? '#0F2048' : '#E5E7EB',
+            color: text.trim() ? '#fff' : '#999',
+            transition:'background .2s'}}>
+          ➤
+        </button>
+      </div>
+    </div>
   );
 }
 

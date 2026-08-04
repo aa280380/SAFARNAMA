@@ -829,15 +829,15 @@ function App() {
   return (
     <div style={{position:'relative'}}>
       {tripTopNav}
-      {/* VotingScreen is full-width — rendered outside mobile-wrap */}
+      {/* Full-width screens — rendered outside mobile-wrap */}
       {scr === 'voting' && <VotingScreen trip={currentTrip} members={members} session={session} sendNotifications={sendNotifications} />}
-      {scr !== 'voting' && (
+      {scr === 'itinerary' && <PlanScreen trip={currentTrip} members={members} />}
+      {scr !== 'voting' && scr !== 'itinerary' && (
         <div className="mobile-wrap screen-inner">
           {scr === 'tracker' && <TrackerScreen trip={currentTrip} members={members} session={session} profile={profile} loadTripData={loadTripData} />}
           {scr === 'places' && <PlacesScreen places={places} setPlaces={setPlaces} trip={currentTrip} members={members} />}
           {scr === 'hotels' && <HotelsScreen trip={currentTrip} members={members} />}
           {scr === 'cost' && <CostScreen trip={currentTrip} members={members} expenses={expenses} setExpenses={setExpenses} session={session} profile={profile} showAddExp={showAddExp} setShowAddExp={setShowAddExp} sendNotifications={sendNotifications} />}
-          {scr === 'itinerary' && <ItineraryScreen trip={currentTrip} members={members} />}
           {scr === 'flights' && <FlightsScreen trip={currentTrip} members={members} />}
           {scr === 'ai-chat' && <AiChatScreen trip={currentTrip} />}
           {scr === 'memories' && <MemoriesScreen trip={currentTrip} members={members} session={session} />}
@@ -2316,6 +2316,37 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
 }
 
 
+/* ══════════════════════════════════════════
+   PLAN SCREEN — split: Itinerary + Flights
+══════════════════════════════════════════ */
+function PlanScreen({ trip, members }) {
+  const [tab, setTab] = useState('itinerary'); // 'itinerary' | 'flights'
+  return (
+    <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:0,minHeight:'calc(100vh - 120px)'}}>
+
+      {/* ── LEFT: ITINERARY ── */}
+      <div style={{borderRight:'1px solid #E5E7EB',overflowY:'auto',maxHeight:'calc(100vh - 120px)',background:'#fff'}}>
+        <div style={{padding:'16px 20px 0'}}>
+          <ItineraryScreen trip={trip} members={members} />
+        </div>
+      </div>
+
+      {/* ── RIGHT: FLIGHT BOOKING ── */}
+      <div style={{background:'#F8FAFC',overflowY:'auto',maxHeight:'calc(100vh - 120px)',borderLeft:'1px solid #E5E7EB'}}>
+        {/* Header */}
+        <div style={{background:'linear-gradient(135deg,#E53935,#F97316)',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+          <div style={{color:'#fff',fontWeight:800,fontSize:13}}>✈️ Book Flights</div>
+          <div style={{marginLeft:'auto',fontSize:10,color:'rgba(255,255,255,.75)',fontWeight:600}}>{members.length} travellers</div>
+        </div>
+        <div style={{padding:'12px 14px'}}>
+          <FlightsScreen trip={trip} members={members} />
+        </div>
+      </div>
+
+    </div>
+  );
+}
+
 function ItineraryScreen({ trip, members }) {
   const [itinerary, setItinerary] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -2645,7 +2676,6 @@ function MoreScreen({ trip, members, expenses, session, setScr }) {
     { id:'ai-chat', icon:'🤖', label:'AI Trip Assistant', desc:'Ask anything about your trip', color:'#EFF6FF', border:'#BFDBFE', iconBg:'#3B82F6' },
     { id:'agent',   icon:'🛡️', label:'AI Disruption Agent', desc:'Proactive alerts & trip monitoring', color:'#EEF2FF', border:'#C7D2FE', iconBg:'#6366F1' },
     { id:'memories',icon:'📸', label:'Trip Memories',  desc:'Capture moments from your journey', color:'#FFF7ED', border:'#FED7AA', iconBg:'#F97316' },
-    { id:'flights', icon:'✈️', label:'Book Flights',   desc:'Search & compare flight options', color:'#F0FDFA', border:'#99F6E4', iconBg:'#0D9488' },
     { id:'chat',    icon:'💬', label:'Group Chat',     desc:'Live messaging with your travel group', color:'#F0FDF4', border:'#86EFAC', iconBg:'#22C55E' },
   ];
 

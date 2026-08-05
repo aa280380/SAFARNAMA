@@ -39,7 +39,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 .nav-notif{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;position:relative;}
 
 /* ── HERO ── */
-.hero{background:linear-gradient(135deg,#0F2048 0%,#1B4F8C 45%,#0D7874 100%);padding:52px 28px 40px;position:relative;overflow:hidden;}.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+.hero{background:linear-gradient(135deg,#F7941D 0%,#E07010 45%,#c05a00 100%);padding:52px 28px 40px;position:relative;overflow:hidden;}.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
 .hero::before{content:'✈️';position:absolute;right:5%;top:20%;font-size:80px;opacity:.08;transform:rotate(-15deg);}
 .hero::after{content:'🌍';position:absolute;left:3%;bottom:10%;font-size:120px;opacity:.06;}
 .hero-inner{max-width:1120px;margin:0 auto;position:relative;z-index:2;}
@@ -105,7 +105,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 /* ── OLD MOBILE STYLES (for inner trip screens) ── */
 .mobile-wrap{max-width:680px;margin:0 auto;padding:16px 16px 80px;}
 .screen-inner{animation:fadeUp .3s ease;}
-.back-nav{display:flex;align-items:center;padding:14px 20px;background:linear-gradient(135deg,#0F2048 0%,#1B3A6B 100%);color:#fff;position:sticky;top:0;z-index:100;gap:12px;box-shadow:0 2px 12px rgba(0,0,0,.2);}
+.back-nav{display:flex;align-items:center;padding:14px 20px;background:linear-gradient(135deg,#F7941D 0%,#E07010 100%);color:#fff;position:sticky;top:0;z-index:100;gap:12px;box-shadow:0 2px 12px rgba(247,148,29,.35);}
 .back-btn{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:18px;cursor:pointer;line-height:1;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s;backdrop-filter:blur(4px);}.back-btn:hover{background:rgba(255,255,255,.22);}
 .back-title{font-size:16px;font-weight:700;flex:1;}
 .back-action{background:#25D366;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;padding:7px 14px;border-radius:20px;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(37,211,102,.4);transition:all .2s;white-space:nowrap;}.back-action:hover{background:#1ebe5d;transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,211,102,.5);}
@@ -235,7 +235,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 .admin-section{font-size:15px;font-weight:800;margin:16px 0 10px;}
 .join-input{text-transform:uppercase;letter-spacing:4px;font-size:20px;font-weight:800;text-align:center;}
 /* top-nav (inner screens only — inside back-nav) */
-.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:var(--navy);color:#fff;position:sticky;top:0;z-index:100;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:linear-gradient(135deg,#F7941D,#E07010);color:#fff;position:sticky;top:0;z-index:100;}
 .top-nav h2{font-size:17px;font-weight:700;}
 .notif-btn{position:relative;background:none;border:none;font-size:22px;color:#fff;}
 
@@ -298,7 +298,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 
 /* ── ITINERARY SCREEN ── */
 .itin-day{background:#fff;border-radius:18px;margin-bottom:16px;overflow:hidden;border:1px solid #E8EDF5;}
-.itin-day-header{padding:16px 18px 12px;background:linear-gradient(135deg,#0F2048 0%,#1B4F8C 100%);position:relative;}
+.itin-day-header{padding:16px 18px 12px;background:linear-gradient(135deg,#F7941D 0%,#E07010 100%);position:relative;}
 .itin-day-date-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
 .itin-day-badge{font-size:11px;font-weight:800;color:#fff;background:var(--orange);padding:3px 10px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;}
 .itin-day-datestr{font-size:12px;color:rgba(255,255,255,.65);font-weight:500;}
@@ -312,7 +312,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 .itin-dot{width:10px;height:10px;border-radius:50%;border:2px solid #fff;flex-shrink:0;margin-top:5px;box-shadow:0 0 0 2px currentColor;}
 .itin-slot-body{flex:1;padding-bottom:18px;}
 .itin-slot-time{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;letter-spacing:.3px;}
-.itin-slot-name{font-size:14px;font-weight:700;color:#0F2048;line-height:1.4;margin-bottom:3px;}
+.itin-slot-name{font-size:14px;font-weight:700;color:#1B2B6B;line-height:1.4;margin-bottom:3px;}
 .itin-slot-desc{font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:5px;}
 .itin-slot-cost{font-size:11px;font-weight:700;color:var(--teal);background:#F0FDFA;border:1px solid #99F6E4;padding:2px 8px;border-radius:12px;display:inline-block;}
 .itin-meal-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
@@ -1530,7 +1530,7 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
       <div style={{display:'flex',flexDirection:'column',background:'#0F172A',overflow:'hidden',position:'relative'}}>
 
         {/* Header */}
-        <div style={{background:'linear-gradient(135deg,#0F2048,#1B4F8C)',padding:'10px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0,zIndex:2}}>
+        <div style={{background:'linear-gradient(135deg,#F7941D,#E07010)',padding:'10px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0,zIndex:2}}>
           <div style={{flex:1}}>
             <div style={{color:'#fff',fontWeight:900,fontSize:14,letterSpacing:.3}}>📍 I Am Here</div>
             <div style={{fontSize:10,color:'rgba(255,255,255,.55)',marginTop:1}}>Your live location on the map</div>
@@ -1569,7 +1569,7 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
       <div style={{display:'flex',flexDirection:'column',background:'#FAFAF8',borderLeft:'1px solid #E5E7EB',maxHeight:'calc(100vh - 120px)'}}>
 
         {/* Header */}
-        <div style={{background:'linear-gradient(135deg,#0F2048,#1B2B6B)',padding:'10px 16px',flexShrink:0}}>
+        <div style={{background:'linear-gradient(135deg,#F7941D,#E07010)',padding:'10px 16px',flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:900,fontSize:14,letterSpacing:.3}}>👥 Crew Whereabouts</div>
           <div style={{fontSize:10,color:'rgba(255,255,255,.65)',marginTop:1}}>
             {membersWithGps.length} of {members.length} sharing live location · updates every 10s
@@ -1623,7 +1623,7 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
                 <div style={{display:'flex',alignItems:'center',gap:8}}>
                   <div style={{flex:1,height:6,background:'#F3F4F6',borderRadius:3,overflow:'hidden'}}>
                     <div style={{width:pct+'%',height:'100%',borderRadius:3,transition:'width .4s',
-                      background: isMe ? 'linear-gradient(90deg,#F97316,#FB923C)' : 'linear-gradient(90deg,#0F2048,#1B2B6B)'}}/>
+                      background: isMe ? 'linear-gradient(90deg,#F97316,#FB923C)' : 'linear-gradient(90deg,#F7941D,#E07010)'}}/>
                   </div>
                   <span style={{fontSize:11,fontWeight:800,color: isMe ? '#F97316' : '#1B2B6B',flexShrink:0}}>{pct}%</span>
                 </div>
@@ -1889,7 +1889,7 @@ function FlightsScreen({ trip, members }) {
   return (
     <>
       {/* ── HERO SEARCH BAR (MakeMyTrip style) ── */}
-      <div style={{background:'linear-gradient(135deg,#0F2048,#1B2B6B)',borderRadius:16,padding:'20px 20px 24px',marginBottom:16,position:'relative',overflow:'hidden'}}>
+      <div style={{background:'linear-gradient(135deg,#F7941D,#E07010)',borderRadius:16,padding:'20px 20px 24px',marginBottom:16,position:'relative',overflow:'hidden'}}>
         <div style={{position:'absolute',top:-20,right:-20,fontSize:100,opacity:.08}}>✈️</div>
         <div style={{fontSize:13,fontWeight:800,color:'rgba(255,255,255,.85)',letterSpacing:.5,marginBottom:14}}>✈️ BOOK FLIGHTS</div>
 
@@ -2240,7 +2240,7 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
       <div style={{display:'flex',flexDirection:'column',background:'#FAFAF8',overflowY:'auto',maxHeight:'calc(100vh - 120px)',borderLeft:'1px solid #E8E0D8'}}>
 
         {/* Header — navy */}
-        <div style={{background:'linear-gradient(135deg,#0F2048,#1B2B6B)',padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+        <div style={{background:'linear-gradient(135deg,#F7941D,#E07010)',padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:800,fontSize:13,letterSpacing:.2}}>🗳️ Cast Your Votes</div>
           <button onClick={() => setAiOpen(o => !o)}
             style={{background: aiOpen ? '#F97316' : 'rgba(255,255,255,.18)',border:'none',borderRadius:20,padding:'4px 11px',
@@ -2367,7 +2367,7 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
                 </div>
               )}
               <button style={{width:'100%',marginBottom:6,fontSize:12,padding:'9px',borderRadius:9,border:'none',cursor:'pointer',fontWeight:700,
-                background:'linear-gradient(135deg,#0F2048,#F97316)',color:'#fff'}} onClick={getAIConsensus} disabled={generating}>
+                background:'linear-gradient(135deg,#F7941D,#E07010)',color:'#fff'}} onClick={getAIConsensus} disabled={generating}>
                 {generating ? '⏳ Analysing votes…' : '🤖 Get AI Consensus'}
               </button>
             </>
@@ -2398,7 +2398,7 @@ function PlanScreen({ trip, members }) {
       {/* ── RIGHT: FLIGHT BOOKING ── */}
       <div style={{background:'#F8FAFC',overflowY:'auto',maxHeight:'calc(100vh - 120px)',borderLeft:'1px solid #E5E7EB'}}>
         {/* Header */}
-        <div style={{background:'linear-gradient(135deg,#0F2048,#1B2B6B)',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+        <div style={{background:'linear-gradient(135deg,#F7941D,#E07010)',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:800,fontSize:13}}>✈️ Book Flights</div>
           <div style={{marginLeft:'auto',fontSize:10,color:'rgba(255,255,255,.75)',fontWeight:600}}>{members.length} travellers</div>
         </div>
@@ -2763,7 +2763,7 @@ function MoreScreen({ trip, members, expenses, session, setScr }) {
               {t.icon}
             </div>
             <div style={{flex:1}}>
-              <div style={{fontWeight:800,fontSize:14,color:'#0F2048',marginBottom:2}}>{t.label}</div>
+              <div style={{fontWeight:800,fontSize:14,color:'#1B2B6B',marginBottom:2}}>{t.label}</div>
               <div style={{fontSize:12,color:'#6B7280',lineHeight:1.4}}>{t.desc}</div>
             </div>
             <span style={{color:'#94A3B8',fontSize:18}}>›</span>
@@ -2782,7 +2782,7 @@ function MoreScreen({ trip, members, expenses, session, setScr }) {
               {t.icon}
             </div>
             <div style={{flex:1}}>
-              <div style={{fontWeight:800,fontSize:14,color:'#0F2048',marginBottom:2}}>{t.label}</div>
+              <div style={{fontWeight:800,fontSize:14,color:'#1B2B6B',marginBottom:2}}>{t.label}</div>
               <div style={{fontSize:12,color:'#6B7280',lineHeight:1.4}}>{t.desc}</div>
             </div>
             <span style={{color:'#94A3B8',fontSize:18}}>›</span>
@@ -2873,7 +2873,7 @@ function GroupChatScreen({ trip, members, session }) {
   return (
     <div style={{display:'flex',flexDirection:'column',height:'calc(100vh - 140px)',margin:'-12px'}}>
       {/* Header */}
-      <div style={{background:'linear-gradient(135deg,#0F2048,#1B4F8C)',padding:'12px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
+      <div style={{background:'linear-gradient(135deg,#F7941D,#E07010)',padding:'12px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
         <div style={{width:38,height:38,borderRadius:'50%',background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>💬</div>
         <div>
           <div style={{fontWeight:800,fontSize:14,color:'#fff'}}>{trip.destination} Group</div>
@@ -2893,7 +2893,7 @@ function GroupChatScreen({ trip, members, session }) {
         {!loading && messages.length === 0 && (
           <div style={{textAlign:'center',padding:40}}>
             <div style={{fontSize:40,marginBottom:8}}>👋</div>
-            <div style={{fontWeight:700,color:'#0F2048',fontSize:15}}>Start the conversation!</div>
+            <div style={{fontWeight:700,color:'#1B2B6B',fontSize:15}}>Start the conversation!</div>
             <div style={{fontSize:13,color:'#888',marginTop:4}}>Say hi to your travel group</div>
           </div>
         )}
@@ -2920,7 +2920,7 @@ function GroupChatScreen({ trip, members, session }) {
                   <div style={{fontSize:11,color:'#666',fontWeight:700,marginBottom:2,marginLeft:4}}>{senderName}</div>
                 )}
                 <div style={{
-                  background: isMe ? '#0F2048' : '#fff',
+                  background: isMe ? '#F7941D' : '#fff',
                   color: isMe ? '#fff' : '#1a1a1a',
                   padding:'9px 13px',
                   borderRadius: isMe ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
@@ -2952,7 +2952,7 @@ function GroupChatScreen({ trip, members, session }) {
         />
         <button onClick={sendMessage} disabled={!text.trim() || sending}
           style={{width:42,height:42,borderRadius:'50%',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0,
-            background: text.trim() ? '#0F2048' : '#E5E7EB',
+            background: text.trim() ? '#F7941D' : '#E5E7EB',
             color: text.trim() ? '#fff' : '#999',
             transition:'background .2s'}}>
           ➤
@@ -3096,7 +3096,7 @@ Be specific to ${tripInfo.destination}. Make alerts genuinely useful.`;
       {lastScan && <div style={{fontSize:11,color:'var(--muted)',marginBottom:12}}>Last scan: {lastScan.toLocaleTimeString()}</div>}
 
       {/* Agent Status Card */}
-      <div style={{background:'linear-gradient(135deg,#0F2048,#1B4F8C)',borderRadius:16,padding:16,marginBottom:16,color:'#fff'}}>
+      <div style={{background:'linear-gradient(135deg,#F7941D,#E07010)',borderRadius:16,padding:16,marginBottom:16,color:'#fff'}}>
         <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
           <div style={{width:40,height:40,borderRadius:'50%',background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>🛡️</div>
           <div>

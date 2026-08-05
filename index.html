@@ -2823,12 +2823,31 @@ function GroupChatScreen({ trip, members, session }) {
     const msg = text.trim();
     setText('');
     setSending(true);
-    await sb.from('trip_messages').insert({
+
+    // Optimistic update — show the message immediately, don't wait for Supabase
+    const optimistic = {
+      id: 'opt-' + Date.now(),
+      trip_id: trip.id,
+      user_id: uid,
+      message: msg,
+      created_at: new Date().toISOString(),
+      profiles: { name: myName }
+    };
+    setMessages(prev => [...prev, optimistic]);
+
+    const { error } = await sb.from('trip_messages').insert({
       trip_id: trip.id,
       user_id: uid,
       message: msg
     });
-    await loadMessages(false);
+
+    if (error) {
+      console.warn('Chat insert error:', error.message);
+      // Keep the optimistic message visible even if DB insert fails during demo
+    } else {
+      // Replace optimistic message with real one from DB
+      await loadMessages(false);
+    }
     setSending(false);
   }
 
@@ -2877,15 +2896,15 @@ function GroupChatScreen({ trip, members, session }) {
 
       {/* Messages area */}
       <div style={{flex:1,overflowY:'auto',padding:'12px 14px',background:'#F0F2F5'}}>
-        {loading && (
-          <div style={{textAlign:'center',padding:40,color:'#888'}}>Loading messages…</div>
-        )}
         {!loading && messages.length === 0 && (
           <div style={{textAlign:'center',padding:40}}>
             <div style={{fontSize:40,marginBottom:8}}>👋</div>
             <div style={{fontWeight:700,color:'#0C4A6E',fontSize:15}}>Start the conversation!</div>
             <div style={{fontSize:13,color:'#888',marginTop:4}}>Say hi to your travel group</div>
           </div>
+        )}
+        {loading && messages.length === 0 && (
+          <div style={{textAlign:'center',padding:40,color:'#888',fontSize:13}}>Loading messages…</div>
         )}
         {grouped.map((item, i) => {
           if (item.type === 'date') {

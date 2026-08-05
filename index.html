@@ -1569,7 +1569,7 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
       <div style={{display:'flex',flexDirection:'column',background:'#FAFAF8',borderLeft:'1px solid #E5E7EB',maxHeight:'calc(100vh - 120px)'}}>
 
         {/* Header */}
-        <div style={{background:'linear-gradient(135deg,#0D9488,#059669)',padding:'10px 16px',flexShrink:0}}>
+        <div style={{background:'linear-gradient(135deg,#0F2048,#1B2B6B)',padding:'10px 16px',flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:900,fontSize:14,letterSpacing:.3}}>👥 Crew Whereabouts</div>
           <div style={{fontSize:10,color:'rgba(255,255,255,.65)',marginTop:1}}>
             {membersWithGps.length} of {members.length} sharing live location · updates every 10s
@@ -1623,9 +1623,9 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
                 <div style={{display:'flex',alignItems:'center',gap:8}}>
                   <div style={{flex:1,height:6,background:'#F3F4F6',borderRadius:3,overflow:'hidden'}}>
                     <div style={{width:pct+'%',height:'100%',borderRadius:3,transition:'width .4s',
-                      background: isMe ? 'linear-gradient(90deg,#F97316,#FB923C)' : 'linear-gradient(90deg,#0D9488,#14B8A6)'}}/>
+                      background: isMe ? 'linear-gradient(90deg,#F97316,#FB923C)' : 'linear-gradient(90deg,#0F2048,#1B2B6B)'}}/>
                   </div>
-                  <span style={{fontSize:11,fontWeight:800,color: isMe ? '#F97316' : '#0D9488',flexShrink:0}}>{pct}%</span>
+                  <span style={{fontSize:11,fontWeight:800,color: isMe ? '#F97316' : '#1B2B6B',flexShrink:0}}>{pct}%</span>
                 </div>
 
                 {/* Location coords if available */}
@@ -1889,7 +1889,7 @@ function FlightsScreen({ trip, members }) {
   return (
     <>
       {/* ── HERO SEARCH BAR (MakeMyTrip style) ── */}
-      <div style={{background:'linear-gradient(135deg,#E53935,#F97316)',borderRadius:16,padding:'20px 20px 24px',marginBottom:16,position:'relative',overflow:'hidden'}}>
+      <div style={{background:'linear-gradient(135deg,#0F2048,#1B2B6B)',borderRadius:16,padding:'20px 20px 24px',marginBottom:16,position:'relative',overflow:'hidden'}}>
         <div style={{position:'absolute',top:-20,right:-20,fontSize:100,opacity:.08}}>✈️</div>
         <div style={{fontSize:13,fontWeight:800,color:'rgba(255,255,255,.85)',letterSpacing:.5,marginBottom:14}}>✈️ BOOK FLIGHTS</div>
 
@@ -1897,7 +1897,7 @@ function FlightsScreen({ trip, members }) {
         <div style={{display:'flex',gap:8,marginBottom:14}}>
           {['One Way','Round Trip'].map(t => (
             <button key={t} style={{padding:'4px 14px',borderRadius:20,fontSize:11,fontWeight:700,border:'1.5px solid rgba(255,255,255,.6)',cursor:'pointer',
-              background:travelClass===t?'#fff':'transparent',color:travelClass===t?'#E53935':'#fff',transition:'all .2s'}}
+              background:travelClass===t?'#fff':'transparent',color:travelClass===t?'#F97316':'#fff',transition:'all .2s'}}
               onClick={() => setTravelClass(t)}>{t}</button>
           ))}
           <button style={{padding:'4px 14px',borderRadius:20,fontSize:11,fontWeight:700,border:'1.5px solid rgba(255,255,255,.6)',cursor:'pointer',background:'transparent',color:'#fff',marginLeft:'auto'}}
@@ -1916,7 +1916,7 @@ function FlightsScreen({ trip, members }) {
             </select>
           </div>
           <button onClick={swapCities}
-            style={{width:36,background:'#F3F4F6',border:'none',cursor:'pointer',fontSize:18,color:'#E53935',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700}}>
+            style={{width:36,background:'#F3F4F6',border:'none',cursor:'pointer',fontSize:18,color:'#F97316',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700}}>
             ⇄
           </button>
           <div style={{flex:1,padding:'10px 14px',borderLeft:'1px solid #F3F4F6'}}>
@@ -1948,7 +1948,7 @@ function FlightsScreen({ trip, members }) {
         <button onClick={doSearch} disabled={loading}
           style={{width:'100%',padding:'14px',borderRadius:12,border:'none',cursor:'pointer',
             background: loading ? 'rgba(255,255,255,.5)' : '#fff',
-            color: loading ? '#9CA3AF' : '#E53935',
+            color: loading ? '#9CA3AF' : '#F97316',
             fontSize:15,fontWeight:800,letterSpacing:.3,boxShadow:'0 4px 12px rgba(0,0,0,.15)',transition:'all .2s'}}>
           {loading ? '⏳  Searching…' : '🔍  SEARCH FLIGHTS'}
         </button>
@@ -1959,7 +1959,7 @@ function FlightsScreen({ trip, members }) {
       {loading && (
         <div style={{textAlign:'center',padding:'32px 0'}}>
           <div style={{fontSize:52,animation:'spin 1.5s linear infinite',display:'inline-block'}}>✈️</div>
-          <div style={{fontWeight:700,color:'#E53935',marginTop:12}}>Finding best fares…</div>
+          <div style={{fontWeight:700,color:'#F97316',marginTop:12}}>Finding best fares…</div>
           <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>{INDIAN_CITIES.find(c=>c.code===origin)?.name} → {INDIAN_CITIES.find(c=>c.code===dest)?.name} · {adults} traveller{adults>1?'s':''}</div>
         </div>
       )}
@@ -1999,10 +1999,10 @@ function FlightsScreen({ trip, members }) {
           {/* Price + Book */}
           <div style={{padding:'10px 16px 14px',borderTop:'1px dashed #E5E7EB',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
             <div>
-              <div style={{fontSize:22,fontWeight:900,color:'#E53935'}}>₹{f.pricePerPerson.toLocaleString('en-IN')}</div>
+              <div style={{fontSize:22,fontWeight:900,color:'#F97316'}}>₹{f.pricePerPerson.toLocaleString('en-IN')}</div>
               <div style={{fontSize:11,color:'var(--muted)'}}>per person · ₹{(f.pricePerPerson*f.adults).toLocaleString('en-IN')} total for {f.adults}</div>
             </div>
-            <button style={{background:'#E53935',color:'#fff',border:'none',borderRadius:10,padding:'9px 18px',fontSize:13,fontWeight:800,cursor:'pointer',boxShadow:'0 4px 10px rgba(229,57,53,.25)'}}>
+            <button style={{background:'#F97316',color:'#fff',border:'none',borderRadius:10,padding:'9px 18px',fontSize:13,fontWeight:800,cursor:'pointer',boxShadow:'0 4px 10px rgba(249,115,22,.3)'}}>
               Book Now
             </button>
           </div>
@@ -2239,8 +2239,8 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
       {/* ── RIGHT: VOTING PANEL (narrower, warm palette) ── */}
       <div style={{display:'flex',flexDirection:'column',background:'#FAFAF8',overflowY:'auto',maxHeight:'calc(100vh - 120px)',borderLeft:'1px solid #E8E0D8'}}>
 
-        {/* Header — warm teal */}
-        <div style={{background:'linear-gradient(135deg,#0D9488,#0F766E)',padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+        {/* Header — navy */}
+        <div style={{background:'linear-gradient(135deg,#0F2048,#1B2B6B)',padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:800,fontSize:13,letterSpacing:.2}}>🗳️ Cast Your Votes</div>
           <button onClick={() => setAiOpen(o => !o)}
             style={{background: aiOpen ? '#F97316' : 'rgba(255,255,255,.18)',border:'none',borderRadius:20,padding:'4px 11px',
@@ -2251,8 +2251,8 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
 
         {/* AI panel — warm amber */}
         {aiOpen && (
-          <div style={{background:'#FFFBEB',borderBottom:'1px solid #FDE68A',padding:'10px 14px',flexShrink:0}}>
-            <div style={{fontSize:11,fontWeight:700,color:'#92400E',marginBottom:7}}>🤖 AI Travel Assistant</div>
+          <div style={{background:'#EEF2FF',borderBottom:'1px solid #C7D2FE',padding:'10px 14px',flexShrink:0}}>
+            <div style={{fontSize:11,fontWeight:700,color:'#1E3A8A',marginBottom:7}}>🤖 AI Travel Assistant</div>
             <div style={{display:'flex',gap:6,marginBottom:7}}>
               <input className="form-input" style={{flex:1,fontSize:12,padding:'6px 9px'}}
                 placeholder={`Ask about ${trip.destination}…`}
@@ -2263,11 +2263,11 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
                 {aiLoading ? '⏳' : 'Ask'}
               </button>
             </div>
-            {aiA && <div style={{fontSize:11,color:'#78350F',lineHeight:1.6,background:'#fff',padding:'7px 9px',borderRadius:7,border:'1px solid #FDE68A'}}>{aiA}</div>}
+            {aiA && <div style={{fontSize:11,color:'#1E3A8A',lineHeight:1.6,background:'#fff',padding:'7px 9px',borderRadius:7,border:'1px solid #C7D2FE'}}>{aiA}</div>}
             <div style={{display:'flex',gap:5,flexWrap:'wrap',marginTop:6}}>
               {[`Best time?`,'What to pack?','Budget tips?'].map(q => (
                 <button key={q} onClick={() => setAiQ(`${q.replace('?','')} for ${trip.destination}?`)}
-                  style={{fontSize:10,padding:'3px 8px',borderRadius:12,border:'1px solid #FCD34D',background:'#fff',color:'#92400E',cursor:'pointer'}}>{q}</button>
+                  style={{fontSize:10,padding:'3px 8px',borderRadius:12,border:'1px solid #C7D2FE',background:'#fff',color:'#1E3A8A',cursor:'pointer'}}>{q}</button>
               ))}
             </div>
           </div>
@@ -2367,7 +2367,7 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
                 </div>
               )}
               <button style={{width:'100%',marginBottom:6,fontSize:12,padding:'9px',borderRadius:9,border:'none',cursor:'pointer',fontWeight:700,
-                background:'linear-gradient(135deg,#0D9488,#F97316)',color:'#fff'}} onClick={getAIConsensus} disabled={generating}>
+                background:'linear-gradient(135deg,#0F2048,#F97316)',color:'#fff'}} onClick={getAIConsensus} disabled={generating}>
                 {generating ? '⏳ Analysing votes…' : '🤖 Get AI Consensus'}
               </button>
             </>
@@ -2398,7 +2398,7 @@ function PlanScreen({ trip, members }) {
       {/* ── RIGHT: FLIGHT BOOKING ── */}
       <div style={{background:'#F8FAFC',overflowY:'auto',maxHeight:'calc(100vh - 120px)',borderLeft:'1px solid #E5E7EB'}}>
         {/* Header */}
-        <div style={{background:'linear-gradient(135deg,#E53935,#F97316)',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+        <div style={{background:'linear-gradient(135deg,#0F2048,#1B2B6B)',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:800,fontSize:13}}>✈️ Book Flights</div>
           <div style={{marginLeft:'auto',fontSize:10,color:'rgba(255,255,255,.75)',fontWeight:600}}>{members.length} travellers</div>
         </div>

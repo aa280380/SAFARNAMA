@@ -830,11 +830,12 @@ function App() {
     <div style={{position:'relative'}}>
       {tripTopNav}
       {/* Full-width screens — rendered outside mobile-wrap */}
-      {scr === 'voting' && <VotingScreen trip={currentTrip} members={members} session={session} sendNotifications={sendNotifications} />}
+      {scr === 'voting'    && <VotingScreen trip={currentTrip} members={members} session={session} sendNotifications={sendNotifications} />}
       {scr === 'itinerary' && <PlanScreen trip={currentTrip} members={members} />}
-      {scr !== 'voting' && scr !== 'itinerary' && (
+      {scr === 'tracker'   && <TrackerScreen trip={currentTrip} members={members} session={session} profile={profile} loadTripData={loadTripData} />}
+      {scr !== 'voting' && scr !== 'itinerary' && scr !== 'tracker' && (
         <div className="mobile-wrap screen-inner">
-          {scr === 'tracker' && <TrackerScreen trip={currentTrip} members={members} session={session} profile={profile} loadTripData={loadTripData} />}
+          {false && null /* tracker now full-width above */}
           {scr === 'places' && <PlacesScreen places={places} setPlaces={setPlaces} trip={currentTrip} members={members} />}
           {scr === 'hotels' && <HotelsScreen trip={currentTrip} members={members} />}
           {scr === 'cost' && <CostScreen trip={currentTrip} members={members} expenses={expenses} setExpenses={setExpenses} session={session} profile={profile} showAddExp={showAddExp} setShowAddExp={setShowAddExp} sendNotifications={sendNotifications} />}
@@ -1523,65 +1524,128 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
   const membersWithGps = members.filter(m => m.lat && m.lng);
 
   return (
-    <>
-      {/* GPS status bar */}
-      <div className="gps-status">
-        <div className={'gps-dot ' + gpsStatus}/>
-        {gpsStatus === 'active' && <span style={{color:'var(--green)',fontWeight:600}}>📡 GPS Active — sharing location</span>}
-        {gpsStatus === 'denied' && <span style={{color:'var(--red)'}}>📵 GPS denied — enable in browser settings</span>}
-        {gpsStatus === 'pending' && <span style={{color:'var(--orange)'}}>⏳ Requesting GPS…</span>}
-        {membersWithGps.length > 0 && <span style={{marginLeft:'auto',color:'var(--muted)',fontSize:12}}>{membersWithGps.length} live on map</span>}
-      </div>
+    <div style={{display:'grid',gridTemplateColumns:'2fr 1fr',gap:0,minHeight:'calc(100vh - 120px)'}}>
 
-      {/* Leaflet map */}
-      <div id="tracker-map" />
+      {/* ── LEFT: I AM HERE ── */}
+      <div style={{display:'flex',flexDirection:'column',background:'#0F172A',overflow:'hidden',position:'relative'}}>
 
-      {/* Progress slider */}
-      <div className="card">
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
-          <div className="card-title" style={{margin:0}}>My Journey Progress</div>
-          {saving && <span style={{fontSize:12,color:'var(--muted)'}}>Saving…</span>}
-        </div>
-        <input type="range" min="0" max="100" value={myProgress}
-          onChange={e => updateProgress(Number(e.target.value))}
-          style={{width:'100%',accentColor:'var(--orange)'}}/>
-        <div style={{display:'flex',justifyContent:'space-between',fontSize:12,color:'var(--muted)',marginTop:4}}>
-          <span>🏠 Start</span>
-          <span style={{color:'var(--orange)',fontWeight:700}}>{myProgress}% done</span>
-          <span>📍 {trip.destination}</span>
-        </div>
-      </div>
-
-      {/* Member list */}
-      <div className="card">
-        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:10}}>
-          <div className="card-title" style={{margin:0}}>Group ({members.length})</div>
-          <span style={{fontSize:12,color:'var(--muted)'}}>Updates every 10s</span>
-        </div>
-        {members.map((m, i) => (
-          <div key={m.id} className="member-row">
-            <div style={{width:40,height:40,borderRadius:'50%',background:m.profiles?.avatar_color||COLORS[i%COLORS.length],display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,fontWeight:700,color:'#fff',flexShrink:0}}>
-              {initials(m.profiles?.name||'?')}
-            </div>
-            <div className="m-info">
-              <div className="m-name">{m.profiles?.name||'Unknown'}</div>
-              <div className="m-city">
-                {transIcons[m.transport_mode]||'✈️'} from {m.from_city}
-                {m.lat && m.lng
-                  ? <span style={{color:'var(--green)',marginLeft:6,fontWeight:600}}>📡 Live{m.last_seen ? ' · '+timeSince(new Date(m.last_seen)) : ''}</span>
-                  : <span style={{color:'var(--muted)',marginLeft:6}}>No GPS</span>
-                }
-              </div>
-              <div className="prog-bar"><div className="prog-fill" style={{width:(m.progress||0)+'%'}}/></div>
-            </div>
-            <div style={{textAlign:'right',flexShrink:0}}>
-              <span className={'m-role '+m.role}>{m.role==='coordinator'?'👑 Host':'👤 Member'}</span>
-              <div style={{fontSize:12,color:'var(--orange)',fontWeight:700,marginTop:4}}>{m.progress||0}%</div>
-            </div>
+        {/* Header */}
+        <div style={{background:'linear-gradient(135deg,#0F2048,#1B4F8C)',padding:'10px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0,zIndex:2}}>
+          <div style={{flex:1}}>
+            <div style={{color:'#fff',fontWeight:900,fontSize:14,letterSpacing:.3}}>📍 I Am Here</div>
+            <div style={{fontSize:10,color:'rgba(255,255,255,.55)',marginTop:1}}>Your live location on the map</div>
           </div>
-        ))}
+          <div style={{display:'flex',alignItems:'center',gap:6}}>
+            <div style={{width:8,height:8,borderRadius:'50%',
+              background: gpsStatus==='active' ? '#22C55E' : gpsStatus==='denied' ? '#EF4444' : '#F59E0B',
+              boxShadow: gpsStatus==='active' ? '0 0 0 3px rgba(34,197,94,.3)' : 'none'}}/>
+            <span style={{fontSize:11,color:'rgba(255,255,255,.75)',fontWeight:600}}>
+              {gpsStatus==='active' ? 'GPS Active' : gpsStatus==='denied' ? 'GPS Denied' : 'Locating…'}
+            </span>
+          </div>
+        </div>
+
+        {/* Map fills remaining space */}
+        <div id="tracker-map" style={{flex:1,minHeight:320}}/>
+
+        {/* My progress bar — bottom overlay */}
+        <div style={{background:'rgba(15,32,72,.92)',backdropFilter:'blur(8px)',padding:'12px 16px',flexShrink:0,zIndex:2}}>
+          <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
+            <span style={{color:'#fff',fontWeight:700,fontSize:12}}>🚀 My Journey Progress</span>
+            <span style={{color:'#F97316',fontWeight:800,fontSize:13}}>{myProgress}%</span>
+            {saving && <span style={{color:'rgba(255,255,255,.5)',fontSize:10,marginLeft:6}}>saving…</span>}
+          </div>
+          <input type="range" min="0" max="100" value={myProgress}
+            onChange={e => updateProgress(Number(e.target.value))}
+            style={{width:'100%',accentColor:'#F97316',height:6}}/>
+          <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:'rgba(255,255,255,.45)',marginTop:5}}>
+            <span>🏠 Home</span>
+            <span>📍 {trip.destination}</span>
+          </div>
+        </div>
       </div>
-    </>
+
+      {/* ── RIGHT: CREW WHEREABOUTS ── */}
+      <div style={{display:'flex',flexDirection:'column',background:'#FAFAF8',borderLeft:'1px solid #E5E7EB',maxHeight:'calc(100vh - 120px)'}}>
+
+        {/* Header */}
+        <div style={{background:'linear-gradient(135deg,#0D9488,#059669)',padding:'10px 16px',flexShrink:0}}>
+          <div style={{color:'#fff',fontWeight:900,fontSize:14,letterSpacing:.3}}>👥 Crew Whereabouts</div>
+          <div style={{fontSize:10,color:'rgba(255,255,255,.65)',marginTop:1}}>
+            {membersWithGps.length} of {members.length} sharing live location · updates every 10s
+          </div>
+        </div>
+
+        {/* Member cards */}
+        <div style={{flex:1,overflowY:'auto',padding:'10px 12px'}}>
+          {members.map((m, i) => {
+            const isMe = m.user_id === uid;
+            const hasGps = !!(m.lat && m.lng);
+            const color = m.profiles?.avatar_color || COLORS[i % COLORS.length];
+            const pct = m.progress || 0;
+            const seen = m.last_seen ? timeSince(new Date(m.last_seen)) : null;
+            return (
+              <div key={m.id} style={{background:'#fff',borderRadius:12,padding:'12px 14px',marginBottom:10,
+                border: isMe ? '2px solid #F97316' : '1px solid #E5E7EB',
+                boxShadow: isMe ? '0 2px 12px rgba(249,115,22,.12)' : '0 1px 4px rgba(0,0,0,.05)'}}>
+
+                {/* Avatar + name row */}
+                <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
+                  <div style={{width:38,height:38,borderRadius:'50%',background:color,display:'flex',alignItems:'center',
+                    justifyContent:'center',fontSize:14,fontWeight:800,color:'#fff',flexShrink:0,
+                    border: isMe ? '2px solid #F97316' : 'none'}}>
+                    {initials(m.profiles?.name || '?')}
+                  </div>
+                  <div style={{flex:1,minWidth:0}}>
+                    <div style={{fontWeight:800,fontSize:13,color:'#1F2937',display:'flex',alignItems:'center',gap:5}}>
+                      {m.profiles?.name || 'Unknown'}
+                      {isMe && <span style={{fontSize:9,background:'#FFF7ED',color:'#F97316',border:'1px solid #FED7AA',padding:'1px 6px',borderRadius:8,fontWeight:700}}>YOU</span>}
+                    </div>
+                    <div style={{fontSize:10,color:'#6B7280',marginTop:1}}>
+                      {transIcons[m.transport_mode] || '✈️'} {m.from_city ? `from ${m.from_city}` : 'en route'}
+                    </div>
+                  </div>
+                  <div style={{textAlign:'right',flexShrink:0}}>
+                    {hasGps
+                      ? <div style={{display:'flex',flexDirection:'column',alignItems:'flex-end',gap:2}}>
+                          <span style={{fontSize:10,color:'#16A34A',fontWeight:700,display:'flex',alignItems:'center',gap:3}}>
+                            <span style={{width:6,height:6,borderRadius:'50%',background:'#22C55E',display:'inline-block'}}/>
+                            Live
+                          </span>
+                          {seen && <span style={{fontSize:9,color:'#9CA3AF'}}>{seen}</span>}
+                        </div>
+                      : <span style={{fontSize:10,color:'#9CA3AF'}}>No GPS</span>
+                    }
+                  </div>
+                </div>
+
+                {/* Progress bar */}
+                <div style={{display:'flex',alignItems:'center',gap:8}}>
+                  <div style={{flex:1,height:6,background:'#F3F4F6',borderRadius:3,overflow:'hidden'}}>
+                    <div style={{width:pct+'%',height:'100%',borderRadius:3,transition:'width .4s',
+                      background: isMe ? 'linear-gradient(90deg,#F97316,#FB923C)' : 'linear-gradient(90deg,#0D9488,#14B8A6)'}}/>
+                  </div>
+                  <span style={{fontSize:11,fontWeight:800,color: isMe ? '#F97316' : '#0D9488',flexShrink:0}}>{pct}%</span>
+                </div>
+
+                {/* Location coords if available */}
+                {hasGps && (
+                  <div style={{marginTop:6,fontSize:9,color:'#9CA3AF',fontFamily:'monospace'}}>
+                    📡 {m.lat?.toFixed(4)}°N, {m.lng?.toFixed(4)}°E
+                  </div>
+                )}
+              </div>
+            );
+          })}
+
+          {/* Legend */}
+          <div style={{marginTop:4,padding:'8px 10px',background:'#F3F4F6',borderRadius:8,fontSize:10,color:'#9CA3AF',textAlign:'center'}}>
+            🔵 Teal bar = crew · 🟠 Orange bar = you · Tap map pins for details
+          </div>
+        </div>
+      </div>
+
+    </div>
   );
 }
 

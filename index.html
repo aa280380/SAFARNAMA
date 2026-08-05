@@ -1305,10 +1305,6 @@ function CreateTripScreen({ session, profile, setScr, loadTrips }) {
         <div className="card">
           <div className="card-title">Your Travel Info</div>
           <div className="form-group"><label className="form-label">Travelling From</label><input className="form-input" placeholder="Mumbai" value={fromCity} onChange={e => setFromCity(e.target.value)} /></div>
-          <div className="form-group"><label className="form-label">Mode of Transport</label>
-            <select className="form-input" value={transport} onChange={e => setTransport(e.target.value)}>
-              <option value="flight">✈️ Flight</option><option value="train">🚂 Train</option><option value="bus">🚌 Bus</option><option value="car">🚗 Car</option>
-            </select>
           </div>
         </div>
         <button className="btn btn-primary" onClick={createTrip} disabled={loading}>{loading ? '⏳ Creating…' : '🚀 Create Trip & Get Invite Link'}</button>
@@ -1363,10 +1359,6 @@ function JoinTripScreen({ session, profile, setScr, loadTrips }) {
           <div className="form-group"><input className="form-input join-input" placeholder="ABC12345" maxLength={8} value={code} onChange={e => { setCode(e.target.value.toUpperCase()); setFound(null); }} onBlur={lookupCode} /></div>
           {found && <div style={{background:'#F0FFF4',border:'1.5px solid #86EFAC',borderRadius:10,padding:12,marginBottom:12}}><div style={{fontSize:13,color:'var(--muted)'}}>Trip found! ✅</div><div style={{fontSize:17,fontWeight:800,color:'var(--navy)'}}>{found.destination}</div><div style={{fontSize:13,color:'var(--muted)'}}>{found.name}</div></div>}
           <div className="form-group"><label className="form-label">Travelling From</label><input className="form-input" placeholder="Delhi" value={fromCity} onChange={e => setFromCity(e.target.value)} /></div>
-          <div className="form-group"><label className="form-label">Mode of Transport</label>
-            <select className="form-input" value={transport} onChange={e => setTransport(e.target.value)}>
-              <option value="flight">✈️ Flight</option><option value="train">🚂 Train</option><option value="bus">🚌 Bus</option><option value="car">🚗 Car</option>
-            </select>
           </div>
           <button className="btn btn-primary" onClick={found ? joinTrip : lookupCode} disabled={loading}>{loading ? '⏳ Joining…' : found ? '✅ Join Trip' : '🔍 Find Trip'}</button>
         </div>

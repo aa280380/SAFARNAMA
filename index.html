@@ -6,19 +6,19 @@
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>SafarNama – AI Group Travel</title>
-<meta name="theme-color" content="#059669"/>
+<meta name="theme-color" content="#0EA5E9"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="theme-color" content="#059669"/>
+<meta name="theme-color" content="#0EA5E9"/>
 <meta name="apple-mobile-web-app-title" content="SafarNama"/>
-<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;SafarNama&quot;,&quot;short_name&quot;:&quot;SafarNama&quot;,&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%23059669&quot;,&quot;theme_color&quot;:&quot;%23059669&quot;,&quot;description&quot;:&quot;AI-powered group travel planner&quot;}"/>
+<link rel="manifest" href="data:application/manifest+json,{&quot;name&quot;:&quot;SafarNama&quot;,&quot;short_name&quot;:&quot;SafarNama&quot;,&quot;start_url&quot;:&quot;/&quot;,&quot;display&quot;:&quot;standalone&quot;,&quot;background_color&quot;:&quot;%230EA5E9&quot;,&quot;theme_color&quot;:&quot;%230EA5E9&quot;,&quot;description&quot;:&quot;AI-powered group travel planner&quot;}"/>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <style>
-:root{--navy:#064E3B;--orange:#059669;--teal:#0D9488;--green:#22C55E;--red:#EF4444;--purple:#8B5CF6;--bg:#F1F5F9;--card:#fff;--text:#0F172A;--muted:#64748B;--border:#E2E8F0;}
+:root{--navy:#0F172A;--orange:#0EA5E9;--teal:#0D9488;--green:#22C55E;--red:#EF4444;--purple:#8B5CF6;--bg:#F1F5F9;--card:#fff;--text:#0F172A;--muted:#64748B;--border:#E2E8F0;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Poppins',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
 button{cursor:pointer;border:none;outline:none;font-family:inherit;}
@@ -39,7 +39,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 .nav-notif{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;position:relative;}
 
 /* ── HERO ── */
-.hero{background:linear-gradient(135deg,#059669 0%,#10B981 100%);padding:52px 28px 40px;position:relative;overflow:hidden;}.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
+.hero{background:linear-gradient(135deg,#0EA5E9 0%,#06B6D4 100%);padding:52px 28px 40px;position:relative;overflow:hidden;}.hero::before{content:"";position:absolute;inset:0;background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);background-size:28px 28px;pointer-events:none;}
 .hero::before{content:'✈️';position:absolute;right:5%;top:20%;font-size:80px;opacity:.08;transform:rotate(-15deg);}
 .hero::after{content:'🌍';position:absolute;left:3%;bottom:10%;font-size:120px;opacity:.06;}
 .hero-inner{max-width:1120px;margin:0 auto;position:relative;z-index:2;}
@@ -105,7 +105,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 /* ── OLD MOBILE STYLES (for inner trip screens) ── */
 .mobile-wrap{max-width:680px;margin:0 auto;padding:16px 16px 80px;}
 .screen-inner{animation:fadeUp .3s ease;}
-.back-nav{display:flex;align-items:center;padding:14px 20px;background:linear-gradient(135deg,#059669 0%,#10B981 100%);color:#fff;position:sticky;top:0;z-index:100;gap:12px;box-shadow:0 2px 12px rgba(5,150,105,.35);}
+.back-nav{display:flex;align-items:center;padding:14px 20px;background:linear-gradient(135deg,#0EA5E9 0%,#06B6D4 100%);color:#fff;position:sticky;top:0;z-index:100;gap:12px;box-shadow:0 2px 12px rgba(14,165,233,.35);}
 .back-btn{background:rgba(255,255,255,.12);border:none;color:#fff;font-size:18px;cursor:pointer;line-height:1;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s;backdrop-filter:blur(4px);}.back-btn:hover{background:rgba(255,255,255,.22);}
 .back-title{font-size:16px;font-weight:700;flex:1;}
 .back-action{background:#25D366;border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer;padding:7px 14px;border-radius:20px;display:flex;align-items:center;gap:6px;box-shadow:0 2px 8px rgba(37,211,102,.4);transition:all .2s;white-space:nowrap;}.back-action:hover{background:#1ebe5d;transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,211,102,.5);}
@@ -187,7 +187,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 .vote-count{font-size:12px;color:var(--muted);}
 .hotel-card{background:#fff;border-radius:16px;padding:14px;margin-bottom:12px;box-shadow:0 2px 8px rgba(0,0,0,.06);}
 .hotel-name{font-size:15px;font-weight:800;margin-bottom:4px;}
-.hotel-stars{color:#F59E0B;font-size:14px;}
+.hotel-stars{color:#FF6B6B;font-size:14px;}
 .hotel-price{font-size:18px;font-weight:800;color:var(--orange);}
 .hotel-per{font-size:12px;color:var(--muted);}
 .hotel-tags{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0;}
@@ -235,7 +235,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 .admin-section{font-size:15px;font-weight:800;margin:16px 0 10px;}
 .join-input{text-transform:uppercase;letter-spacing:4px;font-size:20px;font-weight:800;text-align:center;}
 /* top-nav (inner screens only — inside back-nav) */
-.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:linear-gradient(135deg,#059669,#10B981);color:#fff;position:sticky;top:0;z-index:100;}
+.top-nav{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:linear-gradient(135deg,#0EA5E9,#06B6D4);color:#fff;position:sticky;top:0;z-index:100;}
 .top-nav h2{font-size:17px;font-weight:700;}
 .notif-btn{position:relative;background:none;border:none;font-size:22px;color:#fff;}
 
@@ -298,7 +298,7 @@ input,textarea,select{font-family:inherit;outline:none;}
 
 /* ── ITINERARY SCREEN ── */
 .itin-day{background:#fff;border-radius:18px;margin-bottom:16px;overflow:hidden;border:1px solid #E8EDF5;}
-.itin-day-header{padding:16px 18px 12px;background:linear-gradient(135deg,#059669 0%,#10B981 100%);position:relative;}
+.itin-day-header{padding:16px 18px 12px;background:linear-gradient(135deg,#0EA5E9 0%,#06B6D4 100%);position:relative;}
 .itin-day-date-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
 .itin-day-badge{font-size:11px;font-weight:800;color:#fff;background:var(--orange);padding:3px 10px;border-radius:20px;letter-spacing:.5px;text-transform:uppercase;}
 .itin-day-datestr{font-size:12px;color:rgba(255,255,255,.65);font-weight:500;}
@@ -312,11 +312,11 @@ input,textarea,select{font-family:inherit;outline:none;}
 .itin-dot{width:10px;height:10px;border-radius:50%;border:2px solid #fff;flex-shrink:0;margin-top:5px;box-shadow:0 0 0 2px currentColor;}
 .itin-slot-body{flex:1;padding-bottom:18px;}
 .itin-slot-time{font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px;display:inline-block;margin-bottom:6px;letter-spacing:.3px;}
-.itin-slot-name{font-size:14px;font-weight:700;color:#064E3B;line-height:1.4;margin-bottom:3px;}
+.itin-slot-name{font-size:14px;font-weight:700;color:#0F172A;line-height:1.4;margin-bottom:3px;}
 .itin-slot-desc{font-size:12px;color:#6B7280;line-height:1.5;margin-bottom:5px;}
 .itin-slot-cost{font-size:11px;font-weight:700;color:var(--teal);background:#F0FDFA;border:1px solid #99F6E4;padding:2px 8px;border-radius:12px;display:inline-block;}
 .itin-meal-badge{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;padding:2px 7px;border-radius:10px;margin-left:6px;vertical-align:middle;}
-.itin-tip{background:#ECFDF5;border-left:3px solid #059669;padding:10px 14px;margin-top:4px;border-radius:0 10px 10px 0;font-size:12px;color:#064E3B;line-height:1.5;font-weight:500;}
+.itin-tip{background:#E0F2FE;border-left:3px solid #0EA5E9;padding:10px 14px;margin-top:4px;border-radius:0 10px 10px 0;font-size:12px;color:#0F172A;line-height:1.5;font-weight:500;}
 .itin-edit-btn{font-size:12px;padding:5px 12px;border-radius:8px;border:1.5px solid var(--border);background:#fff;cursor:pointer;color:var(--muted);font-weight:600;}
 .itin-edit-btn:hover{border-color:var(--teal);color:var(--teal);}
 .itin-edit-area{width:100%;min-height:400px;font-size:13px;font-family:monospace;padding:12px;border:1.5px solid var(--border);border-radius:10px;line-height:1.7;resize:vertical;}
@@ -490,13 +490,13 @@ const AI_RESPONSES = {
   'hotel':'🏨 For groups: Zostel is fun & social (₹800/night), Goa Marriott is mid-range (₹4,800/night), Leela is luxury (₹8,500/night).',
   'transport':'🚗 Best for groups: rent a self-drive car (₹1,500/day) or hire a local cab for day trips. Scooters are great for beach hopping!',
 };
-const COLORS = ['#059669','#064E3B','#22C55E','#EF4444','#8B5CF6','#F59E0B','#14B8A6','#F59E0B'];
+const COLORS = ['#0EA5E9','#0F172A','#22C55E','#EF4444','#8B5CF6','#FF6B6B','#14B8A6','#FF6B6B'];
 
 /* ── Destination → gradient (for trip photo cards) ── */
 const DEST_GRADS = [
-  ['#0B4F6C','#20A4F3'],['#7B2D8B','#C850C0'],['#134E4A','#059669'],
-  ['#92400E','#D97706'],['#1E3A5F','#3B82F6'],['#4A044E','#059669'],
-  ['#1C1917','#78350F'],['#0F172A','#0D9488'],['#831843','#F59E0B'],
+  ['#0B4F6C','#20A4F3'],['#7B2D8B','#C850C0'],['#134E4A','#0EA5E9'],
+  ['#92400E','#D97706'],['#1E3A5F','#3B82F6'],['#4A044E','#0EA5E9'],
+  ['#1C1917','#78350F'],['#0F172A','#0D9488'],['#831843','#FF6B6B'],
 ];
 function destImage(dest='') {
   const d = dest.toLowerCase();
@@ -904,7 +904,7 @@ function AuthScreen({ authMode, setAuthMode, setScr, setProfile, setSession }) {
       if (error) { setErr(error.message); setLoading(false); return; }
     } else {
       if (!name.trim()) { setErr('Name is required'); setLoading(false); return; }
-      const { data, error, needsConfirm } = await sb.auth.signUp({ email, password, options:{ data:{ name:name.trim(), phone:phone.trim(), avatar_color: '#059669' } } });
+      const { data, error, needsConfirm } = await sb.auth.signUp({ email, password, options:{ data:{ name:name.trim(), phone:phone.trim(), avatar_color: '#0EA5E9' } } });
       if (error) { setErr(error.message); setLoading(false); return; }
       if (needsConfirm) { setMsg('✅ Account created! Check your email to confirm, then log in.'); setLoading(false); setAuthMode('login'); return; }
     }
@@ -1029,7 +1029,7 @@ function DashboardScreen({ profile, trips, session, setScr, loadTripData, notifi
           <NotificationBell notifications={notifications} session={session} markAllRead={markAllRead} />
           <div
             className="nav-avatar"
-            style={{background: profile.avatar_color||'#059669'}}
+            style={{background: profile.avatar_color||'#0EA5E9'}}
             onClick={() => setScr('profile-scr')}
             title={profile.name}
           >
@@ -1530,14 +1530,14 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
       <div style={{display:'flex',flexDirection:'column',background:'#0F172A',overflow:'hidden',position:'relative'}}>
 
         {/* Header */}
-        <div style={{background:'linear-gradient(135deg,#059669,#10B981)',padding:'10px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0,zIndex:2}}>
+        <div style={{background:'linear-gradient(135deg,#0EA5E9,#06B6D4)',padding:'10px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0,zIndex:2}}>
           <div style={{flex:1}}>
             <div style={{color:'#fff',fontWeight:900,fontSize:14,letterSpacing:.3}}>📍 I Am Here</div>
             <div style={{fontSize:10,color:'rgba(255,255,255,.55)',marginTop:1}}>Your live location on the map</div>
           </div>
           <div style={{display:'flex',alignItems:'center',gap:6}}>
             <div style={{width:8,height:8,borderRadius:'50%',
-              background: gpsStatus==='active' ? '#22C55E' : gpsStatus==='denied' ? '#EF4444' : '#F59E0B',
+              background: gpsStatus==='active' ? '#22C55E' : gpsStatus==='denied' ? '#EF4444' : '#FF6B6B',
               boxShadow: gpsStatus==='active' ? '0 0 0 3px rgba(34,197,94,.3)' : 'none'}}/>
             <span style={{fontSize:11,color:'rgba(255,255,255,.75)',fontWeight:600}}>
               {gpsStatus==='active' ? 'GPS Active' : gpsStatus==='denied' ? 'GPS Denied' : 'Locating…'}
@@ -1552,12 +1552,12 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
         <div style={{background:'rgba(15,32,72,.92)',backdropFilter:'blur(8px)',padding:'12px 16px',flexShrink:0,zIndex:2}}>
           <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:6}}>
             <span style={{color:'#fff',fontWeight:700,fontSize:12}}>🚀 My Journey Progress</span>
-            <span style={{color:'#F59E0B',fontWeight:800,fontSize:13}}>{myProgress}%</span>
+            <span style={{color:'#FF6B6B',fontWeight:800,fontSize:13}}>{myProgress}%</span>
             {saving && <span style={{color:'rgba(255,255,255,.5)',fontSize:10,marginLeft:6}}>saving…</span>}
           </div>
           <input type="range" min="0" max="100" value={myProgress}
             onChange={e => updateProgress(Number(e.target.value))}
-            style={{width:'100%',accentColor:'#059669',height:6}}/>
+            style={{width:'100%',accentColor:'#0EA5E9',height:6}}/>
           <div style={{display:'flex',justifyContent:'space-between',fontSize:10,color:'rgba(255,255,255,.45)',marginTop:5}}>
             <span>🏠 Home</span>
             <span>📍 {trip.destination}</span>
@@ -1569,7 +1569,7 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
       <div style={{display:'flex',flexDirection:'column',background:'#FAFAF8',borderLeft:'1px solid #E5E7EB',maxHeight:'calc(100vh - 120px)'}}>
 
         {/* Header */}
-        <div style={{background:'linear-gradient(135deg,#059669,#10B981)',padding:'10px 16px',flexShrink:0}}>
+        <div style={{background:'linear-gradient(135deg,#0EA5E9,#06B6D4)',padding:'10px 16px',flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:900,fontSize:14,letterSpacing:.3}}>👥 Crew Whereabouts</div>
           <div style={{fontSize:10,color:'rgba(255,255,255,.65)',marginTop:1}}>
             {membersWithGps.length} of {members.length} sharing live location · updates every 10s
@@ -1586,20 +1586,20 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
             const seen = m.last_seen ? timeSince(new Date(m.last_seen)) : null;
             return (
               <div key={m.id} style={{background:'#fff',borderRadius:12,padding:'12px 14px',marginBottom:10,
-                border: isMe ? '2px solid #F59E0B' : '1px solid #E5E7EB',
+                border: isMe ? '2px solid #FF6B6B' : '1px solid #E5E7EB',
                 boxShadow: isMe ? '0 2px 12px rgba(249,115,22,.12)' : '0 1px 4px rgba(0,0,0,.05)'}}>
 
                 {/* Avatar + name row */}
                 <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:8}}>
                   <div style={{width:38,height:38,borderRadius:'50%',background:color,display:'flex',alignItems:'center',
                     justifyContent:'center',fontSize:14,fontWeight:800,color:'#fff',flexShrink:0,
-                    border: isMe ? '2px solid #F59E0B' : 'none'}}>
+                    border: isMe ? '2px solid #FF6B6B' : 'none'}}>
                     {initials(m.profiles?.name || '?')}
                   </div>
                   <div style={{flex:1,minWidth:0}}>
                     <div style={{fontWeight:800,fontSize:13,color:'#1F2937',display:'flex',alignItems:'center',gap:5}}>
                       {m.profiles?.name || 'Unknown'}
-                      {isMe && <span style={{fontSize:9,background:'#F59E0B',color:'#064E3B',border:'1px solid #F59E0B',padding:'1px 6px',borderRadius:8,fontWeight:700}}>YOU</span>}
+                      {isMe && <span style={{fontSize:9,background:'#FF6B6B',color:'#0F172A',border:'1px solid #FF6B6B',padding:'1px 6px',borderRadius:8,fontWeight:700}}>YOU</span>}
                     </div>
                     <div style={{fontSize:10,color:'#6B7280',marginTop:1}}>
                       {transIcons[m.transport_mode] || '✈️'} {m.from_city ? `from ${m.from_city}` : 'en route'}
@@ -1623,9 +1623,9 @@ function TrackerScreen({ trip, members: initialMembers, session, profile, loadTr
                 <div style={{display:'flex',alignItems:'center',gap:8}}>
                   <div style={{flex:1,height:6,background:'#F3F4F6',borderRadius:3,overflow:'hidden'}}>
                     <div style={{width:pct+'%',height:'100%',borderRadius:3,transition:'width .4s',
-                      background: isMe ? 'linear-gradient(90deg,#059669,#10B981)' : 'linear-gradient(90deg,#059669,#10B981)'}}/>
+                      background: isMe ? 'linear-gradient(90deg,#0EA5E9,#06B6D4)' : 'linear-gradient(90deg,#0EA5E9,#06B6D4)'}}/>
                   </div>
-                  <span style={{fontSize:11,fontWeight:800,color: isMe ? '#F59E0B' : '#064E3B',flexShrink:0}}>{pct}%</span>
+                  <span style={{fontSize:11,fontWeight:800,color: isMe ? '#FF6B6B' : '#0F172A',flexShrink:0}}>{pct}%</span>
                 </div>
 
                 {/* Location coords if available */}
@@ -1889,7 +1889,7 @@ function FlightsScreen({ trip, members }) {
   return (
     <>
       {/* ── HERO SEARCH BAR (MakeMyTrip style) ── */}
-      <div style={{background:'linear-gradient(135deg,#059669,#10B981)',borderRadius:16,padding:'20px 20px 24px',marginBottom:16,position:'relative',overflow:'hidden'}}>
+      <div style={{background:'linear-gradient(135deg,#0EA5E9,#06B6D4)',borderRadius:16,padding:'20px 20px 24px',marginBottom:16,position:'relative',overflow:'hidden'}}>
         <div style={{position:'absolute',top:-20,right:-20,fontSize:100,opacity:.08}}>✈️</div>
         <div style={{fontSize:13,fontWeight:800,color:'rgba(255,255,255,.85)',letterSpacing:.5,marginBottom:14}}>✈️ BOOK FLIGHTS</div>
 
@@ -1897,7 +1897,7 @@ function FlightsScreen({ trip, members }) {
         <div style={{display:'flex',gap:8,marginBottom:14}}>
           {['One Way','Round Trip'].map(t => (
             <button key={t} style={{padding:'4px 14px',borderRadius:20,fontSize:11,fontWeight:700,border:'1.5px solid rgba(255,255,255,.6)',cursor:'pointer',
-              background:travelClass===t?'#fff':'transparent',color:travelClass===t?'#F59E0B':'#fff',transition:'all .2s'}}
+              background:travelClass===t?'#fff':'transparent',color:travelClass===t?'#FF6B6B':'#fff',transition:'all .2s'}}
               onClick={() => setTravelClass(t)}>{t}</button>
           ))}
           <button style={{padding:'4px 14px',borderRadius:20,fontSize:11,fontWeight:700,border:'1.5px solid rgba(255,255,255,.6)',cursor:'pointer',background:'transparent',color:'#fff',marginLeft:'auto'}}
@@ -1916,7 +1916,7 @@ function FlightsScreen({ trip, members }) {
             </select>
           </div>
           <button onClick={swapCities}
-            style={{width:36,background:'#F3F4F6',border:'none',cursor:'pointer',fontSize:18,color:'#F59E0B',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700}}>
+            style={{width:36,background:'#F3F4F6',border:'none',cursor:'pointer',fontSize:18,color:'#FF6B6B',flexShrink:0,display:'flex',alignItems:'center',justifyContent:'center',fontWeight:700}}>
             ⇄
           </button>
           <div style={{flex:1,padding:'10px 14px',borderLeft:'1px solid #F3F4F6'}}>
@@ -1948,7 +1948,7 @@ function FlightsScreen({ trip, members }) {
         <button onClick={doSearch} disabled={loading}
           style={{width:'100%',padding:'14px',borderRadius:12,border:'none',cursor:'pointer',
             background: loading ? 'rgba(255,255,255,.5)' : '#fff',
-            color: loading ? '#9CA3AF' : '#F59E0B',
+            color: loading ? '#9CA3AF' : '#FF6B6B',
             fontSize:15,fontWeight:800,letterSpacing:.3,boxShadow:'0 4px 12px rgba(0,0,0,.15)',transition:'all .2s'}}>
           {loading ? '⏳  Searching…' : '🔍  SEARCH FLIGHTS'}
         </button>
@@ -1959,7 +1959,7 @@ function FlightsScreen({ trip, members }) {
       {loading && (
         <div style={{textAlign:'center',padding:'32px 0'}}>
           <div style={{fontSize:52,animation:'spin 1.5s linear infinite',display:'inline-block'}}>✈️</div>
-          <div style={{fontWeight:700,color:'#F59E0B',marginTop:12}}>Finding best fares…</div>
+          <div style={{fontWeight:700,color:'#FF6B6B',marginTop:12}}>Finding best fares…</div>
           <div style={{fontSize:12,color:'var(--muted)',marginTop:4}}>{INDIAN_CITIES.find(c=>c.code===origin)?.name} → {INDIAN_CITIES.find(c=>c.code===dest)?.name} · {adults} traveller{adults>1?'s':''}</div>
         </div>
       )}
@@ -1999,10 +1999,10 @@ function FlightsScreen({ trip, members }) {
           {/* Price + Book */}
           <div style={{padding:'10px 16px 14px',borderTop:'1px dashed #E5E7EB',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
             <div>
-              <div style={{fontSize:22,fontWeight:900,color:'#F59E0B'}}>₹{f.pricePerPerson.toLocaleString('en-IN')}</div>
+              <div style={{fontSize:22,fontWeight:900,color:'#FF6B6B'}}>₹{f.pricePerPerson.toLocaleString('en-IN')}</div>
               <div style={{fontSize:11,color:'var(--muted)'}}>per person · ₹{(f.pricePerPerson*f.adults).toLocaleString('en-IN')} total for {f.adults}</div>
             </div>
-            <button style={{background:'#F59E0B',color:'#fff',border:'none',borderRadius:10,padding:'9px 18px',fontSize:13,fontWeight:800,cursor:'pointer',boxShadow:'0 4px 10px rgba(5,150,105,.3)'}}>
+            <button style={{background:'#FF6B6B',color:'#fff',border:'none',borderRadius:10,padding:'9px 18px',fontSize:13,fontWeight:800,cursor:'pointer',boxShadow:'0 4px 10px rgba(14,165,233,.3)'}}>
               Book Now
             </button>
           </div>
@@ -2224,7 +2224,7 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
           {photos.map((_,i) => (
             <button key={i} onClick={() => setPhotoIdx(i)}
               style={{width:i===photoIdx?44:32,height:i===photoIdx?32:24,borderRadius:6,
-                border:i===photoIdx?'2px solid #F59E0B':'2px solid rgba(255,255,255,.35)',
+                border:i===photoIdx?'2px solid #FF6B6B':'2px solid rgba(255,255,255,.35)',
                 background:'rgba(255,255,255,.18)',cursor:'pointer',transition:'all .3s',padding:0,flexShrink:0}} />
           ))}
         </div>
@@ -2240,10 +2240,10 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
       <div style={{display:'flex',flexDirection:'column',background:'#FAFAF8',overflowY:'auto',maxHeight:'calc(100vh - 120px)',borderLeft:'1px solid #E8E0D8'}}>
 
         {/* Header — navy */}
-        <div style={{background:'linear-gradient(135deg,#059669,#10B981)',padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+        <div style={{background:'linear-gradient(135deg,#0EA5E9,#06B6D4)',padding:'10px 16px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:800,fontSize:13,letterSpacing:.2}}>🗳️ Cast Your Votes</div>
           <button onClick={() => setAiOpen(o => !o)}
-            style={{background: aiOpen ? '#F59E0B' : 'rgba(255,255,255,.18)',border:'none',borderRadius:20,padding:'4px 11px',
+            style={{background: aiOpen ? '#FF6B6B' : 'rgba(255,255,255,.18)',border:'none',borderRadius:20,padding:'4px 11px',
               color:'#fff',fontSize:11,fontWeight:700,cursor:'pointer',transition:'background .2s'}}>
             {aiOpen ? '✕ AI' : '🤖 AI'}
           </button>
@@ -2259,7 +2259,7 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
                 value={aiQ} onChange={e => setAiQ(e.target.value)}
                 onKeyDown={e => e.key==='Enter' && askAI()} />
               <button className="btn btn-sm" onClick={askAI} disabled={aiLoading}
-                style={{background:'#F59E0B',color:'#fff',border:'none',whiteSpace:'nowrap',fontSize:11}}>
+                style={{background:'#FF6B6B',color:'#fff',border:'none',whiteSpace:'nowrap',fontSize:11}}>
                 {aiLoading ? '⏳' : 'Ask'}
               </button>
             </div>
@@ -2291,15 +2291,15 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
                         return (
                           <button key={opt} onClick={() => castVote(cat.id, opt)}
                             style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'7px 10px',borderRadius:8,
-                              border: isMyVote ? '2px solid #F59E0B' : '1px solid #E5E7EB',
-                              background: isMyVote ? '#ECFDF5' : '#fff',cursor:'pointer',textAlign:'left',transition:'all .15s',
+                              border: isMyVote ? '2px solid #FF6B6B' : '1px solid #E5E7EB',
+                              background: isMyVote ? '#E0F2FE' : '#fff',cursor:'pointer',textAlign:'left',transition:'all .15s',
                               boxShadow: isMyVote ? '0 2px 8px rgba(249,115,22,.12)' : 'none'}}>
                             <div style={{flex:1}}>
                               <div style={{fontSize:12,color:'#1F2937',fontWeight: isMyVote?700:400}}>{opt}</div>
                               {count>0 && (
                                 <div style={{display:'flex',alignItems:'center',gap:5,marginTop:3}}>
                                   <div style={{flex:1,height:3,background:'#F3F4F6',borderRadius:2}}>
-                                    <div style={{width:pct+'%',height:'100%',background:isMyVote?'#F59E0B':'#0D9488',borderRadius:2,transition:'width .3s'}}/>
+                                    <div style={{width:pct+'%',height:'100%',background:isMyVote?'#FF6B6B':'#0D9488',borderRadius:2,transition:'width .3s'}}/>
                                   </div>
                                   <span style={{fontSize:10,color:isMyVote?'#C2410C':'#0D9488',fontWeight:700}}>{count}/{totalMembers}</span>
                                 </div>
@@ -2344,7 +2344,7 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
                     </div>
                     <input className="form-input" style={{fontSize:11,marginBottom:5}} placeholder="Dietary needs…" value={myPref.dietary||''} onChange={e=>setMyPref(p=>({...p,dietary:e.target.value}))} />
                     <input className="form-input" style={{fontSize:11,marginBottom:8}} placeholder="Room preference…" value={myPref.room||''} onChange={e=>setMyPref(p=>({...p,room:e.target.value}))} />
-                    <button style={{width:'100%',fontSize:11,padding:'7px',borderRadius:8,border:'none',cursor:'pointer',fontWeight:700,background:prefSaved?'#0D9488':'#F59E0B',color:'#fff',transition:'background .2s'}} onClick={savePrefs}>{prefSaved?'✅ Saved!':'💾 Save Preferences'}</button>
+                    <button style={{width:'100%',fontSize:11,padding:'7px',borderRadius:8,border:'none',cursor:'pointer',fontWeight:700,background:prefSaved?'#0D9488':'#FF6B6B',color:'#fff',transition:'background .2s'}} onClick={savePrefs}>{prefSaved?'✅ Saved!':'💾 Save Preferences'}</button>
                     {allPrefs.length>0 && (
                       <div style={{marginTop:8}}>
                         <div style={{fontSize:10,fontWeight:700,color:'#9CA3AF',marginBottom:4,textTransform:'uppercase'}}>Group ({allPrefs.length}/{members.length})</div>
@@ -2367,7 +2367,7 @@ function VotingScreen({ trip, members, session, sendNotifications }) {
                 </div>
               )}
               <button style={{width:'100%',marginBottom:6,fontSize:12,padding:'9px',borderRadius:9,border:'none',cursor:'pointer',fontWeight:700,
-                background:'linear-gradient(135deg,#059669,#10B981)',color:'#fff'}} onClick={getAIConsensus} disabled={generating}>
+                background:'linear-gradient(135deg,#0EA5E9,#06B6D4)',color:'#fff'}} onClick={getAIConsensus} disabled={generating}>
                 {generating ? '⏳ Analysing votes…' : '🤖 Get AI Consensus'}
               </button>
             </>
@@ -2398,7 +2398,7 @@ function PlanScreen({ trip, members }) {
       {/* ── RIGHT: FLIGHT BOOKING ── */}
       <div style={{background:'#F8FAFC',overflowY:'auto',maxHeight:'calc(100vh - 120px)',borderLeft:'1px solid #E5E7EB'}}>
         {/* Header */}
-        <div style={{background:'linear-gradient(135deg,#059669,#10B981)',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+        <div style={{background:'linear-gradient(135deg,#0EA5E9,#06B6D4)',padding:'10px 16px',display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
           <div style={{color:'#fff',fontWeight:800,fontSize:13}}>✈️ Book Flights</div>
           <div style={{marginLeft:'auto',fontSize:10,color:'rgba(255,255,255,.75)',fontWeight:600}}>{members.length} travellers</div>
         </div>
@@ -2507,7 +2507,7 @@ Include real restaurant names, realistic INR costs, and make it fun for a group!
   const parsed = itinerary ? parseItinerary(itinerary) : null;
 
   const periodStyle = {
-    morning:   { dot:'#F59E0B', timeBg:'#FFFBEB', timeColor:'#92400E' },
+    morning:   { dot:'#FF6B6B', timeBg:'#FFFBEB', timeColor:'#92400E' },
     afternoon: { dot:'#0D9488', timeBg:'#F0FDFA', timeColor:'#0F766E' },
     evening:   { dot:'#6366F1', timeBg:'#EEF2FF', timeColor:'#4338CA' },
   };
@@ -2739,7 +2739,7 @@ function MoreScreen({ trip, members, expenses, session, setScr }) {
   const tools = [
     { id:'ai-chat', icon:'🤖', label:'AI Trip Assistant', desc:'Ask anything about your trip', color:'#EFF6FF', border:'#BFDBFE', iconBg:'#3B82F6' },
     { id:'agent',   icon:'🛡️', label:'AI Disruption Agent', desc:'Proactive alerts & trip monitoring', color:'#EEF2FF', border:'#C7D2FE', iconBg:'#6366F1' },
-    { id:'memories',icon:'📸', label:'Trip Memories',  desc:'Capture moments from your journey', color:'#ECFDF5', border:'#A7F3D0', iconBg:'#059669' },
+    { id:'memories',icon:'📸', label:'Trip Memories',  desc:'Capture moments from your journey', color:'#E0F2FE', border:'#BAE6FD', iconBg:'#0EA5E9' },
     { id:'chat',    icon:'💬', label:'Group Chat',     desc:'Live messaging with your travel group', color:'#F0FDF4', border:'#86EFAC', iconBg:'#22C55E' },
   ];
 
@@ -2763,7 +2763,7 @@ function MoreScreen({ trip, members, expenses, session, setScr }) {
               {t.icon}
             </div>
             <div style={{flex:1}}>
-              <div style={{fontWeight:800,fontSize:14,color:'#064E3B',marginBottom:2}}>{t.label}</div>
+              <div style={{fontWeight:800,fontSize:14,color:'#0F172A',marginBottom:2}}>{t.label}</div>
               <div style={{fontSize:12,color:'#6B7280',lineHeight:1.4}}>{t.desc}</div>
             </div>
             <span style={{color:'#94A3B8',fontSize:18}}>›</span>
@@ -2782,7 +2782,7 @@ function MoreScreen({ trip, members, expenses, session, setScr }) {
               {t.icon}
             </div>
             <div style={{flex:1}}>
-              <div style={{fontWeight:800,fontSize:14,color:'#064E3B',marginBottom:2}}>{t.label}</div>
+              <div style={{fontWeight:800,fontSize:14,color:'#0F172A',marginBottom:2}}>{t.label}</div>
               <div style={{fontSize:12,color:'#6B7280',lineHeight:1.4}}>{t.desc}</div>
             </div>
             <span style={{color:'#94A3B8',fontSize:18}}>›</span>
@@ -2873,7 +2873,7 @@ function GroupChatScreen({ trip, members, session }) {
   return (
     <div style={{display:'flex',flexDirection:'column',height:'calc(100vh - 140px)',margin:'-12px'}}>
       {/* Header */}
-      <div style={{background:'linear-gradient(135deg,#059669,#10B981)',padding:'12px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
+      <div style={{background:'linear-gradient(135deg,#0EA5E9,#06B6D4)',padding:'12px 16px',display:'flex',alignItems:'center',gap:10,flexShrink:0}}>
         <div style={{width:38,height:38,borderRadius:'50%',background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18}}>💬</div>
         <div>
           <div style={{fontWeight:800,fontSize:14,color:'#fff'}}>{trip.destination} Group</div>
@@ -2893,7 +2893,7 @@ function GroupChatScreen({ trip, members, session }) {
         {!loading && messages.length === 0 && (
           <div style={{textAlign:'center',padding:40}}>
             <div style={{fontSize:40,marginBottom:8}}>👋</div>
-            <div style={{fontWeight:700,color:'#064E3B',fontSize:15}}>Start the conversation!</div>
+            <div style={{fontWeight:700,color:'#0F172A',fontSize:15}}>Start the conversation!</div>
             <div style={{fontSize:13,color:'#888',marginTop:4}}>Say hi to your travel group</div>
           </div>
         )}
@@ -2920,7 +2920,7 @@ function GroupChatScreen({ trip, members, session }) {
                   <div style={{fontSize:11,color:'#666',fontWeight:700,marginBottom:2,marginLeft:4}}>{senderName}</div>
                 )}
                 <div style={{
-                  background: isMe ? '#059669' : '#fff',
+                  background: isMe ? '#0EA5E9' : '#fff',
                   color: isMe ? '#fff' : '#1a1a1a',
                   padding:'9px 13px',
                   borderRadius: isMe ? '16px 4px 16px 16px' : '4px 16px 16px 16px',
@@ -2952,7 +2952,7 @@ function GroupChatScreen({ trip, members, session }) {
         />
         <button onClick={sendMessage} disabled={!text.trim() || sending}
           style={{width:42,height:42,borderRadius:'50%',border:'none',cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',fontSize:18,flexShrink:0,
-            background: text.trim() ? '#059669' : '#E5E7EB',
+            background: text.trim() ? '#0EA5E9' : '#E5E7EB',
             color: text.trim() ? '#fff' : '#999',
             transition:'background .2s'}}>
           ➤
@@ -3076,7 +3076,7 @@ Be specific to ${tripInfo.destination}. Make alerts genuinely useful.`;
 
   const alertColors = {
     critical: {bg:'#FEF2F2',border:'#FCA5A5',title:'#991B1B',text:'#7F1D1D'},
-    warning:  {bg:'#FFFBEB',border:'#F59E0B',title:'#92400E',text:'#78350F'},
+    warning:  {bg:'#FFFBEB',border:'#FF6B6B',title:'#92400E',text:'#78350F'},
     info:     {bg:'#EFF6FF',border:'#93C5FD',title:'#1E40AF',text:'#1E3A8A'},
     success:  {bg:'#F0FDF4',border:'#86EFAC',title:'#166534',text:'#14532D'},
   };
@@ -3096,7 +3096,7 @@ Be specific to ${tripInfo.destination}. Make alerts genuinely useful.`;
       {lastScan && <div style={{fontSize:11,color:'var(--muted)',marginBottom:12}}>Last scan: {lastScan.toLocaleTimeString()}</div>}
 
       {/* Agent Status Card */}
-      <div style={{background:'linear-gradient(135deg,#059669,#10B981)',borderRadius:16,padding:16,marginBottom:16,color:'#fff'}}>
+      <div style={{background:'linear-gradient(135deg,#0EA5E9,#06B6D4)',borderRadius:16,padding:16,marginBottom:16,color:'#fff'}}>
         <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
           <div style={{width:40,height:40,borderRadius:'50%',background:'rgba(255,255,255,.15)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:20}}>🛡️</div>
           <div>
@@ -3230,7 +3230,7 @@ function ProfileScreen({ profile, session, setScr, setSession }) {
       </div>
       <div className="mobile-wrap screen-inner" style={{paddingBottom:20}}>
         <div className="profile-header">
-          <div className="profile-avatar-big" style={{background:profile?.avatar_color||'#059669'}}>{initials(profile?.name||'?')}</div>
+          <div className="profile-avatar-big" style={{background:profile?.avatar_color||'#0EA5E9'}}>{initials(profile?.name||'?')}</div>
           <div className="profile-name">{profile?.name}</div>
           <div className="profile-email">{session?.user?.email}</div>
           {profile?.phone && <div style={{marginTop:4,fontSize:13,opacity:.7}}>📱 {profile.phone}</div>}
